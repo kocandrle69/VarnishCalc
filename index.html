@@ -67,7 +67,6 @@
         }
         .btn-main:active { transform: scale(0.98); }
 
-        /* Styly pro vizualizaci výsledků */
         .main-result-banner {
             background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.15));
             border-radius: 18px; padding: 20px; margin-bottom: 15px; text-align: center;
@@ -84,7 +83,6 @@
         
         .highlight-green { color: var(--accent-green); }
         .highlight-blue { color: var(--accent-blue); }
-
         .footer-note { font-size: 11px; color: var(--text-dim); margin-top: 15px; line-height: 1.4; }
     </style>
 </head>
@@ -141,8 +139,7 @@
     </div>
 
 <script>
-    // --- AKTUALIZOVANÁ DATA Z EXCELU ---
-const varnishes = {
+    const varnishes = {
         internal: [
             { id: 1, cat: "PAM alternative", name: "RLC15031", scv: 36.00, dryD: 1.37, wetD: 1.12, minT: 7, maxT: 11 },
             { id: 2, cat: "BPANI", name: "RLC10031/4", scv: 39.91, dryD: 1.26, wetD: 1.03, minT: 6, maxT: 10 },
@@ -169,93 +166,114 @@ const varnishes = {
             { id: 1009, cat: "White Enamel", name: "WHITE ENAMEL T1195", scv: 95.6, dryD: 1.98, wetD: 1.47, minT: 10, maxT: 20 },
             { id: 1010, cat: "Overvarnish", name: "(Gloss) 75 KW 373/5 WB", scv: 61.3, dryD: 1.17, wetD: 1.03, minT: 10, maxT: 12 }
         ]
-};
-
-function calculate() {
-    const v = JSON.parse(document.getElementById('varnishSelect').value);
-    const d = parseFloat(document.getElementById('diameter').value);
-    const l = parseFloat(document.getElementById('length').value);
-    const type = document.getElementById('coatingType').value;
-
-    // 1. PLOCHA (A) - přesně dle "Výpočet CZ"
-    // INT: (PI * d * l) + (PI * d^2 / 4) | EXT: (PI * d * l)
-    const areaMm2 = (type === 'internal') 
-        ? (Math.PI * d * l) + (Math.PI * Math.pow(d, 2) / 4)
-        : (Math.PI * d * l);
-    
-    const areaM2 = areaMm2 / 1000000;
-
-    // 2. VÝPOČET PRO DANOU TLOUŠŤKU (T)
-    const getAnalysis = (T_dry) => {
-        // Tloušťka mokrá [µm]
-        const T_wet = T_dry / (v.scv / 100);
-        
-        // Gramy na m2 (Suché = T * hustota / 1000 * 1000 -> zjednodušeno)
-        // Excel: (T_dry / 10000) * dryD * 100 * 100
-        const gM2_dry = T_dry * v.dryD;
-        const gM2_wet = T_wet * v.wetD;
-
-        // Váha na plechovku [g]
-        const weight_dry = gM2_dry * areaM2;
-        const weight_wet = gM2_wet * areaM2;
-
-        return { 
-            wetThick: T_wet, 
-            dryG: weight_dry, 
-            wetG: weight_wet,
-            dryM2: gM2_dry,
-            wetM2: gM2_wet
-        };
     };
 
-    const resMin = getAnalysis(v.minT);
-    const resMax = getAnalysis(v.maxT);
+    const translations = {
+        cs: { title: "Varnish<b>Calc</b> Pro", type: "Typ aplikace", varnish: "Specifikace laku", diam: "Průměr (mm)", len: "Délka (mm)", calc: "SPUSTIT ANALÝZU", area: "Celková plocha", wet: "Mokrý nános", dry: "Suchý nános", plan: "Plánování", prod: "Výtěžnost výroby" },
+        en: { title: "Varnish<b>Calc</b> Pro", type: "Application Type", varnish: "Varnish Specification", diam: "Diameter (mm)", len: "Length (mm)", calc: "RUN ANALYSIS", area: "Total Area", wet: "Wet weight", dry: "Dry weight", plan: "Planning", prod: "Production Yield" }
+    };
 
-    // Zobrazení výsledků (převedeno na mg pro lepší čitelnost v supportu, jak máš v kódu)
-    updateResultUI(resMin, resMax, areaMm2, v);
-}
+    let currentLang = 'cs';
 
-function updateResultUI(min, max, area, v) {
-    const t = translations[currentLang];
-    document.getElementById('resContent').innerHTML = `
-        <div class="main-result-banner">
-            <span style="font-size: 11px; color: var(--text-dim); text-transform:uppercase;">${t.area}</span>
-            <div style="font-size: 24px; font-weight: 800;">${(area/100).toFixed(2)} cm²</div>
-            <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">Objemová sušina (SCV): ${v.scv}%</div>
-        </div>
-        <div class="result-grid">
-            <div class="result-card-mini" style="grid-column: span 2; background: rgba(255,255,255,0.03); padding: 8px;">
-                <span style="font-size: 10px; color: var(--accent-cyan)">LIMIT MIN: ${v.minT} µm (Mokrá: ${min.wetThick.toFixed(1)} µm)</span>
-            </div>
-            <div class="result-card-mini">
-                <span class="label">${t.dry} / plechovka</span>
-                <span class="value highlight-blue">${(min.dryG * 1000).toFixed(0)}<small>mg</small></span>
-            </div>
-            <div class="result-card-mini">
-                <span class="label">${t.wet} / plechovka</span>
-                <span class="value highlight-green">${(min.wetG * 1000).toFixed(0)}<small>mg</small></span>
-            </div>
+    function setLang(l) { currentLang = l; updateTexts(); loadVarnishes(); }
 
-            <div class="result-card-mini" style="grid-column: span 2; background: rgba(255,255,255,0.03); padding: 8px; margin-top:10px;">
-                <span style="font-size: 10px; color: var(--accent-cyan)">LIMIT MAX: ${v.maxT} µm (Mokrá: ${max.wetThick.toFixed(1)} µm)</span>
+    function updateTexts() {
+        const t = translations[currentLang];
+        document.getElementById('appTitle').innerHTML = t.title;
+        document.getElementById('lblType').innerText = t.type;
+        document.getElementById('lblVarnish').innerText = t.varnish;
+        document.getElementById('lblDiam').innerText = t.diam;
+        document.getElementById('lblLen').innerText = t.len;
+        document.getElementById('btnCalculate').innerText = t.calc;
+        document.getElementById('tabCalc').innerText = (currentLang === 'cs' ? 'Kalkulátor' : 'Calculator');
+        document.getElementById('tabPlan').innerText = t.plan;
+    }
+
+    function switchTab(tab) {
+        document.getElementById('calculatorSection').style.display = tab === 'calc' ? 'block' : 'none';
+        document.getElementById('planningSection').style.display = tab === 'plan' ? 'block' : 'none';
+        document.getElementById('tabCalc').classList.toggle('active', tab === 'calc');
+        document.getElementById('tabPlan').classList.toggle('active', tab === 'plan');
+    }
+
+    function loadVarnishes() {
+        const type = document.getElementById('coatingType').value;
+        const select = document.getElementById('varnishSelect');
+        const data = varnishes[type];
+        const categories = [...new Set(data.map(v => v.cat))];
+        
+        select.innerHTML = categories.map(cat => `
+            <optgroup label="${cat}">
+                ${data.filter(v => v.cat === cat).map(v => 
+                    `<option value='${JSON.stringify(v)}'>${v.name}</option>`
+                ).join('')}
+            </optgroup>
+        `).join('');
+    }
+
+    function calculate() {
+        const v = JSON.parse(document.getElementById('varnishSelect').value);
+        const d = parseFloat(document.getElementById('diameter').value);
+        const l = parseFloat(document.getElementById('length').value);
+        const type = document.getElementById('coatingType').value;
+
+        const areaMm2 = (type === 'internal') 
+            ? (Math.PI * d * l) + (Math.PI * Math.pow(d, 2) / 4)
+            : (Math.PI * d * l);
+        
+        const areaM2 = areaMm2 / 1000000;
+
+        const getAnalysis = (T_dry) => {
+            const T_wet = T_dry / (v.scv / 100);
+            const weight_dry = T_dry * v.dryD * areaM2;
+            const weight_wet = T_wet * v.wetD * areaM2;
+            return { wetThick: T_wet, dryG: weight_dry, wetG: weight_wet };
+        };
+
+        const resMin = getAnalysis(v.minT);
+        const resMax = getAnalysis(v.maxT);
+        updateResultUI(resMin, resMax, areaMm2, v);
+    }
+
+    function updateResultUI(min, max, area, v) {
+        const t = translations[currentLang];
+        document.getElementById('resContent').innerHTML = `
+            <div class="main-result-banner">
+                <span style="font-size: 11px; color: var(--text-dim); text-transform:uppercase;">${t.area}</span>
+                <div style="font-size: 24px; font-weight: 800;">${(area/100).toFixed(2)} cm²</div>
+                <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">Kategorie: ${v.cat} | SCV: ${v.scv}%</div>
             </div>
-            <div class="result-card-mini">
-                <span class="label">${t.dry} / plechovka</span>
-                <span class="value highlight-blue">${(max.dryG * 1000).toFixed(0)}<small>mg</small></span>
+            <div class="result-grid">
+                <div class="result-card-mini" style="grid-column: span 2; background: rgba(255,255,255,0.03); padding: 8px;">
+                    <span style="font-size: 10px; color: var(--accent-cyan)">LIMIT MIN: ${v.minT} µm (Mokrá: ${min.wetThick.toFixed(1)} µm)</span>
+                </div>
+                <div class="result-card-mini">
+                    <span class="label">${t.dry}</span>
+                    <span class="value highlight-blue">${(min.dryG * 1000).toFixed(0)}<small>mg</small></span>
+                </div>
+                <div class="result-card-mini">
+                    <span class="label">${t.wet}</span>
+                    <span class="value highlight-green">${(min.wetG * 1000).toFixed(0)}<small>mg</small></span>
+                </div>
+                <div class="result-card-mini" style="grid-column: span 2; background: rgba(255,255,255,0.03); padding: 8px; margin-top:10px;">
+                    <span style="font-size: 10px; color: var(--accent-cyan)">LIMIT MAX: ${v.maxT} µm (Mokrá: ${max.wetThick.toFixed(1)} µm)</span>
+                </div>
+                <div class="result-card-mini">
+                    <span class="label">${t.dry}</span>
+                    <span class="value highlight-blue">${(max.dryG * 1000).toFixed(0)}<small>mg</small></span>
+                </div>
+                <div class="result-card-mini">
+                    <span class="label">${t.wet}</span>
+                    <span class="value highlight-green">${(max.wetG * 1000).toFixed(0)}<small>mg</small></span>
+                </div>
             </div>
-            <div class="result-card-mini">
-                <span class="label">${t.wet} / plechovka</span>
-                <span class="value highlight-green">${(max.wetG * 1000).toFixed(0)}<small>mg</small></span>
-            </div>
-        </div>
-        <div class="footer-note">Výpočet odpovídá databázi laku ${v.name}. Suchá hustota: ${v.dryD} g/cm³.</div>
-    `;
-    document.getElementById('resultsCard').style.display = 'block';
-}
+        `;
+        document.getElementById('resultsCard').style.display = 'block';
+    }
 
     // Inicializace
-    loadVarnishes();
     updateTexts();
+    loadVarnishes();
 </script>
 </body>
 </html>
