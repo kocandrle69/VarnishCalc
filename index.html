@@ -1,279 +1,838 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VarnishCalc Pro - Global Support</title>
-    <style>
-        :root {
-            --bg-dark: #050a18;
-            --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --accent-purple: #a855f7;
-            --accent-cyan: #06b6d4;
-            --accent-green: #34d399;
-            --accent-blue: #60a5fa;
-            --text-main: #ffffff;
-            --text-dim: rgba(255, 255, 255, 0.5);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VarnishCalc Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg-dark);
-            background-image: radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
-            color: var(--text-main);
-            margin: 0; padding: 20px 15px;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-        }
+:root {
+  --bg: #08091a;
+  --glass-1: rgba(255,255,255,0.065);
+  --glass-2: rgba(255,255,255,0.038);
+  --glass-3: rgba(255,255,255,0.018);
+  --border-1: rgba(255,255,255,0.14);
+  --border-2: rgba(255,255,255,0.07);
+  --border-3: rgba(255,255,255,0.04);
+  --text: #ffffff;
+  --text-2: rgba(255,255,255,0.60);
+  --text-3: rgba(255,255,255,0.32);
+  --accent-purple: #9b59f5;
+  --accent-cyan: #2de2ff;
+  --r: 22px;
+  --r-sm: 14px;
+}
 
-        .glass-card {
-            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 24px;
-            padding: 24px; width: 100%; max-width: 450px; box-sizing: border-box;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); margin-bottom: 20px;
-        }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-        h1 { font-weight: 200; letter-spacing: -1px; margin: 10px 0 25px 0; font-size: 28px; text-align: center; }
-        h1 b { font-weight: 800; color: var(--accent-cyan); }
+.bg-mesh {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 8% 5%,   rgba(155,89,245,0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 65% at 95% 8%,   rgba(45,226,255,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 45% at 50% 100%, rgba(240,96,158,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 40% at 85% 55%,  rgba(62,207,142,0.08) 0%, transparent 70%);
+}
+.bg-noise {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-        label { display: block; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin: 0 0 6px 4px; }
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 480px; margin: 0 auto;
+  padding: 18px 15px 50px;
+  display: flex; flex-direction: column; gap: 12px;
+}
 
-        select, input {
-            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
-            padding: 14px; border-radius: 14px; color: white; margin-bottom: 18px;
-            font-size: 16px; box-sizing: border-box; outline: none; appearance: none;
-        }
+/* HEADER */
+.header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 8px 0 4px; gap: 12px;
+}
+.logo {
+  font-size: 25px; font-weight: 800; letter-spacing: -0.8px; white-space: nowrap;
+  background: linear-gradient(135deg, #fff 10%, var(--accent-purple) 55%, var(--accent-cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo-light { font-weight: 300; }
 
-        .picker-container { position: relative; }
-        .picker-container::after {
-            content: '↓'; font-size: 12px; position: absolute; right: 15px; top: 15px; color: var(--text-dim); pointer-events: none;
-        }
+.lang-select-wrap { position: relative; }
+.lang-select {
+  appearance: none; background: rgba(0,0,0,0.35); border: 1px solid var(--border-2);
+  border-radius: 11px; color: white; font-size: 12px; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; padding: 7px 28px 7px 10px;
+  cursor: pointer; outline: none; transition: border-color 0.2s;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  min-width: 120px;
+}
+.lang-select:focus { border-color: rgba(155,89,245,0.55); }
+.lang-select option { background: #111228; color: white; }
+.lang-select-arrow { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; font-size: 11px; }
 
-        .tab-bar {
-            display: flex; background: var(--glass); padding: 5px; border-radius: 15px;
-            width: 100%; max-width: 450px; margin-bottom: 20px;
-        }
-        .tab-btn {
-            flex: 1; background: transparent; border: none; color: var(--text-dim);
-            padding: 10px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.3s;
-        }
-        .tab-btn.active { background: rgba(255,255,255,0.1); color: white; }
+/* CARD */
+.card {
+  background: var(--glass-1);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r);
+  padding: 20px;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.07) inset,
+    0 -1px 0 rgba(0,0,0,0.4) inset,
+    0 12px 40px rgba(0,0,0,0.45),
+    0 2px 8px rgba(0,0,0,0.3);
+  position: relative; overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  pointer-events: none;
+}
 
-        .btn-main {
-            width: 100%; padding: 18px; border-radius: 18px; border: none;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            color: white; font-weight: 800; font-size: 17px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); transition: transform 0.2s;
-        }
-        .btn-main:active { transform: scale(0.98); }
+/* TABS */
+.tabs {
+  display: flex; gap: 4px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-2);
+  border-radius: 18px; padding: 4px;
+}
+.tab {
+  flex: 1; background: transparent; border: none; color: var(--text-3);
+  padding: 12px 6px; border-radius: 14px; cursor: pointer;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.1px;
+  transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+}
+.tab.active {
+  background: linear-gradient(135deg, rgba(155,89,245,0.28), rgba(45,226,255,0.18));
+  color: white; border: 1px solid rgba(155,89,245,0.35);
+  box-shadow: 0 0 20px rgba(155,89,245,0.18), inset 0 1px 0 rgba(255,255,255,0.1);
+}
 
-        .main-result-banner {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.15));
-            border-radius: 18px; padding: 20px; margin-bottom: 15px; text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
+/* FIELD LABEL */
+.flabel {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.1px;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 8px;
+}
 
-        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .result-card-mini {
-            background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;
-        }
-        .result-card-mini .label { font-size: 9px; color: var(--text-dim); margin-bottom: 4px; }
-        .result-card-mini .value { font-size: 19px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
-        
-        .highlight-green { color: var(--accent-green); }
-        .highlight-blue { color: var(--accent-blue); }
-        .footer-note { font-size: 11px; color: var(--text-dim); margin-top: 15px; line-height: 1.4; }
-    </style>
+/* TYPE TOGGLE */
+.type-toggle { display: flex; gap: 8px; }
+.type-btn {
+  flex: 1; padding: 13px 8px; border-radius: 15px;
+  border: 1px solid var(--border-2); background: var(--glass-3);
+  color: var(--text-3); font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all 0.22s; font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.type-btn.active {
+  background: linear-gradient(135deg, rgba(155,89,245,0.22), rgba(45,226,255,0.12));
+  border-color: rgba(155,89,245,0.45); color: white;
+  box-shadow: 0 0 24px rgba(155,89,245,0.18), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.type-btn .ico { font-size: 18px; }
+
+/* SELECT */
+.select-wrap { position: relative; }
+.glass-select {
+  width: 100%; padding: 14px 40px 14px 16px;
+  background: rgba(0,0,0,0.4); border: 1px solid var(--border-2);
+  border-radius: var(--r-sm); color: white;
+  font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  appearance: none; outline: none; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.3);
+  transition: border-color 0.2s;
+}
+.glass-select:focus { border-color: rgba(155,89,245,0.55); box-shadow: 0 0 0 3px rgba(155,89,245,0.12); }
+.glass-select option, .glass-select optgroup { background: #111228; color: white; }
+.select-arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; font-size: 12px; }
+[dir="rtl"] .select-arrow { right: auto; left: 14px; }
+
+.varnish-badge {
+  display: inline-flex; align-items: center;
+  background: linear-gradient(135deg, rgba(155,89,245,0.2), rgba(45,226,255,0.12));
+  border: 1px solid rgba(155,89,245,0.35);
+  border-radius: 8px; padding: 3px 9px;
+  font-size: 10px; font-weight: 700; color: #c4a9ff; letter-spacing: 0.4px;
+}
+
+/* NUMBER INPUT */
+.dim-row { display: flex; gap: 10px; }
+.dim-field { flex: 1; }
+.dim-wrap { position: relative; }
+.num-input {
+  width: 100%; padding: 13px 38px 13px 14px;
+  background: rgba(0,0,0,0.4); border: 1px solid var(--border-2);
+  border-radius: var(--r-sm); color: white;
+  font-size: 22px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  outline: none; transition: border-color 0.2s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.num-input:focus { border-color: rgba(155,89,245,0.55); box-shadow: 0 0 0 3px rgba(155,89,245,0.1); }
+.num-unit { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 10px; font-weight: 700; letter-spacing: 0.5px; pointer-events: none; }
+[dir="rtl"] .num-unit { right: auto; left: 11px; }
+
+/* BUTTON */
+.btn-main {
+  width: 100%; padding: 18px;
+  background: linear-gradient(135deg, #7c6cfc 0%, #36b0e0 60%, #2de2ff 100%);
+  border: none; border-radius: 18px; color: white;
+  font-size: 16px; font-weight: 800; letter-spacing: 0.8px;
+  cursor: pointer; transition: all 0.18s; font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 28px rgba(124,108,252,0.40), inset 0 1px 0 rgba(255,255,255,0.2);
+  position: relative; overflow: hidden;
+}
+.btn-main::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.14), transparent);
+  border-radius: 18px 18px 0 0; pointer-events: none;
+}
+.btn-main:active { transform: scale(0.97); box-shadow: 0 2px 14px rgba(124,108,252,0.3); }
+
+/* UNIT TOGGLE */
+.unit-toggle { display: flex; gap: 3px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-2); border-radius: 12px; padding: 3px; }
+.unit-btn { flex: 1; padding: 8px 4px; border: none; background: transparent; color: var(--text-3); font-size: 11px; font-weight: 700; border-radius: 9px; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.unit-btn.active { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border-2); }
+
+/* ══ RESULT CARDS ══ */
+.res-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 3px; }
+.res-sub   { font-size: 11px; color: var(--text-3); margin-bottom: 14px; line-height: 1.6; }
+
+.area-pill {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255,255,255,0.045); border: 1px solid var(--border-2);
+  border-radius: 14px; padding: 12px 16px; margin-bottom: 14px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.area-pill-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px; color: var(--text-3); }
+.area-pill-val { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--accent-cyan); }
+
+/* The big glass result cards */
+.rc {
+  border-radius: 22px; margin-bottom: 10px;
+  position: relative; overflow: hidden;
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.28),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+    inset 1px 0 0 rgba(255,255,255,0.06),
+    inset -1px 0 0 rgba(255,255,255,0.06),
+    0 20px 60px rgba(0,0,0,0.55),
+    0 4px 14px rgba(0,0,0,0.4);
+  animation: rcUp 0.38s cubic-bezier(.22,.68,0,1.18) both;
+}
+.rc:nth-child(1){animation-delay:.03s}
+.rc:nth-child(2){animation-delay:.09s}
+.rc:nth-child(3){animation-delay:.15s}
+@keyframes rcUp {
+  from{opacity:0;transform:translateY(18px) scale(0.97)}
+  to  {opacity:1;transform:translateY(0)    scale(1)}
+}
+/* top specular line */
+.rc::before {
+  content:''; position:absolute; top:0; left:18px; right:18px; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.42),transparent);
+  pointer-events:none; z-index:1;
+}
+/* shine blob */
+.rc::after {
+  content:''; position:absolute; top:-30%; left:-5%; width:45%; height:80%;
+  background:radial-gradient(ellipse,rgba(255,255,255,0.09) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.rc-purple { background: linear-gradient(145deg, rgba(109,40,217,0.80) 0%, rgba(192,38,211,0.70) 100%); }
+.rc-blue   { background: linear-gradient(145deg, rgba(29,78,216,0.80)  0%, rgba(109,40,217,0.70) 100%); }
+.rc-green  { background: linear-gradient(145deg, rgba(4,120,87,0.82)   0%, rgba(15,118,110,0.72) 100%); }
+
+.rc-inner { padding: 18px 18px 16px; position: relative; z-index: 2; }
+.rc-head  { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.rc-icon  {
+  width:44px; height:44px; border-radius:13px; flex-shrink:0;
+  background:rgba(0,0,0,0.28);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+}
+.rc-card-title { font-size:15px; font-weight:700; color:#fff; letter-spacing:-0.2px; line-height:1.2; }
+
+.rc-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.11);
+}
+.rc-row:last-child { border-bottom:none; padding-bottom:2px; }
+.rc-row-left { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:rgba(255,255,255,0.82); }
+.rc-dot {
+  width:20px; height:20px; border-radius:50%; flex-shrink:0;
+  background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.15);
+  display:flex; align-items:center; justify-content:center; font-size:10px;
+}
+.rc-val { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; color:#fff; letter-spacing:-0.3px; }
+[dir="rtl"] .rc-row   { flex-direction:row-reverse; }
+[dir="rtl"] .rc-row-left { flex-direction:row-reverse; }
+[dir="rtl"] .rc-head  { flex-direction:row-reverse; }
+
+/* PLAN RESULTS */
+.plan-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; margin-top:14px; }
+.plan-mini {
+  background:var(--glass-2); border:1px solid var(--border-2);
+  border-radius:16px; padding:14px 8px; text-align:center;
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 4px 12px rgba(0,0,0,0.25);
+  position:relative; overflow:hidden;
+}
+.plan-mini::before {
+  content:''; position:absolute; top:0; left:25%; right:25%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
+}
+.pm-lbl  { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.9px; color:var(--text-3); margin-bottom:7px; }
+.pm-val  { font-size:26px; font-weight:800; font-family:'JetBrains Mono',monospace; line-height:1; }
+.pm-unit { font-size:9px; color:var(--text-3); margin-top:5px; font-weight:700; letter-spacing:0.5px; }
+.pm-min{color:#fb7185} .pm-avg{color:#a78bfa} .pm-max{color:#34d399}
+
+.plan-detail {
+  background:var(--glass-2); border:1px solid var(--border-2);
+  border-radius:13px; padding:12px 14px; margin-top:10px;
+  display:flex; justify-content:space-between; align-items:center;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+.pd-lbl { font-size:10px; color:var(--text-3); font-weight:600; text-transform:uppercase; letter-spacing:0.7px; }
+.pd-val { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--accent-cyan); }
+
+.footer { text-align:center; font-size:10px; color:var(--text-3); padding-top:8px; letter-spacing:0.3px; }
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+</style>
 </head>
 <body>
+<div class="bg-mesh"></div>
+<div class="bg-noise"></div>
+<div class="wrap">
 
-    <div class="glass-card" style="padding: 10px 20px; margin-bottom: 10px;">
-        <select id="langPicker" onchange="setLang(this.value)" style="margin-bottom:0; padding:5px; font-size:12px; border:none; background:transparent;">
-            <option value="cs">🇨🇿 Čeština</option>
-            <option value="en">🇺🇸 English</option>
-        </select>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo"><span class="logo-light">Varnish</span>Calc<span class="logo-light"> Pro</span></div>
+    <div class="lang-select-wrap">
+      <select class="lang-select" id="langSelect" onchange="setLang(this.value)"></select>
+      <div class="lang-select-arrow">⌄</div>
     </div>
+  </div>
 
-    <h1 id="appTitle">Varnish<b>Calc</b> Pro</h1>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" id="tabCalc" onclick="switchTab('calc')">Calculator</button>
+    <button class="tab"        id="tabPlan" onclick="switchTab('plan')">Planning</button>
+  </div>
 
-    <div class="tab-bar">
-        <button class="tab-btn active" id="tabCalc" onclick="switchTab('calc')">Kalkulátor</button>
-        <button class="tab-btn" id="tabPlan" onclick="switchTab('plan')">Plánování</button>
-    </div>
+  <!-- ══ CALCULATOR ══ -->
+  <div id="calcSection">
+    <div class="card">
+      <div class="flabel" id="lAppType">Application Type</div>
+      <div class="type-toggle" style="margin-bottom:20px;">
+        <button class="type-btn active" id="btnInternal" onclick="setType('internal')">
+          <span class="ico">🥫</span><span id="lInternal">Internal</span>
+        </button>
+        <button class="type-btn" id="btnExternal" onclick="setType('external')">
+          <span class="ico">🌐</span><span id="lExternal">External</span>
+        </button>
+      </div>
 
-    <div id="calculatorSection" class="glass-card">
-        <label id="lblType">Typ aplikace</label>
-        <select id="coatingType" onchange="loadVarnishes()">
-            <option value="internal">Interní (Vnitřní lak)</option>
-            <option value="external">Externí (Vnější lak)</option>
-        </select>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div class="flabel" style="margin-bottom:0;" id="lVarnishSpec">Varnish Specification</div>
+        <div class="varnish-badge" id="varnishBadge">—</div>
+      </div>
+      <div class="select-wrap" style="margin-bottom:18px;">
+        <select class="glass-select" id="varnishSelect" onchange="onVarnishChange()"></select>
+        <div class="select-arrow">⌄</div>
+      </div>
 
-        <label id="lblVarnish">Specifikace laku</label>
-        <div class="picker-container">
-            <select id="varnishSelect"></select>
+      <div class="flabel" id="lDims">Dimensions</div>
+      <div class="dim-row" style="margin-bottom:18px;">
+        <div class="dim-field">
+          <div class="flabel" id="lDiam">Diameter</div>
+          <div class="dim-wrap">
+            <input class="num-input" type="number" id="diameter" value="35" step="0.1" min="0.1">
+            <span class="num-unit">mm</span>
+          </div>
         </div>
-
-        <div style="display: flex; gap: 15px;">
-            <div style="flex:1">
-                <label id="lblDiam">Průměr (mm)</label>
-                <input type="number" id="diameter" value="35" step="0.1">
-            </div>
-            <div style="flex:1">
-                <label id="lblLen">Délka (mm)</label>
-                <input type="number" id="length" value="150" step="1">
-            </div>
+        <div class="dim-field">
+          <div class="flabel" id="lLen">Length</div>
+          <div class="dim-wrap">
+            <input class="num-input" type="number" id="length" value="150" step="1" min="1">
+            <span class="num-unit">mm</span>
+          </div>
         </div>
-        <button class="btn-main" id="btnCalculate" onclick="calculate()">SPUSTIT ANALÝZU</button>
+      </div>
+
+      <button class="btn-main" id="btnCalc" onclick="calculate()">CALCULATE</button>
     </div>
 
-    <div id="planningSection" class="glass-card" style="display:none;">
-        <label id="lblAvailable">Dostupné množství (kg)</label>
-        <input type="number" id="availKg" placeholder="25.0" step="0.1">
-        <button class="btn-main" id="btnPlan" onclick="calculatePlanning()">VÝPOČET KAPACITY</button>
+    <div id="resultsSection" style="display:none;">
+      <div class="res-title" id="lResTitle">Calculation Results</div>
+      <div class="res-sub" id="resSub"></div>
+      <div class="area-pill" id="areaPill"></div>
+      <div id="resultCards"></div>
+    </div>
+  </div>
+
+  <!-- ══ PLANNING ══ -->
+  <div id="planSection" style="display:none;">
+    <div class="card">
+
+      <!-- Coating type + varnish picker -->
+      <div class="flabel" id="lPlanCoatingType">Coating Type</div>
+      <div class="select-wrap" style="margin-bottom:10px;">
+        <select class="glass-select" id="planCoatingType" onchange="loadPlanVarnishes()">
+          <option value="internal" id="planOptInternal">Internal</option>
+          <option value="external" id="planOptExternal">External</option>
+        </select>
+        <div class="select-arrow">⌄</div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div class="flabel" style="margin-bottom:0;" id="lPlanVarnish">Varnish Specification</div>
+        <div class="varnish-badge" id="planVarnishBadge">—</div>
+      </div>
+      <div class="select-wrap" style="margin-bottom:18px;">
+        <select class="glass-select" id="planVarnishSelect" onchange="onPlanVarnishChange()"></select>
+        <div class="select-arrow">⌄</div>
+      </div>
+
+      <!-- Quantity -->
+      <div class="flabel" id="lAvailVarnish">Available Varnish</div>
+      <div class="unit-toggle" style="margin-bottom:10px;">
+        <button class="unit-btn active" id="uKg"  onclick="setPlanUnit('kg')">kg</button>
+        <button class="unit-btn"        id="uL"   onclick="setPlanUnit('l')" id="uL">L</button>
+        <button class="unit-btn"        id="uG"   onclick="setPlanUnit('g')">g</button>
+      </div>
+      <div class="dim-wrap" style="margin-bottom:18px;">
+        <input class="num-input" type="number" id="planQty" value="25" step="0.1" min="0.001">
+        <span class="num-unit" id="planUnitLbl">kg</span>
+      </div>
+
+      <!-- Product dimensions -->
+      <div class="flabel" id="lProductDims">Product Dimensions</div>
+      <div class="dim-row" style="margin-bottom:18px;">
+        <div class="dim-field">
+          <div class="flabel" id="lPlanDiam">Diameter</div>
+          <div class="dim-wrap">
+            <input class="num-input" type="number" id="planDiam" value="35" step="0.1" min="0.1">
+            <span class="num-unit">mm</span>
+          </div>
+        </div>
+        <div class="dim-field">
+          <div class="flabel" id="lPlanLen">Length</div>
+          <div class="dim-wrap">
+            <input class="num-input" type="number" id="planLen" value="150" step="1" min="1">
+            <span class="num-unit">mm</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-main" id="btnPlan" onclick="calculatePlanning()">CALCULATE CAPACITY</button>
     </div>
 
-    <div id="resultsCard" class="glass-card" style="display:none; border-top: 2px solid var(--accent-cyan);">
-        <h3 id="resTitle" style="margin-top:0; font-weight: 300; font-size: 16px;">Technický výstup</h3>
-        <div id="resContent"></div>
+    <div id="planResultsSection" style="display:none;">
+      <div id="planCards"></div>
     </div>
+  </div>
+
+  <div class="footer">VarnishCalc Pro · Jan Kočandrle · © 2026</div>
+</div>
 
 <script>
-    const varnishes = {
-        internal: [
-            { id: 1, cat: "PAM alternative", name: "RLC15031", scv: 36.00, dryD: 1.37, wetD: 1.12, minT: 7, maxT: 11 },
-            { id: 2, cat: "BPANI", name: "RLC10031/4", scv: 39.91, dryD: 1.26, wetD: 1.03, minT: 6, maxT: 10 },
-            { id: 3, cat: "PAM alternative", name: "PPG8900-304A", scv: 40.59, dryD: 1.08, wetD: 1.03, minT: 6, maxT: 10 },
-            { id: 4, cat: "PAM", name: "PPG8460", scv: 19.49, dryD: 1.38, wetD: 1.03, minT: 5, maxT: 15 },
-            { id: 5, cat: "Epoxy", name: "PPG7940-301/B", scv: 31.04, dryD: 1.18, wetD: 1.02, minT: 7, maxT: 12 },
-            { id: 6, cat: "Epoxy", name: "PPG3936-403/A", scv: 27.04, dryD: 1.31, wetD: 1.03, minT: 6, maxT: 14 },
-            { id: 7, cat: "Epoxy", name: "J462 R003", scv: 34.35, dryD: 1.19, wetD: 1.01, minT: 5, maxT: 11 },
-            { id: 8, cat: "BPANI", name: "32S23MC", scv: 25.6, dryD: 1.25, wetD: 1, minT: 5, maxT: 11 },
-            { id: 9, cat: "BPANI", name: "2845-801D", scv: 31.44, dryD: 1.29, wetD: 1.07, minT: 8, maxT: 12 },
-            { id: 10, cat: "Epoxy", name: "716315", scv: 42.05, dryD: 1.2, wetD: 1.2, minT: 10, maxT: 14.5 },
-            { id: 11, cat: "Epoxy", name: "716307", scv: 32.0, dryD: 1.4, wetD: 1.1, minT: 10.7, maxT: 14.3 },
-            { id: 12, cat: "BPANI", name: "32S39MJ", scv: 34.07, dryD: 1.25, wetD: 1.009, minT: 5, maxT: 10 }
-        ],
-        external: [
-            { id: 1001, cat: "Overvarnish", name: "PFASNi (B 40) 75 KW 373/6 WB satin 30/70", scv: 59.1, dryD: 1.23, wetD: 1.04, minT: 10, maxT: 13 },
-            { id: 1002, cat: "Overvarnish", name: "PFASNi (B 12) 75 KW 373/6 WB satin 70/30", scv: 56.7, dryD: 1.18, wetD: 1.02, minT: 10, maxT: 13 },
-            { id: 1003, cat: "Overvarnish", name: "PFASNi (B 15) 75 KW 373/6 WB satin", scv: 59.1, dryD: 1.23, wetD: 1.04, minT: 10, maxT: 13 },
-            { id: 1004, cat: "Overvarnish", name: "PFASNi (Gloss) 75 KW 373/6 WB", scv: 61.3, dryD: 1.17, wetD: 1.03, minT: 10, maxT: 12 },
-            { id: 1005, cat: "Clear basecoat", name: "CLEAR SIZECOAT 72 KM 401", scv: 58.5, dryD: 1.17, wetD: 1.02, minT: 4, maxT: 7 },
-            { id: 1006, cat: "Overvarnish", name: "(B 12) 75 KW 373/5 WB satin 70/30", scv: 58.3, dryD: 1.2, wetD: 1.03, minT: 10, maxT: 13 },
-            { id: 1007, cat: "Overvarnish", name: "(B 40) 75 KW 373/5 WB satin 30/70", scv: 60.5, dryD: 1.21, wetD: 1.04, minT: 10, maxT: 13 },
-            { id: 1008, cat: "Overvarnish", name: "(B 15) 75 KW 373/5 WB satin", scv: 60.5, dryD: 1.21, wetD: 1.04, minT: 10, maxT: 13 },
-            { id: 1009, cat: "White Enamel", name: "WHITE ENAMEL T1195", scv: 95.6, dryD: 1.98, wetD: 1.47, minT: 10, maxT: 20 },
-            { id: 1010, cat: "Overvarnish", name: "(Gloss) 75 KW 373/5 WB", scv: 61.3, dryD: 1.17, wetD: 1.03, minT: 10, maxT: 12 }
-        ]
-    };
+// ════ DATA ════
+const VARNISHES = {
+  internal: [
+    {id:1,  cat:"PAM alternative",name:"RLC15031",      scv:36.00,dryD:1.37,wetD:1.12,minT:7,   maxT:11  },
+    {id:2,  cat:"BPANI",          name:"RLC10031/4",    scv:39.91,dryD:1.26,wetD:1.03,minT:6,   maxT:10  },
+    {id:3,  cat:"PAM alternative",name:"PPG8900-304A",  scv:40.59,dryD:1.08,wetD:1.03,minT:6,   maxT:10  },
+    {id:4,  cat:"PAM",            name:"PPG8460",       scv:19.49,dryD:1.38,wetD:1.03,minT:5,   maxT:15  },
+    {id:5,  cat:"Epoxy",          name:"PPG7940-301/B", scv:31.04,dryD:1.18,wetD:1.02,minT:7,   maxT:12  },
+    {id:6,  cat:"Epoxy",          name:"PPG3936-403/A", scv:27.04,dryD:1.31,wetD:1.03,minT:6,   maxT:14  },
+    {id:7,  cat:"Epoxy",          name:"J462 R003",     scv:34.35,dryD:1.19,wetD:1.01,minT:5,   maxT:11  },
+    {id:8,  cat:"BPANI",          name:"32S23MC",       scv:25.60,dryD:1.25,wetD:1.00,minT:5,   maxT:11  },
+    {id:9,  cat:"BPANI",          name:"2845-801D",     scv:31.44,dryD:1.29,wetD:1.07,minT:8,   maxT:12  },
+    {id:10, cat:"Epoxy",          name:"716315",        scv:42.05,dryD:1.20,wetD:1.20,minT:10,  maxT:14.5},
+    {id:11, cat:"Epoxy",          name:"716307",        scv:32.00,dryD:1.40,wetD:1.10,minT:10.7,maxT:14.3},
+    {id:12, cat:"BPANI",          name:"32S39MJ",       scv:34.07,dryD:1.25,wetD:1.009,minT:5,  maxT:10  }
+  ],
+  external: [
+    {id:1001,cat:"Overvarnish",   name:"PFASNi (B 40) 75 KW 373/6 WB satin 30/70",scv:59.1,dryD:1.23,wetD:1.04,minT:10,maxT:13},
+    {id:1002,cat:"Overvarnish",   name:"PFASNi (B 12) 75 KW 373/6 WB satin 70/30",scv:56.7,dryD:1.18,wetD:1.02,minT:10,maxT:13},
+    {id:1003,cat:"Overvarnish",   name:"PFASNi (B 15) 75 KW 373/6 WB satin",      scv:59.1,dryD:1.23,wetD:1.04,minT:10,maxT:13},
+    {id:1004,cat:"Overvarnish",   name:"PFASNi (Gloss) 75 KW 373/6 WB",           scv:61.3,dryD:1.17,wetD:1.03,minT:10,maxT:12},
+    {id:1005,cat:"Clear basecoat",name:"CLEAR SIZECOAT 72 KM 401",                scv:58.5,dryD:1.17,wetD:1.02,minT:4, maxT:7 },
+    {id:1006,cat:"Overvarnish",   name:"(B 12) 75 KW 373/5 WB satin 70/30",       scv:58.3,dryD:1.20,wetD:1.03,minT:10,maxT:13},
+    {id:1007,cat:"Overvarnish",   name:"(B 40) 75 KW 373/5 WB satin 30/70",       scv:60.5,dryD:1.21,wetD:1.04,minT:10,maxT:13},
+    {id:1008,cat:"Overvarnish",   name:"(B 15) 75 KW 373/5 WB satin",             scv:60.5,dryD:1.21,wetD:1.04,minT:10,maxT:13},
+    {id:1009,cat:"White Enamel",  name:"WHITE ENAMEL T1195",                      scv:95.6,dryD:1.98,wetD:1.47,minT:10,maxT:20},
+    {id:1010,cat:"Overvarnish",   name:"(Gloss) 75 KW 373/5 WB",                  scv:61.3,dryD:1.17,wetD:1.03,minT:10,maxT:12}
+  ]
+};
 
-    const translations = {
-        cs: { title: "Varnish<b>Calc</b> Pro", type: "Typ aplikace", varnish: "Specifikace laku", diam: "Průměr (mm)", len: "Délka (mm)", calc: "SPUSTIT ANALÝZU", area: "Celková plocha", wet: "Mokrý nános", dry: "Suchý nános", plan: "Plánování", prod: "Výtěžnost výroby" },
-        en: { title: "Varnish<b>Calc</b> Pro", type: "Application Type", varnish: "Varnish Specification", diam: "Diameter (mm)", len: "Length (mm)", calc: "RUN ANALYSIS", area: "Total Area", wet: "Wet weight", dry: "Dry weight", plan: "Planning", prod: "Production Yield" }
-    };
+// ════ TRANSLATIONS ════
+const LANGS = [
+  {code:'en',lbl:'EN',flag:'🇬🇧',dir:'ltr',name:'English'},
+  {code:'cs',lbl:'CS',flag:'🇨🇿',dir:'ltr',name:'Čeština'},
+  {code:'sk',lbl:'SK',flag:'🇸🇰',dir:'ltr',name:'Slovenčina'},
+  {code:'fr',lbl:'FR',flag:'🇫🇷',dir:'ltr',name:'Français'},
+  {code:'nl',lbl:'NL',flag:'🇧🇪',dir:'ltr',name:'Nederlands (BE)'},
+  {code:'pt',lbl:'PT',flag:'🇧🇷',dir:'ltr',name:'Português BR'},
+  {code:'es',lbl:'ES',flag:'🇪🇸',dir:'ltr',name:'Español'},
+  {code:'uk',lbl:'UA',flag:'🇺🇦',dir:'ltr',name:'Українська'},
+  {code:'ar',lbl:'AR',flag:'🇸🇦',dir:'rtl',name:'العربية'},
+];
 
-    let currentLang = 'cs';
+const T = {
+  en:{
+    tabCalc:'Calculator',tabPlan:'Planning',
+    appType:'Application Type',internal:'Internal',external:'External',
+    varnishSpec:'Varnish Specification',dims:'Dimensions',diam:'Diameter',len:'Length',
+    btnCalc:'CALCULATE',btnPlan:'CALCULATE CAPACITY',
+    resTitle:'Calculation Results',surfaceArea:'Surface area',
+    weightCan:'Layer weight (g/can)',weightM2:'Layer weight (g/m²)',thickness:'Layer thickness (µm)',
+    dry:'Dry',wet:'Wet',
+    coatingType:'Coating Type',availVarnish:'Available Varnish',liters:'Liters (L)',
+    productDims:'Product Dimensions',
+    minPcs:'Min. pieces',avg:'Average',maxPcs:'Max. pieces',pcs:'pcs',
+    wetPerCan:'Wet varnish per can',
+    internalNote:'incl. bottom',externalNote:'side only',
+  },
+  cs:{
+    tabCalc:'Kalkulátor',tabPlan:'Plánování',
+    appType:'Typ aplikace',internal:'Vnitřní',external:'Vnější',
+    varnishSpec:'Specifikace laku',dims:'Rozměry',diam:'Průměr',len:'Délka',
+    btnCalc:'VYPOČÍTAT',btnPlan:'VÝPOČET KAPACITY',
+    resTitle:'Výsledky výpočtu',surfaceArea:'Plocha povrchu',
+    weightCan:'Hmotnost vrstvy (g/plechovka)',weightM2:'Hmotnost vrstvy (g/m²)',thickness:'Tloušťka vrstvy (µm)',
+    dry:'Suchý',wet:'Mokrý',
+    coatingType:'Typ laku',availVarnish:'Dostupné množství laku',liters:'Litry (L)',
+    productDims:'Rozměry produktu',
+    minPcs:'Min. kusů',avg:'Průměr',maxPcs:'Max. kusů',pcs:'ks',
+    wetPerCan:'Mokrý lak na plechovku',
+    internalNote:'vč. dna',externalNote:'pouze plášť',
+  },
+  sk:{
+    tabCalc:'Kalkulačka',tabPlan:'Plánovanie',
+    appType:'Typ aplikácie',internal:'Vnútorný',external:'Vonkajší',
+    varnishSpec:'Špecifikácia laku',dims:'Rozmery',diam:'Priemer',len:'Dĺžka',
+    btnCalc:'VYPOČÍTAŤ',btnPlan:'VÝPOČET KAPACITY',
+    resTitle:'Výsledky výpočtu',surfaceArea:'Plocha povrchu',
+    weightCan:'Hmotnosť vrstvy (g/plechovka)',weightM2:'Hmotnosť vrstvy (g/m²)',thickness:'Hrúbka vrstvy (µm)',
+    dry:'Suchý',wet:'Mokrý',
+    coatingType:'Typ laku',availVarnish:'Dostupné množstvo laku',liters:'Litre (L)',
+    productDims:'Rozmery produktu',
+    minPcs:'Min. kusov',avg:'Priemer',maxPcs:'Max. kusov',pcs:'ks',
+    wetPerCan:'Mokrý lak na plechovku',
+    internalNote:'vr. dna',externalNote:'iba plášť',
+  },
+  fr:{
+    tabCalc:'Calculateur',tabPlan:'Planification',
+    appType:"Type d'application",internal:'Interne',external:'Externe',
+    varnishSpec:'Spécification du vernis',dims:'Dimensions',diam:'Diamètre',len:'Longueur',
+    btnCalc:'CALCULER',btnPlan:'CALCULER LA CAPACITÉ',
+    resTitle:'Résultats du calcul',surfaceArea:'Surface totale',
+    weightCan:'Poids de couche (g/boîte)',weightM2:'Poids de couche (g/m²)',thickness:'Épaisseur de couche (µm)',
+    dry:'Sec',wet:'Humide',
+    coatingType:'Type de revêtement',availVarnish:'Quantité de vernis disponible',liters:'Litres (L)',
+    productDims:'Dimensions du produit',
+    minPcs:'Pièces min.',avg:'Moyenne',maxPcs:'Pièces max.',pcs:'pcs',
+    wetPerCan:'Vernis humide par boîte',
+    internalNote:'fond incl.',externalNote:'côté seul',
+  },
+  nl:{
+    tabCalc:'Calculator',tabPlan:'Planning',
+    appType:'Toepassingstype',internal:'Intern',external:'Extern',
+    varnishSpec:'Vernis specificatie',dims:'Afmetingen',diam:'Diameter',len:'Lengte',
+    btnCalc:'BEREKENEN',btnPlan:'CAPACITEIT BEREKENEN',
+    resTitle:'Berekeningsresultaten',surfaceArea:'Oppervlakte',
+    weightCan:'Laaggewicht (g/blik)',weightM2:'Laaggewicht (g/m²)',thickness:'Laagdikte (µm)',
+    dry:'Droog',wet:'Nat',
+    coatingType:'Coating type',availVarnish:'Beschikbare vernis',liters:'Liter (L)',
+    productDims:'Productafmetingen',
+    minPcs:'Min. stuks',avg:'Gemiddeld',maxPcs:'Max. stuks',pcs:'st',
+    wetPerCan:'Nat vernis per blik',
+    internalNote:'incl. bodem',externalNote:'alleen zijkant',
+  },
+  pt:{
+    tabCalc:'Calculadora',tabPlan:'Planejamento',
+    appType:'Tipo de aplicação',internal:'Interno',external:'Externo',
+    varnishSpec:'Especificação do verniz',dims:'Dimensões',diam:'Diâmetro',len:'Comprimento',
+    btnCalc:'CALCULAR',btnPlan:'CALCULAR CAPACIDADE',
+    resTitle:'Resultados do cálculo',surfaceArea:'Área da superfície',
+    weightCan:'Peso da camada (g/lata)',weightM2:'Peso da camada (g/m²)',thickness:'Espessura da camada (µm)',
+    dry:'Seco',wet:'Úmido',
+    coatingType:'Tipo de cobertura',availVarnish:'Quantidade de verniz disponível',liters:'Litros (L)',
+    productDims:'Dimensões do produto',
+    minPcs:'Mín. peças',avg:'Média',maxPcs:'Máx. peças',pcs:'un',
+    wetPerCan:'Verniz úmido por lata',
+    internalNote:'incl. fundo',externalNote:'apenas lateral',
+  },
+  es:{
+    tabCalc:'Calculadora',tabPlan:'Planificación',
+    appType:'Tipo de aplicación',internal:'Interno',external:'Externo',
+    varnishSpec:'Especificación del barniz',dims:'Dimensiones',diam:'Diámetro',len:'Longitud',
+    btnCalc:'CALCULAR',btnPlan:'CALCULAR CAPACIDAD',
+    resTitle:'Resultados del cálculo',surfaceArea:'Área superficial',
+    weightCan:'Peso de capa (g/lata)',weightM2:'Peso de capa (g/m²)',thickness:'Espesor de capa (µm)',
+    dry:'Seco',wet:'Húmedo',
+    coatingType:'Tipo de recubrimiento',availVarnish:'Cantidad de barniz disponible',liters:'Litros (L)',
+    productDims:'Dimensiones del producto',
+    minPcs:'Piezas mín.',avg:'Promedio',maxPcs:'Piezas máx.',pcs:'uds',
+    wetPerCan:'Barniz húmedo por lata',
+    internalNote:'incl. fondo',externalNote:'solo lateral',
+  },
+  uk:{
+    tabCalc:'Калькулятор',tabPlan:'Планування',
+    appType:'Тип покриття',internal:'Внутрішній',external:'Зовнішній',
+    varnishSpec:'Специфікація лаку',dims:'Розміри',diam:'Діаметр',len:'Довжина',
+    btnCalc:'РОЗРАХУВАТИ',btnPlan:'РОЗРАХУНОК ЄМНОСТІ',
+    resTitle:'Результати розрахунку',surfaceArea:'Площа поверхні',
+    weightCan:'Маса шару (г/банка)',weightM2:'Маса шару (г/м²)',thickness:'Товщина шару (мкм)',
+    dry:'Сухий',wet:'Мокрий',
+    coatingType:'Тип покриття',availVarnish:'Доступна кількість лаку',liters:'Літри (L)',
+    productDims:'Розміри продукту',
+    minPcs:'Мін. шт.',avg:'Середнє',maxPcs:'Макс. шт.',pcs:'шт',
+    wetPerCan:'Мокрий лак на банку',
+    internalNote:'вкл. дно',externalNote:'лише бічна',
+  },
+  ar:{
+    tabCalc:'الحاسبة',tabPlan:'التخطيط',
+    appType:'نوع التطبيق',internal:'داخلي',external:'خارجي',
+    varnishSpec:'مواصفات الورنيش',dims:'الأبعاد',diam:'القطر',len:'الطول',
+    btnCalc:'احسب',btnPlan:'احسب الطاقة',
+    resTitle:'نتائج الحساب',surfaceArea:'مساحة السطح',
+    weightCan:'وزن الطبقة (غ/علبة)',weightM2:'وزن الطبقة (غ/م²)',thickness:'سماكة الطبقة (ميكرون)',
+    dry:'جاف',wet:'رطب',
+    coatingType:'نوع الطلاء',availVarnish:'كمية الورنيش المتاحة',liters:'لترات (L)',
+    productDims:'أبعاد المنتج',
+    minPcs:'الحد الأدنى',avg:'المتوسط',maxPcs:'الحد الأقصى',pcs:'قطعة',
+    wetPerCan:'ورنيش رطب لكل علبة',
+    internalNote:'شاملاً القاع',externalNote:'الجانب فقط',
+  }
+};
 
-    function setLang(l) { currentLang = l; updateTexts(); loadVarnishes(); }
+// ════ STATE ════
+let lang = 'en', coatingType = 'internal', planUnit = 'kg';
 
-    function updateTexts() {
-        const t = translations[currentLang];
-        document.getElementById('appTitle').innerHTML = t.title;
-        document.getElementById('lblType').innerText = t.type;
-        document.getElementById('lblVarnish').innerText = t.varnish;
-        document.getElementById('lblDiam').innerText = t.diam;
-        document.getElementById('lblLen').innerText = t.len;
-        document.getElementById('btnCalculate').innerText = t.calc;
-        document.getElementById('tabCalc').innerText = (currentLang === 'cs' ? 'Kalkulátor' : 'Calculator');
-        document.getElementById('tabPlan').innerText = t.plan;
-    }
+// ════ CALCULATION (matches Swift CalculatorService.swift exactly) ════
+function calcCoating(v, d, l, incBot) {
+  const scvR = v.scv / 100;
+  const side = Math.PI * d * l;
+  const bot  = Math.PI * d * d / 4;
+  const area = incBot ? side + bot : side;
+  const aM2  = area / 1e6;
 
-    function switchTab(tab) {
-        document.getElementById('calculatorSection').style.display = tab === 'calc' ? 'block' : 'none';
-        document.getElementById('planningSection').style.display = tab === 'plan' ? 'block' : 'none';
-        document.getElementById('tabCalc').classList.toggle('active', tab === 'calc');
-        document.getElementById('tabPlan').classList.toggle('active', tab === 'plan');
-    }
+  // wetLayerGM2 = (dryThickness / scvRatio) * wetDensity
+  const minWGM2 = (v.minT / scvR) * v.wetD;
+  const maxWGM2 = (v.maxT / scvR) * v.wetD;
+  const minDGM2 = minWGM2 * scvR;
+  const maxDGM2 = maxWGM2 * scvR;
+  const minWG = minWGM2 * aM2, maxWG = maxWGM2 * aM2;
+  const minDG = minDGM2 * aM2, maxDG = maxDGM2 * aM2;
+  const minWUm = v.minT / scvR, maxWUm = v.maxT / scvR;
 
-    function loadVarnishes() {
-        const type = document.getElementById('coatingType').value;
-        const select = document.getElementById('varnishSelect');
-        const data = varnishes[type];
-        const categories = [...new Set(data.map(v => v.cat))];
-        
-        select.innerHTML = categories.map(cat => `
-            <optgroup label="${cat}">
-                ${data.filter(v => v.cat === cat).map(v => 
-                    `<option value='${JSON.stringify(v)}'>${v.name}</option>`
-                ).join('')}
-            </optgroup>
-        `).join('');
-    }
+  return {area,aM2,minWGM2,maxWGM2,minDGM2,maxDGM2,minWG,maxWG,minDG,maxDG,minDUm:v.minT,maxDUm:v.maxT,minWUm,maxWUm};
+}
 
-    function calculate() {
-        const v = JSON.parse(document.getElementById('varnishSelect').value);
-        const d = parseFloat(document.getElementById('diameter').value);
-        const l = parseFloat(document.getElementById('length').value);
-        const type = document.getElementById('coatingType').value;
+// ════ CALCULATE ════
+function calculate() {
+  const v = getV('varnishSelect', coatingType);
+  const d = parseFloat(document.getElementById('diameter').value);
+  const l = parseFloat(document.getElementById('length').value);
+  if (!v || !d || !l || d<=0 || l<=0) return;
 
-        const areaMm2 = (type === 'internal') 
-            ? (Math.PI * d * l) + (Math.PI * Math.pow(d, 2) / 4)
-            : (Math.PI * d * l);
-        
-        const areaM2 = areaMm2 / 1000000;
+  const inc = coatingType === 'internal';
+  const r = calcCoating(v, d, l, inc);
+  const t = T[lang];
+  const fr = (a,b,dec=2) => `${a.toFixed(dec)} – ${b.toFixed(dec)}`;
 
-        const getAnalysis = (T_dry) => {
-            const T_wet = T_dry / (v.scv / 100);
-            const weight_dry = T_dry * v.dryD * areaM2;
-            const weight_wet = T_wet * v.wetD * areaM2;
-            return { wetThick: T_wet, dryG: weight_dry, wetG: weight_wet };
-        };
+  document.getElementById('resSub').textContent =
+    `${v.name}  ·  SCV ${v.scv.toFixed(2)}%  ·  Ø${d} × ${l} mm  ·  ${inc ? t.internalNote : t.externalNote}`;
 
-        const resMin = getAnalysis(v.minT);
-        const resMax = getAnalysis(v.maxT);
-        updateResultUI(resMin, resMax, areaMm2, v);
-    }
+  document.getElementById('areaPill').innerHTML = `
+    <div><div class="area-pill-lbl">${t.surfaceArea}</div></div>
+    <div style="text-align:right">
+      <div class="area-pill-val">${(r.area/100).toFixed(2)} cm²</div>
+      <div style="font-size:9px;color:var(--text-3);margin-top:2px">${r.aM2.toFixed(6)} m²</div>
+    </div>`;
 
-    function updateResultUI(min, max, area, v) {
-        const t = translations[currentLang];
-        document.getElementById('resContent').innerHTML = `
-            <div class="main-result-banner">
-                <span style="font-size: 11px; color: var(--text-dim); text-transform:uppercase;">${t.area}</span>
-                <div style="font-size: 24px; font-weight: 800;">${(area/100).toFixed(2)} cm²</div>
-                <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">Kategorie: ${v.cat} | SCV: ${v.scv}%</div>
-            </div>
-            <div class="result-grid">
-                <div class="result-card-mini" style="grid-column: span 2; background: rgba(255,255,255,0.03); padding: 8px;">
-                    <span style="font-size: 10px; color: var(--accent-cyan)">LIMIT MIN: ${v.minT} µm (Mokrá: ${min.wetThick.toFixed(1)} µm)</span>
-                </div>
-                <div class="result-card-mini">
-                    <span class="label">${t.dry}</span>
-                    <span class="value highlight-blue">${(min.dryG * 1000).toFixed(0)}<small>mg</small></span>
-                </div>
-                <div class="result-card-mini">
-                    <span class="label">${t.wet}</span>
-                    <span class="value highlight-green">${(min.wetG * 1000).toFixed(0)}<small>mg</small></span>
-                </div>
-                <div class="result-card-mini" style="grid-column: span 2; background: rgba(255,255,255,0.03); padding: 8px; margin-top:10px;">
-                    <span style="font-size: 10px; color: var(--accent-cyan)">LIMIT MAX: ${v.maxT} µm (Mokrá: ${max.wetThick.toFixed(1)} µm)</span>
-                </div>
-                <div class="result-card-mini">
-                    <span class="label">${t.dry}</span>
-                    <span class="value highlight-blue">${(max.dryG * 1000).toFixed(0)}<small>mg</small></span>
-                </div>
-                <div class="result-card-mini">
-                    <span class="label">${t.wet}</span>
-                    <span class="value highlight-green">${(max.wetG * 1000).toFixed(0)}<small>mg</small></span>
-                </div>
-            </div>
-        `;
-        document.getElementById('resultsCard').style.display = 'block';
-    }
+  document.getElementById('resultCards').innerHTML = `
+    <div class="rc rc-purple"><div class="rc-inner">
+      <div class="rc-head"><div class="rc-icon">⚖️</div><div class="rc-card-title">${t.weightCan}</div></div>
+      <div class="rc-row"><div class="rc-row-left"><div class="rc-dot">☀️</div>${t.dry}</div><div class="rc-val">${fr(r.minDG,r.maxDG)}</div></div>
+      <div class="rc-row"><div class="rc-row-left"><div class="rc-dot">💧</div>${t.wet}</div><div class="rc-val">${fr(r.minWG,r.maxWG)}</div></div>
+    </div></div>
+    <div class="rc rc-blue"><div class="rc-inner">
+      <div class="rc-head"><div class="rc-icon">⊞</div><div class="rc-card-title">${t.weightM2}</div></div>
+      <div class="rc-row"><div class="rc-row-left"><div class="rc-dot">☀️</div>${t.dry}</div><div class="rc-val">${fr(r.minDGM2,r.maxDGM2)}</div></div>
+      <div class="rc-row"><div class="rc-row-left"><div class="rc-dot">💧</div>${t.wet}</div><div class="rc-val">${fr(r.minWGM2,r.maxWGM2)}</div></div>
+    </div></div>
+    <div class="rc rc-green"><div class="rc-inner">
+      <div class="rc-head"><div class="rc-icon">📏</div><div class="rc-card-title">${t.thickness}</div></div>
+      <div class="rc-row"><div class="rc-row-left"><div class="rc-dot">☀️</div>${t.dry}</div><div class="rc-val">${fr(r.minDUm,r.maxDUm)}</div></div>
+      <div class="rc-row"><div class="rc-row-left"><div class="rc-dot">💧</div>${t.wet}</div><div class="rc-val">${fr(r.minWUm,r.maxWUm)}</div></div>
+    </div></div>`;
 
-    // Inicializace
-    updateTexts();
-    loadVarnishes();
+  document.getElementById('resultsSection').style.display = 'block';
+  setTimeout(()=>document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+// ════ PLANNING ════
+function loadPlanVarnishes() {
+  const type = document.getElementById('planCoatingType').value;
+  fillSelect(document.getElementById('planVarnishSelect'), type);
+  onPlanVarnishChange();
+}
+function onPlanVarnishChange() {
+  const type = document.getElementById('planCoatingType').value;
+  const v = getV('planVarnishSelect', type);
+  document.getElementById('planVarnishBadge').textContent = v ? v.cat : '—';
+}
+function setPlanUnit(u) {
+  planUnit = u;
+  ['kg','l','g'].forEach(x => {
+    const btn = document.getElementById('u'+x.charAt(0).toUpperCase()+x.slice(1));
+    if(btn) btn.classList.toggle('active', x===u);
+  });
+  document.getElementById('planUnitLbl').textContent = u==='l' ? 'L' : u;
+}
+function calculatePlanning() {
+  const type = document.getElementById('planCoatingType').value;
+  const v    = getV('planVarnishSelect', type);
+  const qty  = parseFloat(document.getElementById('planQty').value);
+  const d    = parseFloat(document.getElementById('planDiam').value);
+  const l    = parseFloat(document.getElementById('planLen').value);
+  if (!v||!qty||!d||!l) return;
+
+  let g;
+  if(planUnit==='kg')      g = qty*1000;
+  else if(planUnit==='l')  g = qty*1000*v.wetD;
+  else                     g = qty;
+
+  const inc = type==='internal';
+  const r   = calcCoating(v,d,l,inc);
+  const maxPcs = Math.floor(g/r.minWG);
+  const minPcs = Math.floor(g/r.maxWG);
+  const avgPcs = Math.round((maxPcs+minPcs)/2);
+  const t = T[lang];
+
+  document.getElementById('planCards').innerHTML = `
+    <div class="card" style="margin-top:0">
+      <div style="font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:5px">${t.resTitle}</div>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:14px;line-height:1.6">
+        ${v.name} · ${qty} ${planUnit==='l'?'L':planUnit} · Ø${d}×${l} mm
+      </div>
+      <div class="plan-grid">
+        <div class="plan-mini"><div class="pm-lbl">${t.minPcs}</div><div class="pm-val pm-min">${minPcs}</div><div class="pm-unit">${t.pcs}</div></div>
+        <div class="plan-mini"><div class="pm-lbl">${t.avg}</div><div class="pm-val pm-avg">${avgPcs}</div><div class="pm-unit">${t.pcs}</div></div>
+        <div class="plan-mini"><div class="pm-lbl">${t.maxPcs}</div><div class="pm-val pm-max">${maxPcs}</div><div class="pm-unit">${t.pcs}</div></div>
+      </div>
+      <div class="plan-detail">
+        <div class="pd-lbl">${t.wetPerCan}</div>
+        <div class="pd-val">${r.minWG.toFixed(2)} – ${r.maxWG.toFixed(2)} g</div>
+      </div>
+    </div>`;
+  document.getElementById('planResultsSection').style.display='block';
+  setTimeout(()=>document.getElementById('planResultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+// ════ HELPERS ════
+function fillSelect(sel, type) {
+  const data = VARNISHES[type];
+  const cats = [...new Set(data.map(v=>v.cat))];
+  sel.innerHTML = cats.map(cat=>
+    `<optgroup label="${cat}">${data.filter(v=>v.cat===cat).map(v=>`<option value="${v.id}">${v.name}</option>`).join('')}</optgroup>`
+  ).join('');
+}
+function getV(selId, type) {
+  const id = parseInt(document.getElementById(selId).value);
+  return VARNISHES[type].find(v=>v.id===id);
+}
+function onVarnishChange() {
+  const v = getV('varnishSelect',coatingType);
+  document.getElementById('varnishBadge').textContent = v?v.cat:'—';
+}
+function setType(type) {
+  coatingType = type;
+  document.getElementById('btnInternal').classList.toggle('active',type==='internal');
+  document.getElementById('btnExternal').classList.toggle('active',type==='external');
+  fillSelect(document.getElementById('varnishSelect'),type);
+  onVarnishChange();
+  document.getElementById('resultsSection').style.display='none';
+}
+function switchTab(tab) {
+  document.getElementById('calcSection').style.display = tab==='calc'?'block':'none';
+  document.getElementById('planSection').style.display = tab==='plan'?'block':'none';
+  document.getElementById('tabCalc').classList.toggle('active',tab==='calc');
+  document.getElementById('tabPlan').classList.toggle('active',tab==='plan');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ════ LANGUAGE ════
+function buildLangSelect() {
+  const sel = document.getElementById('langSelect');
+  sel.innerHTML = LANGS.map(l =>
+    `<option value="${l.code}"${l.code===lang?' selected':''}>${l.flag} ${l.name}</option>`
+  ).join('');
+}
+function setLang(l) {
+  lang = l;
+  const lObj = LANGS.find(x=>x.code===l);
+  document.documentElement.lang = l;
+  document.documentElement.dir  = lObj?.dir||'ltr';
+  buildLangSelect();
+  applyT();
+  if(document.getElementById('resultsSection').style.display!=='none') calculate();
+  if(document.getElementById('planResultsSection').style.display!=='none') calculatePlanning();
+}
+function applyT() {
+  const t = T[lang];
+  document.getElementById('tabCalc').textContent = t.tabCalc;
+  document.getElementById('tabPlan').textContent = t.tabPlan;
+  document.getElementById('lAppType').textContent   = t.appType;
+  document.getElementById('lInternal').textContent  = t.internal;
+  document.getElementById('lExternal').textContent  = t.external;
+  document.getElementById('lVarnishSpec').textContent= t.varnishSpec;
+  document.getElementById('lDims').textContent      = t.dims;
+  document.getElementById('lDiam').textContent      = t.diam;
+  document.getElementById('lLen').textContent       = t.len;
+  document.getElementById('btnCalc').textContent    = t.btnCalc;
+  document.getElementById('lPlanCoatingType').textContent= t.coatingType;
+  document.getElementById('lPlanVarnish').textContent    = t.varnishSpec;
+  document.getElementById('lAvailVarnish').textContent   = t.availVarnish;
+  document.getElementById('uL').textContent         = t.liters;
+  document.getElementById('lProductDims').textContent    = t.productDims;
+  document.getElementById('lPlanDiam').textContent   = t.diam;
+  document.getElementById('lPlanLen').textContent    = t.len;
+  document.getElementById('btnPlan').textContent    = t.btnPlan;
+  document.getElementById('lResTitle').textContent   = t.resTitle;
+  // coating type options
+  document.getElementById('planOptInternal').textContent = t.internal;
+  document.getElementById('planOptExternal').textContent = t.external;
+}
+
+// ════ INIT ════
+buildLangSelect();
+fillSelect(document.getElementById('varnishSelect'), 'internal');
+onVarnishChange();
+loadPlanVarnishes();
+applyT();
 </script>
 </body>
 </html>
