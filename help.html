@@ -1,1 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VarnishCalc Pro — Help</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --accent-purple: #9b59f5;
+  --accent-cyan: #2de2ff;
+  --text: #ffffff;
+  --text-2: rgba(255,255,255,0.60);
+  --text-3: rgba(255,255,255,0.32);
+  --r: 20px;
+}
+html { scroll-behavior: smooth; }
+body { font-family:'DM Sans',-apple-system,sans-serif; background:#0a0a12; color:var(--text); min-height:100vh; overflow-x:hidden; line-height:1.6; }
 
+.bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.bg-base {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 65% 55% at 80% 20%, rgba(120,60,200,0.40) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 65% at 10% 80%, rgba(60,20,160,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 105%, rgba(180,60,120,0.25) 0%, transparent 55%),
+    linear-gradient(180deg, #0e0b1a 0%, #0a0a14 50%, #0c0b16 100%);
+}
+.blob { position:absolute; border-radius:50%; filter:blur(100px); animation:blobDrift linear infinite; }
+.blob-1 { width:600px; height:600px; background:rgba(100,40,220,0.22); top:-20%; right:-10%; animation-duration:60s; }
+.blob-2 { width:450px; height:450px; background:rgba(40,10,140,0.18); bottom:-15%; left:-10%; animation-duration:75s; animation-delay:-25s; }
+.blob-3 { width:350px; height:350px; background:rgba(200,60,140,0.14); bottom:20%; right:5%; animation-duration:50s; animation-delay:-12s; }
+@keyframes blobDrift {
+  0%  { transform:translate(0,0) scale(1); }
+  33% { transform:translate(20px,-30px) scale(1.04); }
+  66% { transform:translate(-15px,22px) scale(0.97); }
+  100%{ transform:translate(0,0) scale(1); }
+}
+.bg-vignette { position:fixed; inset:0; z-index:0; pointer-events:none; background:radial-gradient(ellipse 120% 120% at 50% 50%,transparent 30%,rgba(5,4,10,0.8) 100%); }
+
+.wrap { position:relative; z-index:1; max-width:600px; margin:0 auto; padding:22px 15px 56px; }
+
+/* HEADER */
+.header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.logo { font-size:20px; font-weight:800; letter-spacing:-0.5px; background:linear-gradient(135deg,#fff 10%,var(--accent-purple) 55%,var(--accent-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap; }
+.header-right { display:flex; align-items:center; gap:8px; }
+
+/* LANG SELECT — matches main app */
+.lang-wrap { position:relative; }
+.lang-sel {
+  appearance:none; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px; color:white; font-size:13px; font-weight:600;
+  font-family:'DM Sans',sans-serif; padding:7px 26px 7px 10px;
+  cursor:pointer; outline:none; backdrop-filter:blur(12px); min-width:118px;
+}
+.lang-sel option { background:#12102a; color:white; }
+.lang-arrow { position:absolute; right:8px; top:50%; transform:translateY(-50%); color:var(--text-3); pointer-events:none; font-size:10px; }
+
+.back-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px; padding:7px 13px; color:rgba(255,255,255,0.60);
+  font-size:13px; font-weight:600; text-decoration:none; transition:all 0.2s;
+  font-family:'DM Sans',sans-serif; backdrop-filter:blur(12px); white-space:nowrap;
+}
+.back-btn:hover { background:rgba(255,255,255,0.12); color:white; }
+
+/* TOC */
+.toc { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:20px; }
+.toc-link { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10); border-radius:20px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--text-2); text-decoration:none; transition:all 0.2s; backdrop-filter:blur(10px); }
+.toc-link:hover { background:rgba(155,89,245,0.18); border-color:rgba(155,89,245,0.35); color:white; }
+.toc-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+/* SECTION CARD */
+.section {
+  background:rgba(255,255,255,0.06); backdrop-filter:blur(32px) saturate(160%);
+  -webkit-backdrop-filter:blur(32px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.11); border-radius:var(--r);
+  padding:22px; margin-bottom:12px; position:relative; overflow:hidden;
+  scroll-margin-top:16px;
+}
+.section::before { content:''; position:absolute; top:0; left:20px; right:20px; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent); }
+.section-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.s-icon { width:42px; height:42px; border-radius:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:20px; border:1px solid rgba(255,255,255,0.12); box-shadow:inset 0 1px 0 rgba(255,255,255,0.10); }
+.s-title { font-size:17px; font-weight:800; letter-spacing:-0.3px; }
+.s-sub { font-size:12px; color:var(--text-3); font-weight:500; margin-top:2px; }
+
+/* TEXT */
+p { font-size:14px; color:var(--text-2); line-height:1.65; margin-bottom:10px; }
+p:last-child { margin-bottom:0; }
+.mono { display:inline-block; padding:2px 7px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:5px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent-cyan); vertical-align:middle; }
+.divider { height:1px; background:rgba(255,255,255,0.07); margin:13px 0; }
+.micro { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-3); margin-bottom:10px; }
+
+/* FORMULA */
+.formula {
+  background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.09);
+  border-radius:12px; padding:13px 15px; margin:10px 0;
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:rgba(255,255,255,0.70); line-height:2; overflow-x:auto;
+}
+.fc { color:var(--text-3); }
+.fk { color:var(--accent-cyan); }
+.fv { color:#a78bfa; }
+
+/* INFO ROWS */
+.info-grid { display:flex; flex-direction:column; gap:7px; margin:10px 0; }
+.info-row { display:flex; align-items:flex-start; gap:11px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:11px; padding:10px 13px; }
+.i-ico { font-size:15px; flex-shrink:0; margin-top:1px; }
+.i-lbl { font-size:12px; font-weight:700; color:white; margin-bottom:2px; }
+.i-desc { font-size:13px; color:var(--text-2); line-height:1.5; }
+
+/* CATEGORIES */
+.cat-grid { display:flex; flex-direction:column; gap:6px; margin:10px 0; }
+.cat-row { display:flex; align-items:flex-start; gap:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:9px 12px; }
+.cat-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.cat-name { font-size:12px; font-weight:700; color:white; min-width:90px; font-family:'JetBrains Mono',monospace; }
+.cat-desc { font-size:12px; color:var(--text-2); line-height:1.45; }
+
+/* STEPS */
+.steps { display:flex; flex-direction:column; gap:9px; margin:10px 0; }
+.step { display:flex; gap:11px; align-items:flex-start; }
+.step-n { width:24px; height:24px; border-radius:50%; flex-shrink:0; background:rgba(155,89,245,0.2); border:1px solid rgba(155,89,245,0.35); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:var(--accent-purple); }
+.step-t { font-size:13px; color:var(--text-2); line-height:1.55; padding-top:3px; }
+.step-t strong { color:white; }
+
+/* HIGHLIGHT */
+.hl { display:flex; gap:10px; align-items:flex-start; background:rgba(155,89,245,0.10); border:1px solid rgba(155,89,245,0.22); border-radius:12px; padding:12px 13px; margin:10px 0; }
+.hl-ico { font-size:15px; flex-shrink:0; }
+.hl-txt { font-size:13px; color:rgba(255,255,255,0.78); line-height:1.55; }
+.hl-txt strong { color:white; }
+
+/* FOOTER */
+.footer { text-align:center; font-size:12px; color:var(--text-3); padding-top:8px; }
+.footer a { color:rgba(255,255,255,0.55); font-weight:700; text-decoration:none; transition:color 0.2s; }
+.footer a:hover { color:rgba(255,255,255,0.88); }
+
+[dir="rtl"] .back-btn { flex-direction:row-reverse; }
+</style>
+</head>
+<body>
+<div class="bg-canvas">
+  <div class="bg-base"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div class="bg-vignette"></div>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo" id="hLogo">VarnishCalc <span style="font-weight:300">Pro</span> — Help</div>
+    <div class="header-right">
+      <div class="lang-wrap">
+        <select class="lang-sel" id="langSel" onchange="setLang(this.value)"></select>
+        <div class="lang-arrow">⌄</div>
+      </div>
+      <a href="varnishcalc.html" class="back-btn" id="hBack">← Back</a>
+    </div>
+  </div>
+
+  <div class="toc">
+    <a href="#scv"           class="toc-link"><span class="toc-dot" style="background:#a78bfa"></span><span id="tocSCV"></span></a>
+    <a href="#calculator"    class="toc-link"><span class="toc-dot" style="background:#7c6cfc"></span><span id="tocCalc"></span></a>
+    <a href="#recalculation" class="toc-link"><span class="toc-dot" style="background:#2de2ff"></span><span id="tocRecalc"></span></a>
+    <a href="#planning"      class="toc-link"><span class="toc-dot" style="background:#34d399"></span><span id="tocPlan"></span></a>
+    <a href="#categories"    class="toc-link"><span class="toc-dot" style="background:#fb7185"></span><span id="tocCats"></span></a>
+  </div>
+
+  <!-- SCV -->
+  <div class="section" id="scv">
+    <div class="section-head">
+      <div class="s-icon" style="background:rgba(167,139,250,0.15);">%</div>
+      <div><div class="s-title" id="scvTitle"></div><div class="s-sub" id="scvSub"></div></div>
+    </div>
+    <p id="scvP1"></p>
+    <div class="info-grid">
+      <div class="info-row"><div class="i-ico">💧</div><div><div class="i-lbl" id="scvWL"></div><div class="i-desc" id="scvWD"></div></div></div>
+      <div class="info-row"><div class="i-ico">☀️</div><div><div class="i-lbl" id="scvDL"></div><div class="i-desc" id="scvDD"></div></div></div>
+    </div>
+    <div class="formula">
+<span class="fc" id="scvFC"></span>
+<span class="fk">dry thickness</span> = <span class="fv">wet thickness</span> × (SCV / 100)
+<span class="fk">wet thickness</span> = <span class="fv">dry thickness</span> / (SCV / 100)
+
+<span class="fc" id="scvFEx"></span>
+wet = 8 / 0.36 = <span class="fv">22.2 µm</span></div>
+    <div class="hl"><div class="hl-ico">💡</div><div class="hl-txt" id="scvHint"></div></div>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="section" id="calculator">
+    <div class="section-head">
+      <div class="s-icon" style="background:rgba(124,108,252,0.18);">⚖️</div>
+      <div><div class="s-title" id="calcTitle"></div><div class="s-sub" id="calcSub"></div></div>
+    </div>
+    <p id="calcP"></p>
+    <div class="divider"></div>
+    <div class="micro" id="calcHow"></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div class="step-t" id="cS1"></div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t" id="cS2"></div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t" id="cS3"></div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-t" id="cS4"></div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="micro" id="calcOut"></div>
+    <div class="info-grid">
+      <div class="info-row"><div class="i-ico">⚖️</div><div><div class="i-lbl" id="cO1L"></div><div class="i-desc" id="cO1D"></div></div></div>
+      <div class="info-row"><div class="i-ico">⊞</div><div><div class="i-lbl" id="cO2L"></div><div class="i-desc" id="cO2D"></div></div></div>
+      <div class="info-row"><div class="i-ico">📏</div><div><div class="i-lbl" id="cO3L"></div><div class="i-desc" id="cO3D"></div></div></div>
+    </div>
+  </div>
+
+  <!-- RECALCULATION -->
+  <div class="section" id="recalculation">
+    <div class="section-head">
+      <div class="s-icon" style="background:rgba(45,226,255,0.12);">🔄</div>
+      <div><div class="s-title" id="recTitle"></div><div class="s-sub" id="recSub"></div></div>
+    </div>
+    <p id="recP"></p>
+    <div class="hl"><div class="hl-ico">🏭</div><div class="hl-txt" id="recHint"></div></div>
+    <div class="divider"></div>
+    <div class="micro" id="recHow"></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div class="step-t" id="rS1"></div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t" id="rS2"></div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t" id="rS3"></div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-t" id="rS4"></div></div>
+    </div>
+    <div class="formula">
+<span class="fc" id="recFC"></span>
+<span class="fk">dryG</span>   = wetWeight × SCV
+<span class="fk">wetGM2</span> = wetWeight / areaM2
+<span class="fk">dryGM2</span> = wetGM2 × SCV
+<span class="fk">wetUm</span>  = wetGM2 / wetDensity
+<span class="fk">dryUm</span>  = wetUm × SCV</div>
+  </div>
+
+  <!-- PLANNING -->
+  <div class="section" id="planning">
+    <div class="section-head">
+      <div class="s-icon" style="background:rgba(52,211,153,0.12);">📦</div>
+      <div><div class="s-title" id="planTitle"></div><div class="s-sub" id="planSub"></div></div>
+    </div>
+    <p id="planP"></p>
+    <div class="divider"></div>
+    <div class="micro" id="planHow"></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div class="step-t" id="pS1"></div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t" id="pS2"></div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t" id="pS3"></div></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-row"><div class="i-ico" style="color:#fb7185">▼</div><div><div class="i-lbl" id="pO1L"></div><div class="i-desc" id="pO1D"></div></div></div>
+      <div class="info-row"><div class="i-ico" style="color:#a78bfa">◆</div><div><div class="i-lbl" id="pO2L"></div><div class="i-desc" id="pO2D"></div></div></div>
+      <div class="info-row"><div class="i-ico" style="color:#34d399">▲</div><div><div class="i-lbl" id="pO3L"></div><div class="i-desc" id="pO3D"></div></div></div>
+    </div>
+    <div class="hl"><div class="hl-ico">⚠️</div><div class="hl-txt" id="planHint"></div></div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="section" id="categories">
+    <div class="section-head">
+      <div class="s-icon" style="background:rgba(251,113,133,0.12);">🏷️</div>
+      <div><div class="s-title" id="catTitle"></div><div class="s-sub" id="catSub"></div></div>
+    </div>
+    <p id="catP"></p>
+    <div class="cat-grid">
+      <div class="cat-row"><div class="cat-dot" style="background:#60a5fa"></div><div class="cat-name">EPOXY</div><div class="cat-desc" id="cEpoxy"></div></div>
+      <div class="cat-row"><div class="cat-dot" style="background:#c084fc"></div><div class="cat-name">BPANI</div><div class="cat-desc" id="cBpani"></div></div>
+      <div class="cat-row"><div class="cat-dot" style="background:#4ade80"></div><div class="cat-name">PAM</div><div class="cat-desc" id="cPam"></div></div>
+      <div class="cat-row"><div class="cat-dot" style="background:#fb923c"></div><div class="cat-name">PAM Alt.</div><div class="cat-desc" id="cPamAlt"></div></div>
+      <div class="cat-row"><div class="cat-dot" style="background:#f87171"></div><div class="cat-name">PAI</div><div class="cat-desc" id="cPai"></div></div>
+      <div class="cat-row"><div class="cat-dot" style="background:#94a3b8"></div><div class="cat-name">Others</div><div class="cat-desc" id="cOthers"></div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="micro" id="catExtLbl"></div>
+    <div class="cat-grid">
+      <div class="cat-row"><div class="cat-dot" style="background:#22d3ee"></div><div class="cat-name">Overvarnish</div><div class="cat-desc" id="cOver"></div></div>
+      <div class="cat-row"><div class="cat-dot" style="background:#93c5fd"></div><div class="cat-name">Clear Base</div><div class="cat-desc" id="cClear"></div></div>
+      <div class="cat-row"><div class="cat-dot" style="background:#e2e8f0"></div><div class="cat-name">White Base</div><div class="cat-desc" id="cWhite"></div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://kocandrle69.github.io/my-profile/" target="_blank" rel="noopener">Jan Kočandrle</a> · © 2026
+  </div>
+
+</div>
+<script>
+const LANGS=[
+  {c:'en',f:'🇬🇧',l:'English'},
+  {c:'cs',f:'🇨🇿',l:'Čeština'},
+  {c:'sk',f:'🇸🇰',l:'Slovenčina'},
+  {c:'fr',f:'🇫🇷',l:'Français'},
+  {c:'nl',f:'🇳🇱',l:'Nederlands'},
+  {c:'pt',f:'🇧🇷',l:'Português'},
+  {c:'es',f:'🇪🇸',l:'Español'},
+  {c:'uk',f:'🇺🇦',l:'Українська'},
+  {c:'ar',f:'🇸🇦',l:'العربية'},
+];
+
+const H={
+en:{
+  back:'← Back', logoBold:'VarnishCalc', logoLight:' Pro', logoSuffix:' — Help',
+  tocSCV:'What is SCV?',tocCalc:'Calculator',tocRecalc:'Recalculation',tocPlan:'Planning',tocCats:'Varnish Categories',
+  scvTitle:'SCV — Solid Content by Volume',scvSub:'The most important varnish parameter',
+  scvP1:'SCV tells you <strong>what fraction of the wet varnish stays on the can</strong> as dry film after solvents evaporate.',
+  scvWL:'Wet varnish (applied)',scvWD:'The liquid you spray — contains solid resin and volatile solvents that evaporate during curing.',
+  scvDL:'Dry film (what remains)',scvDD:'After curing, only the solid fraction stays. SCV 36% means only 36% of the wet volume becomes dry film.',
+  scvFC:'// SCV relationship',scvFEx:'// Example: SCV = 36%, target dry 8 µm',
+  scvHint:'Lower SCV = more solvent = you must apply more wet material to reach the same dry thickness. Higher SCV varnishes are more material-efficient.',
+  calcTitle:'Calculator',calcSub:'Varnish consumption per can — forward calculation',
+  calcP:'The Calculator answers: <strong>"How much varnish do I need per can?"</strong> Provide can geometry and select a varnish — the app computes wet and dry weights and thicknesses.',
+  how:'How to use',out:'Output explained',
+  cS1:'<strong>Application Type</strong> — choose Internal (food-contact side) or External (decoration/protection).',
+  cS2:'<strong>Varnish Specification</strong> — select from the grouped list. The badge shows the chemical category.',
+  cS3:'<strong>Dimensions</strong> — enter diameter and length in mm. Internal automatically includes the bottom lid area.',
+  cS4:'Press <strong>CALCULATE</strong>. Results show min/max ranges based on the varnish thickness specification.',
+  cO1L:'Weight per can (g)',cO1D:'Grams of wet/dry varnish applied to one can. Min–Max reflects specification tolerance.',
+  cO2L:'Weight per m² (g/m²)',cO2D:'Normalised consumption independent of can size — useful for comparing varnishes.',
+  cO3L:'Layer thickness (µm)',cO3D:'Wet and dry film thickness in micrometres. Dry thickness is what quality control measures.',
+  recTitle:'Recalculation',recSub:'Back-calculate from a measured wet weight',
+  recP:'Recalculation answers: <strong>"I weighed the wet varnish on the can — what thickness did I actually apply?"</strong>',
+  recHint:'Typical use: the production line weighs each can before and after coating. The weight difference is the wet varnish applied. Enter that value here to get the actual film thickness.',
+  rS1:'Select <strong>Application Type</strong> and <strong>Varnish</strong> — must match what was actually applied.',
+  rS2:'Enter <strong>Dimensions</strong> of the can.',
+  rS3:'Enter the <strong>Wet Weight per can</strong> in grams — the actual measured value.',
+  rS4:'Press <strong>RECALCULATE</strong>. Results show actual dry film thickness and layer weights.',
+  recFC:'// From measured wet weight → thickness',
+  planTitle:'Planning',planSub:'How many cans can I coat with available varnish?',
+  planP:'Planning answers: <strong>"I have X kg of varnish — how many cans can I produce?"</strong>',
+  pS1:'Select varnish and enter <strong>Available Varnish</strong> quantity — switch between <strong>kg</strong>, <strong>L</strong>, or <strong>g</strong>.',
+  pS2:'Enter can <strong>Diameter</strong> and <strong>Length</strong> in mm.',
+  pS3:'Press <strong>CALCULATE CAPACITY</strong>. Result shows Min / Average / Max production range.',
+  pO1L:'Min. pieces',pO1D:'Worst case — applying at maximum film thickness (most varnish per can).',
+  pO2L:'Average',pO2D:'Midpoint of the specification range — most likely real-world production output.',
+  pO3L:'Max. pieces',pO3D:'Best case — applying at minimum film thickness (least varnish per can).',
+  planHint:'<strong>Litre input</strong> uses the varnish wet density to convert to kg before calculation. Ensure the selected varnish matches the actual product in stock.',
+  catTitle:'Varnish Categories',catSub:'Internal coating chemistry overview',
+  catP:'Internal varnishes are grouped by their chemical base. Each category has different performance characteristics, cure conditions and application windows.',
+  catExtLbl:'External varnish types',
+  cEpoxy:'Epoxy-based systems. Excellent adhesion and chemical resistance. Widely used for beverage and food cans.',
+  cBpani:'BPA-NI (Bisphenol A Non-Intent). BPA-free epoxy alternative meeting current food contact regulations.',
+  cPam:'Polyamide coating. Good flexibility and adhesion on tinplate and aluminium substrates.',
+  cPamAlt:'Modified polyamide-based systems offering improved performance vs. standard PAM.',
+  cPai:'Polyamide-imide coating. High performance with superior heat and chemical resistance.',
+  cOthers:'Custom or non-standard varnishes. Use when the product does not fit standard categories.',
+  cOver:'Top coat applied over printed decoration. Provides gloss, scratch resistance and print protection.',
+  cClear:'Transparent base layer applied before printing to improve ink adhesion on bare metal.',
+  cWhite:'Opaque white base coat providing a bright ground for full-colour printing. High pigment load.',
+},
+cs:{
+  back:'← Zpět',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Nápověda',
+  tocSCV:'Co je SCV?',tocCalc:'Kalkulátor',tocRecalc:'Přepočet',tocPlan:'Plánování',tocCats:'Kategorie laků',
+  scvTitle:'SCV — Objemový obsah pevných látek',scvSub:'Nejdůležitější parametr laku',
+  scvP1:'SCV říká, <strong>jaká část mokrého laku zůstane na plechovce</strong> jako suchý film po odpaření rozpouštědel.',
+  scvWL:'Mokrý lak (nanášený)',scvWD:'Kapalina, kterou nanášíte — obsahuje pryskyřici a těkavá rozpouštědla, která se odpaří při sušení.',
+  scvDL:'Suchý film (co zůstane)',scvDD:'Po vytvrzení zůstane pouze pevná složka. SCV 36 % → ze 100 % mokrého objemu zůstane jen 36 %.',
+  scvFC:'// Vztah SCV',scvFEx:'// Příklad: SCV = 36 %, cílová suchá tloušťka 8 µm',
+  scvHint:'Nižší SCV = více rozpouštědla = je nutné nanést více mokrého materiálu pro dosažení stejné suché tloušťky.',
+  calcTitle:'Kalkulátor',calcSub:'Spotřeba laku na plechovku — dopředný výpočet',
+  calcP:'Kalkulátor odpovídá: <strong>„Kolik laku potřebuji na jednu plechovku?"</strong>',
+  how:'Jak používat',out:'Vysvětlení výstupů',
+  cS1:'<strong>Typ aplikace</strong> — vyberte Vnitřní (kontakt s potravinou) nebo Vnější (dekorace/ochrana).',
+  cS2:'<strong>Specifikace laku</strong> — vyberte ze seznamu. Badge zobrazuje chemickou kategorii.',
+  cS3:'<strong>Rozměry</strong> — zadejte průměr a délku těla v mm. Vnitřní výpočet zahrnuje plochu dna.',
+  cS4:'Stiskněte <strong>VYPOČÍTAT</strong>. Výsledky zobrazují rozsah min/max.',
+  cO1L:'Hmotnost na plechovku (g)',cO1D:'Gramy mokrého/suchého laku na jednu plechovku.',
+  cO2L:'Hmotnost na m² (g/m²)',cO2D:'Normalizovaná spotřeba nezávislá na velikosti plechovky.',
+  cO3L:'Tloušťka vrstvy (µm)',cO3D:'Tloušťka mokré a suché vrstvy. Suchou měří kontrola kvality.',
+  recTitle:'Přepočet',recSub:'Zpětný výpočet z naměřené mokré hmotnosti',
+  recP:'Přepočet odpovídá: <strong>„Zvážil jsem mokrý lak — jakou tloušťku jsem nanesL?"</strong>',
+  recHint:'Typické použití: linka váží plechovku před a po lakování. Rozdíl hmotností = nanesený mokrý lak.',
+  rS1:'Vyberte <strong>Typ aplikace</strong> a <strong>Lak</strong> — musí odpovídat skutečně použitému.',
+  rS2:'Zadejte <strong>Rozměry</strong> plechovky.',
+  rS3:'Zadejte <strong>Mokrou hmotnost na plechovku</strong> v gramech.',
+  rS4:'Stiskněte <strong>PŘEPOČÍTAT</strong>.',
+  recFC:'// Z naměřené mokré hmotnosti → tloušťka',
+  planTitle:'Plánování',planSub:'Kolik plechovek polakuji z dostupného laku?',
+  planP:'Plánování odpovídá: <strong>„Mám X kg laku — kolik plechovek vyrobím?"</strong>',
+  pS1:'Vyberte lak a zadejte <strong>Dostupné množství</strong> — kg, L nebo g.',
+  pS2:'Zadejte <strong>Průměr</strong> a <strong>Délku</strong> v mm.',
+  pS3:'Stiskněte <strong>VÝPOČET KAPACITY</strong>.',
+  pO1L:'Min. kusů',pO1D:'Nejhorší případ — nanášení při maximální tloušťce.',
+  pO2L:'Průměr',pO2D:'Střed specifikačního rozsahu — nejpravděpodobnější výsledek.',
+  pO3L:'Max. kusů',pO3D:'Nejlepší případ — nanášení při minimální tloušťce.',
+  planHint:'<strong>Zadání v litrech</strong> — přepočet přes hustotu mokrého laku na kg.',
+  catTitle:'Kategorie laků',catSub:'Přehled chemie vnitřních nátěrů',
+  catP:'Vnitřní laky jsou seskupeny podle chemické báze.',
+  catExtLbl:'Typy vnějších laků',
+  cEpoxy:'Epoxidové systémy. Výborná přilnavost a chemická odolnost.',
+  cBpani:'BPA-NI — epoxid bez bisfenolu A, dle potravinových předpisů.',
+  cPam:'Polyamidový nátěr. Dobrá flexibilita a přilnavost na pocínovaný plech i hliník.',
+  cPamAlt:'Modifikované polyamidové systémy s vylepšenými vlastnostmi.',
+  cPai:'Polyamid-imidový nátěr. Vysoký výkon, nadřazená tepelná a chemická odolnost.',
+  cOthers:'Nestandardní laky mimo běžné kategorie.',
+  cOver:'Vrchní lak přes tisk. Lesk, odolnost vůči poškrábání.',
+  cClear:'Transparentní základ pro přilnavost barvy.',
+  cWhite:'Bílý krycí základ pro plnobarevný tisk.',
+},
+sk:{
+  back:'← Späť',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Pomoc',
+  tocSCV:'Čo je SCV?',tocCalc:'Kalkulačka',tocRecalc:'Prepočet',tocPlan:'Plánovanie',tocCats:'Kategórie lakov',
+  scvTitle:'SCV — Objemový obsah pevných látok',scvSub:'Najdôležitejší parameter laku',
+  scvP1:'SCV hovorí, <strong>aká časť mokrého laku zostane na plechovke</strong> ako suchý film po odparení rozpúšťadiel.',
+  scvWL:'Mokrý lak (nanášaný)',scvWD:'Kvapalina, ktorú nanášate — obsahuje živicu a prchavé rozpúšťadlá.',
+  scvDL:'Suchý film (čo zostane)',scvDD:'Po vytvrdení zostane len pevná zložka. SCV 36 % → 36 % objemu sa stane suchým filmom.',
+  scvFC:'// Vzťah SCV',scvFEx:'// Príklad: SCV = 36 %, cieľ suchá hrúbka 8 µm',
+  scvHint:'Nižší SCV = viac rozpúšťadla = treba naniesť viac mokrého materiálu.',
+  calcTitle:'Kalkulačka',calcSub:'Spotreba laku na plechovku — dopredný výpočet',
+  calcP:'Kalkulačka odpovedá: <strong>„Koľko laku potrebujem na jednu plechovku?"</strong>',
+  how:'Ako používať',out:'Vysvetlenie výstupov',
+  cS1:'<strong>Typ aplikácie</strong> — Vnútorný alebo Vonkajší.',
+  cS2:'<strong>Špecifikácia laku</strong> — vyberte zo zoznamu.',
+  cS3:'<strong>Rozmery</strong> — priemer a dĺžka v mm. Vnútorný výpočet zahrňuje dno.',
+  cS4:'Stlačte <strong>VYPOČÍTAŤ</strong>.',
+  cO1L:'Hmotnosť na plechovku (g)',cO1D:'Gramy mokrého/suchého laku na jednu plechovku.',
+  cO2L:'Hmotnosť na m² (g/m²)',cO2D:'Normalizovaná spotreba nezávislá od veľkosti.',
+  cO3L:'Hrúbka vrstvy (µm)',cO3D:'Hrúbka mokrej a suchej vrstvy.',
+  recTitle:'Prepočet',recSub:'Spätný výpočet z nameranej mokrej hmotnosti',
+  recP:'Prepočet odpovedá: <strong>„Zvážil som mokrý lak — akú hrúbku som naniesol?"</strong>',
+  recHint:'Linka váži plechovku pred a po lakovaní. Rozdiel = nanesený mokrý lak.',
+  rS1:'Vyberte <strong>Typ aplikácie</strong> a <strong>Lak</strong>.',
+  rS2:'Zadajte <strong>Rozmery</strong> plechovky.',
+  rS3:'Zadajte <strong>Mokrú hmotnosť</strong> v gramoch.',
+  rS4:'Stlačte <strong>PREPOČÍTAŤ</strong>.',
+  recFC:'// Z nameranej mokrej hmotnosti → hrúbka',
+  planTitle:'Plánovanie',planSub:'Koľko plechoviek nalakujem z dostupného laku?',
+  planP:'Plánovanie odpovedá: <strong>„Mám X kg laku — koľko plechoviek vyrobím?"</strong>',
+  pS1:'Vyberte lak a zadajte <strong>Dostupné množstvo</strong> — kg, L alebo g.',
+  pS2:'Zadajte <strong>Priemer</strong> a <strong>Dĺžku</strong> v mm.',
+  pS3:'Stlačte <strong>VÝPOČET KAPACITY</strong>.',
+  pO1L:'Min. kusov',pO1D:'Nanášanie pri maximálnej hrúbke.',
+  pO2L:'Priemer',pO2D:'Stred špecifikačného rozsahu.',
+  pO3L:'Max. kusov',pO3D:'Nanášanie pri minimálnej hrúbke.',
+  planHint:'<strong>Litre</strong> — prepočet cez hustotu mokrého laku na kg.',
+  catTitle:'Kategórie lakov',catSub:'Prehľad chémie vnútorných náterov',
+  catP:'Vnútorné laky sú zoskupené podľa chemickej bázy.',
+  catExtLbl:'Typy vonkajších lakov',
+  cEpoxy:'Epoxidové systémy. Priľnavosť a chemická odolnosť.',
+  cBpani:'BPA-NI — epoxid bez bisfenolu A.',
+  cPam:'Polyamidový náter. Dobrá flexibilita a priľnavosť.',
+  cPamAlt:'Modifikované polyamidové systémy.',
+  cPai:'Polyamid-imidový náter. Vysoký výkon, tepelná a chemická odolnosť.',
+  cOthers:'Neštandardné laky.',
+  cOver:'Vrchný lak cez tlač.',
+  cClear:'Transparentná základná vrstva.',
+  cWhite:'Biela základná vrstva pre farebný tlač.',
+},
+fr:{
+  back:'← Retour',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Aide',
+  tocSCV:"Qu'est-ce que SCV?",tocCalc:'Calculateur',tocRecalc:'Recalcul',tocPlan:'Planification',tocCats:'Catégories',
+  scvTitle:'SCV — Teneur en solides par volume',scvSub:'Le paramètre le plus important du vernis',
+  scvP1:'Le SCV indique <strong>quelle fraction du vernis humide reste sur la boîte</strong> en film sec après évaporation.',
+  scvWL:'Vernis humide (appliqué)',scvWD:'Le liquide pulvérisé — résine + solvants volatils qui s\'évaporent à la cuisson.',
+  scvDL:'Film sec (ce qui reste)',scvDD:'Après cuisson, seule la fraction solide reste. SCV 36% → 36% du volume humide devient film sec.',
+  scvFC:'// Relation SCV',scvFEx:'// Exemple: SCV = 36%, épaisseur sèche cible 8 µm',
+  scvHint:'SCV plus bas = plus de solvant = appliquer plus de matière humide pour la même épaisseur sèche.',
+  calcTitle:'Calculateur',calcSub:'Consommation de vernis par boîte — calcul direct',
+  calcP:'Le Calculateur répond: <strong>"Quelle quantité de vernis faut-il par boîte?"</strong>',
+  how:'Comment utiliser',out:'Explication des résultats',
+  cS1:"<strong>Type d'application</strong> — Interne ou Externe.",
+  cS2:'<strong>Spécification du vernis</strong> — sélectionner dans la liste.',
+  cS3:'<strong>Dimensions</strong> — diamètre et longueur en mm.',
+  cS4:'Appuyer sur <strong>CALCULER</strong>.',
+  cO1L:'Poids par boîte (g)',cO1D:'Grammes de vernis humide/sec sur une boîte.',
+  cO2L:'Poids par m² (g/m²)',cO2D:'Consommation normalisée indépendante de la taille.',
+  cO3L:'Épaisseur de couche (µm)',cO3D:'Épaisseur du film humide et sec en micromètres.',
+  recTitle:'Recalcul',recSub:'Calcul inverse depuis le poids humide mesuré',
+  recP:'Le Recalcul répond: <strong>"J\'ai pesé le vernis — quelle épaisseur ai-je appliquée?"</strong>',
+  recHint:'Usage typique: la ligne de production pèse chaque boîte avant et après. La différence = vernis humide appliqué.',
+  rS1:'Sélectionner <strong>Type</strong> et <strong>Vernis</strong>.',
+  rS2:'Entrer les <strong>Dimensions</strong>.',
+  rS3:'Entrer le <strong>Poids humide par boîte</strong> en grammes.',
+  rS4:'Appuyer sur <strong>RECALCULER</strong>.',
+  recFC:'// Du poids humide mesuré → épaisseur',
+  planTitle:'Planification',planSub:'Combien de boîtes puis-je enduire?',
+  planP:'La Planification répond: <strong>"J\'ai X kg de vernis — combien de boîtes?"</strong>',
+  pS1:'Sélectionner vernis et entrer la <strong>Quantité disponible</strong> — kg, L ou g.',
+  pS2:'Entrer <strong>Diamètre</strong> et <strong>Longueur</strong> en mm.',
+  pS3:'Appuyer sur <strong>CALCULER LA CAPACITÉ</strong>.',
+  pO1L:'Pièces min.',pO1D:'Pire cas — épaisseur maximale.',
+  pO2L:'Moyenne',pO2D:'Point médian de la plage de spécification.',
+  pO3L:'Pièces max.',pO3D:'Meilleur cas — épaisseur minimale.',
+  planHint:'<strong>Saisie en litres</strong> — conversion via densité humide du vernis.',
+  catTitle:'Catégories de vernis',catSub:'Chimie des revêtements internes',
+  catP:'Les vernis internes sont regroupés par base chimique.',
+  catExtLbl:'Types de vernis externes',
+  cEpoxy:'Systèmes époxy. Excellente adhérence et résistance chimique.',
+  cBpani:'BPA-NI — époxy sans bisphénol A.',
+  cPam:'Revêtement polyamide. Bonne flexibilité et adhérence.',
+  cPamAlt:'Polyamide modifié aux performances améliorées.',
+  cPai:'Revêtement polyamide-imide. Haute performance, résistance thermique et chimique.',
+  cOthers:'Vernis non standards.',
+  cOver:'Vernis de finition sur impression. Brillance, résistance aux rayures.',
+  cClear:'Couche de fond transparente.',
+  cWhite:'Couche de fond blanche opaque.',
+},
+nl:{
+  back:'← Terug',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Help',
+  tocSCV:'Wat is SCV?',tocCalc:'Calculator',tocRecalc:'Herberekening',tocPlan:'Planning',tocCats:'Categorieën',
+  scvTitle:'SCV — Vaste stof gehalte per volume',scvSub:'De belangrijkste vernis parameter',
+  scvP1:'SCV geeft aan <strong>welk deel van het natte vernis op het blik blijft</strong> als droge film.',
+  scvWL:'Nat vernis (aangebracht)',scvWD:'De vloeistof die u spuit — hars + vluchtige oplosmiddelen die verdampen.',
+  scvDL:'Droge film (wat overblijft)',scvDD:'Na uitharden blijft alleen de vaste fractie over. SCV 36% → 36% wordt droge film.',
+  scvFC:'// SCV relatie',scvFEx:'// Voorbeeld: SCV = 36%, doeldikte droog 8 µm',
+  scvHint:'Lager SCV = meer oplosmiddel = meer nat materiaal nodig voor dezelfde droge dikte.',
+  calcTitle:'Calculator',calcSub:'Vernis verbruik per blik — directe berekening',
+  calcP:'De Calculator beantwoordt: <strong>"Hoeveel vernis heb ik per blik nodig?"</strong>',
+  how:'Hoe te gebruiken',out:'Uitleg van de resultaten',
+  cS1:'<strong>Toepassingstype</strong> — Intern of Extern.',
+  cS2:'<strong>Vernis specificatie</strong> — selecteer uit de lijst.',
+  cS3:'<strong>Afmetingen</strong> — diameter en lengte in mm.',
+  cS4:'Druk op <strong>BEREKENEN</strong>.',
+  cO1L:'Gewicht per blik (g)',cO1D:'Grammen nat/droog vernis per blik.',
+  cO2L:'Gewicht per m² (g/m²)',cO2D:'Genormaliseerd verbruik onafhankelijk van blikgrootte.',
+  cO3L:'Laagdikte (µm)',cO3D:'Natte en droge filmdikte in micrometers.',
+  recTitle:'Herberekening',recSub:'Terugrekenen vanuit gemeten nat gewicht',
+  recP:'Herberekening beantwoordt: <strong>"Ik heb het natte vernis gewogen — welke dikte heb ik aangebracht?"</strong>',
+  recHint:'De productielijn weegt elk blik voor en na het coaten. Gewichtsverschil = aangebracht nat vernis.',
+  rS1:'Selecteer <strong>Toepassingstype</strong> en <strong>Vernis</strong>.',
+  rS2:'Voer de <strong>Afmetingen</strong> in.',
+  rS3:'Voer het <strong>Nat gewicht per blik</strong> in grammen in.',
+  rS4:'Druk op <strong>HERBEREKENEN</strong>.',
+  recFC:'// Van gemeten nat gewicht → dikte',
+  planTitle:'Planning',planSub:'Hoeveel blikken kan ik coaten?',
+  planP:'Planning beantwoordt: <strong>"Ik heb X kg vernis — hoeveel blikken?"</strong>',
+  pS1:'Selecteer vernis en voer <strong>Beschikbare hoeveelheid</strong> in — kg, L of g.',
+  pS2:'Voer <strong>Diameter</strong> en <strong>Lengte</strong> in mm in.',
+  pS3:'Druk op <strong>CAPACITEIT BEREKENEN</strong>.',
+  pO1L:'Min. stuks',pO1D:'Slechtste geval — maximale laagdikte.',
+  pO2L:'Gemiddeld',pO2D:'Middelpunt van het specificatiebereik.',
+  pO3L:'Max. stuks',pO3D:'Beste geval — minimale laagdikte.',
+  planHint:'<strong>Invoer in liters</strong> — omrekening via natte dichtheid van het vernis.',
+  catTitle:'Vernis categorieën',catSub:'Chemie van interne coatings',
+  catP:'Interne vernissen zijn gegroepeerd per chemische basis.',
+  catExtLbl:'Externe vernis types',
+  cEpoxy:'Epoxy-systemen. Uitstekende hechting en chemische bestendigheid.',
+  cBpani:'BPA-NI — epoxy zonder bisfenol A.',
+  cPam:'Polyamide coating. Goede flexibiliteit en hechting.',
+  cPamAlt:'Gemodificeerde polyamide systemen.',
+  cPai:'Polyamide-imide coating. Hoge prestaties, warmte- en chemische bestendigheid.',
+  cOthers:'Niet-standaard vernissen.',
+  cOver:'Toplaag over bedrukking. Glans, krasbestendigheid.',
+  cClear:'Transparante basislaag voor inktadhesie.',
+  cWhite:'Dekkende witte basislaag voor volkleurig drukwerk.',
+},
+pt:{
+  back:'← Voltar',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Ajuda',
+  tocSCV:'O que é SCV?',tocCalc:'Calculadora',tocRecalc:'Recálculo',tocPlan:'Planejamento',tocCats:'Categorias',
+  scvTitle:'SCV — Teor de sólidos por volume',scvSub:'O parâmetro mais importante do verniz',
+  scvP1:'O SCV indica <strong>qual fração do verniz úmido permanece na lata</strong> como filme seco.',
+  scvWL:'Verniz úmido (aplicado)',scvWD:'O líquido pulverizado — resina + solventes voláteis que evaporam durante a cura.',
+  scvDL:'Filme seco (o que resta)',scvDD:'Após a cura, apenas a fração sólida permanece. SCV 36% → 36% do volume úmido vira filme seco.',
+  scvFC:'// Relação SCV',scvFEx:'// Exemplo: SCV = 36%, espessura seca alvo 8 µm',
+  scvHint:'SCV menor = mais solvente = mais material úmido necessário para a mesma espessura seca.',
+  calcTitle:'Calculadora',calcSub:'Consumo de verniz por lata — cálculo direto',
+  calcP:'A Calculadora responde: <strong>"Quanto verniz preciso por lata?"</strong>',
+  how:'Como usar',out:'Explicação dos resultados',
+  cS1:'<strong>Tipo de aplicação</strong> — Interno ou Externo.',
+  cS2:'<strong>Especificação do verniz</strong> — selecione da lista.',
+  cS3:'<strong>Dimensões</strong> — diâmetro e comprimento em mm.',
+  cS4:'Pressione <strong>CALCULAR</strong>.',
+  cO1L:'Peso por lata (g)',cO1D:'Gramas de verniz úmido/seco em uma lata.',
+  cO2L:'Peso por m² (g/m²)',cO2D:'Consumo normalizado independente do tamanho da lata.',
+  cO3L:'Espessura da camada (µm)',cO3D:'Espessura do filme úmido e seco em micrômetros.',
+  recTitle:'Recálculo',recSub:'Cálculo reverso a partir do peso úmido medido',
+  recP:'O Recálculo responde: <strong>"Pesei o verniz — que espessura apliquei?"</strong>',
+  recHint:'A linha de produção pesa cada lata antes e após o revestimento. Diferença de peso = verniz úmido aplicado.',
+  rS1:'Selecione <strong>Tipo de aplicação</strong> e <strong>Verniz</strong>.',
+  rS2:'Insira as <strong>Dimensões</strong>.',
+  rS3:'Insira o <strong>Peso úmido por lata</strong> em gramas.',
+  rS4:'Pressione <strong>RECALCULAR</strong>.',
+  recFC:'// Do peso úmido medido → espessura',
+  planTitle:'Planejamento',planSub:'Quantas latas posso revestir?',
+  planP:'O Planejamento responde: <strong>"Tenho X kg de verniz — quantas latas produzo?"</strong>',
+  pS1:'Selecione verniz e insira <strong>Quantidade disponível</strong> — kg, L ou g.',
+  pS2:'Insira <strong>Diâmetro</strong> e <strong>Comprimento</strong> em mm.',
+  pS3:'Pressione <strong>CALCULAR CAPACIDADE</strong>.',
+  pO1L:'Peças mín.',pO1D:'Pior caso — espessura máxima.',
+  pO2L:'Média',pO2D:'Ponto médio do intervalo de especificação.',
+  pO3L:'Peças máx.',pO3D:'Melhor caso — espessura mínima.',
+  planHint:'<strong>Entrada em litros</strong> — conversão via densidade úmida do verniz.',
+  catTitle:'Categorias de verniz',catSub:'Química dos revestimentos internos',
+  catP:'Os vernizes internos são agrupados pela base química.',
+  catExtLbl:'Tipos de verniz externo',
+  cEpoxy:'Sistemas epóxi. Excelente adesão e resistência química.',
+  cBpani:'BPA-NI — epóxi sem bisfenol A.',
+  cPam:'Revestimento de poliamida. Boa flexibilidade e adesão.',
+  cPamAlt:'Poliamida modificada com desempenho aprimorado.',
+  cPai:'Revestimento poliamida-imida. Alto desempenho, resistência térmica e química.',
+  cOthers:'Vernizes não padrão.',
+  cOver:'Verniz de acabamento sobre impressão.',
+  cClear:'Camada base transparente.',
+  cWhite:'Camada base branca opaca.',
+},
+es:{
+  back:'← Volver',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Ayuda',
+  tocSCV:'¿Qué es SCV?',tocCalc:'Calculadora',tocRecalc:'Recálculo',tocPlan:'Planificación',tocCats:'Categorías',
+  scvTitle:'SCV — Contenido en sólidos por volumen',scvSub:'El parámetro más importante del barniz',
+  scvP1:'El SCV indica <strong>qué fracción del barniz húmedo permanece en la lata</strong> como película seca.',
+  scvWL:'Barniz húmedo (aplicado)',scvWD:'El líquido pulverizado — resina + solventes volátiles que se evaporan.',
+  scvDL:'Película seca (lo que queda)',scvDD:'Tras el curado, solo queda la fracción sólida. SCV 36% → 36% se convierte en película seca.',
+  scvFC:'// Relación SCV',scvFEx:'// Ejemplo: SCV = 36%, espesor seco objetivo 8 µm',
+  scvHint:'SCV más bajo = más solvente = hay que aplicar más material húmedo.',
+  calcTitle:'Calculadora',calcSub:'Consumo de barniz por lata — cálculo directo',
+  calcP:'La Calculadora responde: <strong>"¿Cuánto barniz necesito por lata?"</strong>',
+  how:'Cómo usar',out:'Explicación de resultados',
+  cS1:'<strong>Tipo de aplicación</strong> — Interno o Externo.',
+  cS2:'<strong>Especificación del barniz</strong> — seleccionar de la lista.',
+  cS3:'<strong>Dimensiones</strong> — diámetro y longitud en mm.',
+  cS4:'Pulsar <strong>CALCULAR</strong>.',
+  cO1L:'Peso por lata (g)',cO1D:'Gramos de barniz húmedo/seco en una lata.',
+  cO2L:'Peso por m² (g/m²)',cO2D:'Consumo normalizado independiente del tamaño.',
+  cO3L:'Espesor de capa (µm)',cO3D:'Espesor del film húmedo y seco en micrómetros.',
+  recTitle:'Recálculo',recSub:'Cálculo inverso desde el peso húmedo medido',
+  recP:'El Recálculo responde: <strong>"Pesé el barniz — ¿qué espesor apliqué?"</strong>',
+  recHint:'La línea de producción pesa cada lata antes y después. Diferencia = barniz húmedo aplicado.',
+  rS1:'Seleccionar <strong>Tipo</strong> y <strong>Barniz</strong>.',
+  rS2:'Introducir <strong>Dimensiones</strong>.',
+  rS3:'Introducir <strong>Peso húmedo por lata</strong> en gramos.',
+  rS4:'Pulsar <strong>RECALCULAR</strong>.',
+  recFC:'// Del peso húmedo medido → espesor',
+  planTitle:'Planificación',planSub:'¿Cuántas latas puedo revestir?',
+  planP:'La Planificación responde: <strong>"Tengo X kg de barniz — ¿cuántas latas?"</strong>',
+  pS1:'Seleccionar barniz e introducir <strong>Cantidad disponible</strong> — kg, L o g.',
+  pS2:'Introducir <strong>Diámetro</strong> y <strong>Longitud</strong> en mm.',
+  pS3:'Pulsar <strong>CALCULAR CAPACIDAD</strong>.',
+  pO1L:'Piezas mín.',pO1D:'Peor caso — espesor máximo.',
+  pO2L:'Promedio',pO2D:'Punto medio del rango de especificación.',
+  pO3L:'Piezas máx.',pO3D:'Mejor caso — espesor mínimo.',
+  planHint:'<strong>Entrada en litros</strong> — conversión via densidad húmeda.',
+  catTitle:'Categorías de barniz',catSub:'Química de los recubrimientos internos',
+  catP:'Los barnices internos se agrupan por base química.',
+  catExtLbl:'Tipos de barniz externo',
+  cEpoxy:'Sistemas epoxi. Excelente adherencia y resistencia química.',
+  cBpani:'BPA-NI — epoxi sin bisfenol A.',
+  cPam:'Recubrimiento de poliamida. Buena flexibilidad y adherencia.',
+  cPamAlt:'Poliamida modificada con propiedades mejoradas.',
+  cPai:'Recubrimiento poliamida-imida. Alto rendimiento, resistencia térmica y química.',
+  cOthers:'Barnices no estándar.',
+  cOver:'Barniz de acabado sobre impresión.',
+  cClear:'Capa base transparente.',
+  cWhite:'Capa base blanca opaca.',
+},
+uk:{
+  back:'← Назад',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Довідка',
+  tocSCV:'Що таке SCV?',tocCalc:'Калькулятор',tocRecalc:'Перерахунок',tocPlan:'Планування',tocCats:'Категорії',
+  scvTitle:"SCV — Об'ємний вміст твердих речовин",scvSub:'Найважливіший параметр лаку',
+  scvP1:'SCV вказує, <strong>яка частина вологого лаку залишається на банці</strong> як суха плівка.',
+  scvWL:'Вологий лак (нанесений)',scvWD:'Рідина яку наносите — смола + леткі розчинники, що випаровуються.',
+  scvDL:'Суха плівка (що залишається)',scvDD:"Після твердіння залишається лише тверда фракція. SCV 36% → 36% стає сухою плівкою.",
+  scvFC:'// Співвідношення SCV',scvFEx:'// Приклад: SCV = 36%, ціль суха 8 мкм',
+  scvHint:'Нижчий SCV = більше розчинника = потрібно більше вологого матеріалу.',
+  calcTitle:'Калькулятор',calcSub:'Витрата лаку на банку — прямий розрахунок',
+  calcP:'Калькулятор відповідає: <strong>"Скільки лаку потрібно на одну банку?"</strong>',
+  how:'Як використовувати',out:'Пояснення результатів',
+  cS1:'<strong>Тип покриття</strong> — Внутрішній або Зовнішній.',
+  cS2:'<strong>Специфікація лаку</strong> — виберіть зі списку.',
+  cS3:'<strong>Розміри</strong> — діаметр і довжина в мм.',
+  cS4:'Натисніть <strong>РОЗРАХУВАТИ</strong>.',
+  cO1L:'Вага на банку (г)',cO1D:'Грами вологого/сухого лаку на одну банку.',
+  cO2L:'Вага на м² (г/м²)',cO2D:'Нормалізована витрата незалежно від розміру.',
+  cO3L:'Товщина шару (мкм)',cO3D:'Товщина вологої та сухої плівки.',
+  recTitle:'Перерахунок',recSub:'Зворотний розрахунок з виміряної вологої маси',
+  recP:'Перерахунок відповідає: <strong>"Я зважив вологий лак — яку товщину я наніс?"</strong>',
+  recHint:'Виробнича лінія зважує банку до і після нанесення. Різниця = нанесений вологий лак.',
+  rS1:'Виберіть <strong>Тип покриття</strong> та <strong>Лак</strong>.',
+  rS2:'Введіть <strong>Розміри</strong> банки.',
+  rS3:'Введіть <strong>Вологу масу на банку</strong> в грамах.',
+  rS4:'Натисніть <strong>ПЕРЕРАХУВАТИ</strong>.',
+  recFC:'// З виміряної вологої маси → товщина',
+  planTitle:'Планування',planSub:'Скільки банок можна покрити з наявного лаку?',
+  planP:'Планування відповідає: <strong>"У мене є X кг лаку — скільки банок?"</strong>',
+  pS1:'Виберіть лак і введіть <strong>Доступну кількість</strong> — кг, Л або г.',
+  pS2:'Введіть <strong>Діаметр</strong> та <strong>Довжину</strong> в мм.',
+  pS3:'Натисніть <strong>РОЗРАХУНОК ЄМНОСТІ</strong>.',
+  pO1L:'Мін. шт.',pO1D:'Найгірший випадок — максимальна товщина.',
+  pO2L:'Середнє',pO2D:'Середина діапазону специфікації.',
+  pO3L:'Макс. шт.',pO3D:'Найкращий випадок — мінімальна товщина.',
+  planHint:'<strong>Введення в літрах</strong> — конвертація через вологу густину лаку.',
+  catTitle:'Категорії лаків',catSub:'Хімія внутрішніх покриттів',
+  catP:'Внутрішні лаки групуються за хімічною основою.',
+  catExtLbl:'Типи зовнішніх лаків',
+  cEpoxy:'Епоксидні системи. Відмінна адгезія та хімічна стійкість.',
+  cBpani:'BPA-NI — епоксид без бісфенолу А.',
+  cPam:'Поліамідне покриття. Гарна гнучкість і адгезія.',
+  cPamAlt:'Модифіковані поліамідні системи.',
+  cPai:'Поліамід-імідне покриття. Висока стійкість до тепла та хімікатів.',
+  cOthers:'Нестандартні лаки.',
+  cOver:'Верхній лак поверх друку.',
+  cClear:'Прозора базова плівка.',
+  cWhite:'Непрозора біла основа.',
+},
+ar:{
+  back:'رجوع →',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — مساعدة',
+  tocSCV:'ما هو SCV؟',tocCalc:'الحاسبة',tocRecalc:'إعادة الحساب',tocPlan:'التخطيط',tocCats:'الفئات',
+  scvTitle:'SCV — محتوى المواد الصلبة بالحجم',scvSub:'أهم معامل للورنيش',
+  scvP1:'يشير SCV إلى <strong>نسبة الورنيش الرطب التي تبقى على العلبة</strong> كطبقة جافة.',
+  scvWL:'الورنيش الرطب (المطبق)',scvWD:'السائل المرشوش — راتنج + مذيبات متطايرة تتبخر أثناء الفرن.',
+  scvDL:'الطبقة الجافة (ما يبقى)',scvDD:'بعد التصليد تبقى فقط الجزء الصلب. SCV 36% → 36% يصبح طبقة جافة.',
+  scvFC:'// علاقة SCV',scvFEx:'// مثال: SCV = 36%، السماكة الجافة المستهدفة 8 µm',
+  scvHint:'SCV أقل = مذيب أكثر = تحتاج كمية أكبر من المادة الرطبة للوصول لنفس السماكة الجافة.',
+  calcTitle:'الحاسبة',calcSub:'استهلاك الورنيش لكل علبة — حساب مباشر',
+  calcP:'تجيب الحاسبة على: <strong>"كم من الورنيش أحتاج لكل علبة؟"</strong>',
+  how:'كيفية الاستخدام',out:'شرح النتائج',
+  cS1:'<strong>نوع التطبيق</strong> — داخلي أو خارجي.',
+  cS2:'<strong>مواصفات الورنيش</strong> — اختر من القائمة.',
+  cS3:'<strong>الأبعاد</strong> — القطر والطول بالمليمتر.',
+  cS4:'اضغط <strong>احسب</strong>.',
+  cO1L:'الوزن لكل علبة (غ)',cO1D:'غرامات من الورنيش الرطب/الجاف على علبة واحدة.',
+  cO2L:'الوزن لكل م² (غ/م²)',cO2D:'استهلاك موحد بغض النظر عن حجم العلبة.',
+  cO3L:'سماكة الطبقة (ميكرون)',cO3D:'سماكة الفيلم الرطب والجاف بالميكرومتر.',
+  recTitle:'إعادة الحساب',recSub:'حساب عكسي من الوزن الرطب المقاس',
+  recP:'تجيب إعادة الحساب على: <strong>"وزنت الورنيش — ما السماكة التي طبقتها؟"</strong>',
+  recHint:'خط الإنتاج يزن كل علبة قبل وبعد الطلاء. فرق الوزن = الورنيش الرطب المطبق.',
+  rS1:'اختر <strong>نوع التطبيق</strong> و<strong>الورنيش</strong>.',
+  rS2:'أدخل <strong>الأبعاد</strong>.',
+  rS3:'أدخل <strong>الوزن الرطب لكل علبة</strong> بالغرامات.',
+  rS4:'اضغط <strong>أعد الحساب</strong>.',
+  recFC:'// من الوزن الرطب المقاس → السماكة',
+  planTitle:'التخطيط',planSub:'كم علبة يمكنني طلاؤها؟',
+  planP:'يجيب التخطيط على: <strong>"لدي X كغ ورنيش — كم علبة أنتج؟"</strong>',
+  pS1:'اختر الورنيش وأدخل <strong>الكمية المتاحة</strong> — كغ أو لتر أو غ.',
+  pS2:'أدخل <strong>القطر</strong> و<strong>الطول</strong> بالمليمتر.',
+  pS3:'اضغط <strong>احسب الطاقة</strong>.',
+  pO1L:'الحد الأدنى',pO1D:'أسوأ حالة — أقصى سماكة.',
+  pO2L:'المتوسط',pO2D:'منتصف نطاق المواصفات.',
+  pO3L:'الحد الأقصى',pO3D:'أفضل حالة — أدنى سماكة.',
+  planHint:'<strong>الإدخال بالليتر</strong> — تحويل عبر الكثافة الرطبة للورنيش.',
+  catTitle:'فئات الورنيش',catSub:'كيمياء الطلاء الداخلي',
+  catP:'تُجمَّع الورنيشات الداخلية حسب قاعدتها الكيميائية.',
+  catExtLbl:'أنواع الورنيش الخارجي',
+  cEpoxy:'أنظمة إيبوكسي. التصاق وصمود كيميائي ممتازان.',
+  cBpani:'BPA-NI — إيبوكسي بدون بيسفينول-A.',
+  cPam:'طلاء بولياميد. مرونة والتصاق جيدان.',
+  cPamAlt:'بولياميد معدّل بأداء محسّن.',
+  cPai:'طلاء بولياميد-إيميد. أداء عالٍ، مقاومة حرارية وكيميائية.',
+  cOthers:'ورنيشات غير قياسية.',
+  cOver:'طلاء تشطيب فوق الطباعة.',
+  cClear:'طبقة أساسية شفافة.',
+  cWhite:'طبقة أساسية بيضاء معتمة.',
+},
+};
+
+let lang = localStorage.getItem('vcLang') || 'en';
+
+function buildSel(){
+  const s=document.getElementById('langSel');
+  s.innerHTML=LANGS.map(l=>`<option value="${l.c}"${l.c===lang?' selected':''}>${l.f} ${l.l}</option>`).join('');
+}
+
+function setLang(l){
+  lang=l;
+  localStorage.setItem('vcLang',l);
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  applyT();
+}
+
+function s(id,v){ const e=document.getElementById(id); if(e) e.innerHTML=v; }
+
+function applyT(){
+  const t=H[lang]||H.en;
+  document.getElementById('langSel').value=lang;
+  s('hBack',t.back);
+  s('hLogo',`${t.logoBold}<span style="font-weight:300">${t.logoLight}</span>${t.logoSuffix}`);
+  s('tocSCV',t.tocSCV); s('tocCalc',t.tocCalc); s('tocRecalc',t.tocRecalc);
+  s('tocPlan',t.tocPlan); s('tocCats',t.tocCats);
+  // SCV
+  s('scvTitle',t.scvTitle); s('scvSub',t.scvSub); s('scvP1',t.scvP1);
+  s('scvWL',t.scvWL); s('scvWD',t.scvWD); s('scvDL',t.scvDL); s('scvDD',t.scvDD);
+  s('scvFC',t.scvFC); s('scvFEx',t.scvFEx); s('scvHint',t.scvHint);
+  // Calculator
+  s('calcTitle',t.calcTitle); s('calcSub',t.calcSub); s('calcP',t.calcP);
+  s('calcHow',t.how); s('calcOut',t.out);
+  s('cS1',t.cS1); s('cS2',t.cS2); s('cS3',t.cS3); s('cS4',t.cS4);
+  s('cO1L',t.cO1L); s('cO1D',t.cO1D); s('cO2L',t.cO2L); s('cO2D',t.cO2D);
+  s('cO3L',t.cO3L); s('cO3D',t.cO3D);
+  // Recalculation
+  s('recTitle',t.recTitle); s('recSub',t.recSub); s('recP',t.recP);
+  s('recHint',t.recHint); s('recHow',t.how);
+  s('rS1',t.rS1); s('rS2',t.rS2); s('rS3',t.rS3); s('rS4',t.rS4);
+  s('recFC',t.recFC);
+  // Planning
+  s('planTitle',t.planTitle); s('planSub',t.planSub); s('planP',t.planP);
+  s('planHow',t.how);
+  s('pS1',t.pS1); s('pS2',t.pS2); s('pS3',t.pS3);
+  s('pO1L',t.pO1L); s('pO1D',t.pO1D); s('pO2L',t.pO2L); s('pO2D',t.pO2D);
+  s('pO3L',t.pO3L); s('pO3D',t.pO3D); s('planHint',t.planHint);
+  // Categories
+  s('catTitle',t.catTitle); s('catSub',t.catSub); s('catP',t.catP);
+  s('catExtLbl',t.catExtLbl);
+  s('cEpoxy',t.cEpoxy); s('cBpani',t.cBpani); s('cPam',t.cPam);
+  s('cPamAlt',t.cPamAlt); s('cPai',t.cPai); s('cOthers',t.cOthers);
+  s('cOver',t.cOver); s('cClear',t.cClear); s('cWhite',t.cWhite);
+}
+
+buildSel();
+applyT();
+</script>
+</body>
+</html>
