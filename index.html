@@ -54,12 +54,11 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 .logo{font-size:24px;font-weight:800;letter-spacing:-0.6px;white-space:nowrap;background:linear-gradient(135deg,#fff 10%,var(--accent-purple) 55%,var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .logo-light{font-weight:300}
 .header-right{display:flex;align-items:center;gap:8px}
-
-/* DATA BADGE */
-.data-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(45,226,255,0.08);border:1px solid rgba(45,226,255,0.18);border-radius:8px;padding:4px 9px;font-size:10px;font-weight:700;color:rgba(103,232,249,0.7);letter-spacing:0.4px;cursor:default;white-space:nowrap}
-.data-dot{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;animation:dotpulse 2s ease-in-out infinite;flex-shrink:0}
-.data-dot.offline{background:#fb7185;box-shadow:0 0 6px #fb7185}
-@keyframes dotpulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.logo-wrap{display:flex;flex-direction:column;gap:2px}
+.logo-version{font-size:10px;font-weight:600;letter-spacing:0.5px;color:var(--text-3);display:flex;align-items:center;gap:5px;padding-left:1px}
+.data-dot{width:5px;height:5px;border-radius:50%;background:#34d399;box-shadow:0 0 5px #34d399;animation:dotpulse 2s ease-in-out infinite;flex-shrink:0}
+.data-dot.offline{background:#fb7185;box-shadow:0 0 5px #fb7185}
+@keyframes dotpulse{0%,100%{opacity:1}50%{opacity:0.35}}
 
 .lang-select-wrap{position:relative}
 .lang-select{appearance:none;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:11px;color:white;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;padding:8px 28px 8px 11px;cursor:pointer;outline:none;transition:border-color 0.2s;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);min-width:128px}
@@ -163,12 +162,11 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 <div class="wrap" id="mainApp" style="display:none">
 
   <div class="header">
-    <div class="logo"><span class="logo-light">Varnish</span>Calc<span class="logo-light"> Pro</span></div>
+    <div class="logo-wrap">
+      <div class="logo"><span class="logo-light">Varnish</span>Calc<span class="logo-light"> Pro</span></div>
+      <div class="logo-version"><div class="data-dot" id="dataDot"></div><span id="dataVersion">—</span></div>
+    </div>
     <div class="header-right">
-      <div class="data-badge" id="dataBadge">
-        <div class="data-dot" id="dataDot"></div>
-        <span id="dataVersion">—</span>
-      </div>
       <div class="lang-select-wrap">
         <select class="lang-select" id="langSelect" onchange="setLang(this.value)"></select>
         <div class="lang-select-arrow">⌄</div>
