@@ -42,12 +42,10 @@ body { font-family:'DM Sans',-apple-system,sans-serif; background:#0a0a12; color
 
 .wrap { position:relative; z-index:1; max-width:600px; margin:0 auto; padding:22px 15px 56px; }
 
-/* HEADER */
 .header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
 .logo { font-size:20px; font-weight:800; letter-spacing:-0.5px; background:linear-gradient(135deg,#fff 10%,var(--accent-purple) 55%,var(--accent-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; white-space:nowrap; }
 .header-right { display:flex; align-items:center; gap:8px; }
 
-/* LANG SELECT — matches main app */
 .lang-wrap { position:relative; }
 .lang-sel {
   appearance:none; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
@@ -67,13 +65,11 @@ body { font-family:'DM Sans',-apple-system,sans-serif; background:#0a0a12; color
 }
 .back-btn:hover { background:rgba(255,255,255,0.12); color:white; }
 
-/* TOC */
 .toc { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:20px; }
 .toc-link { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10); border-radius:20px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--text-2); text-decoration:none; transition:all 0.2s; backdrop-filter:blur(10px); }
 .toc-link:hover { background:rgba(155,89,245,0.18); border-color:rgba(155,89,245,0.35); color:white; }
 .toc-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 
-/* SECTION CARD */
 .section {
   background:rgba(255,255,255,0.06); backdrop-filter:blur(32px) saturate(160%);
   -webkit-backdrop-filter:blur(32px) saturate(160%);
@@ -87,14 +83,12 @@ body { font-family:'DM Sans',-apple-system,sans-serif; background:#0a0a12; color
 .s-title { font-size:17px; font-weight:800; letter-spacing:-0.3px; }
 .s-sub { font-size:12px; color:var(--text-3); font-weight:500; margin-top:2px; }
 
-/* TEXT */
 p { font-size:14px; color:var(--text-2); line-height:1.65; margin-bottom:10px; }
 p:last-child { margin-bottom:0; }
 .mono { display:inline-block; padding:2px 7px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:5px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent-cyan); vertical-align:middle; }
 .divider { height:1px; background:rgba(255,255,255,0.07); margin:13px 0; }
 .micro { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-3); margin-bottom:10px; }
 
-/* FORMULA */
 .formula {
   background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.09);
   border-radius:12px; padding:13px 15px; margin:10px 0;
@@ -105,34 +99,37 @@ p:last-child { margin-bottom:0; }
 .fk { color:var(--accent-cyan); }
 .fv { color:#a78bfa; }
 
-/* INFO ROWS */
 .info-grid { display:flex; flex-direction:column; gap:7px; margin:10px 0; }
 .info-row { display:flex; align-items:flex-start; gap:11px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:11px; padding:10px 13px; }
 .i-ico { font-size:15px; flex-shrink:0; margin-top:1px; }
 .i-lbl { font-size:12px; font-weight:700; color:white; margin-bottom:2px; }
 .i-desc { font-size:13px; color:var(--text-2); line-height:1.5; }
 
-/* CATEGORIES */
 .cat-grid { display:flex; flex-direction:column; gap:6px; margin:10px 0; }
 .cat-row { display:flex; align-items:flex-start; gap:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:9px 12px; }
 .cat-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; margin-top:4px; }
 .cat-name { font-size:12px; font-weight:700; color:white; min-width:90px; font-family:'JetBrains Mono',monospace; }
 .cat-desc { font-size:12px; color:var(--text-2); line-height:1.45; }
 
-/* STEPS */
 .steps { display:flex; flex-direction:column; gap:9px; margin:10px 0; }
 .step { display:flex; gap:11px; align-items:flex-start; }
 .step-n { width:24px; height:24px; border-radius:50%; flex-shrink:0; background:rgba(155,89,245,0.2); border:1px solid rgba(155,89,245,0.35); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:var(--accent-purple); }
 .step-t { font-size:13px; color:var(--text-2); line-height:1.55; padding-top:3px; }
 .step-t strong { color:white; }
 
-/* HIGHLIGHT */
 .hl { display:flex; gap:10px; align-items:flex-start; background:rgba(155,89,245,0.10); border:1px solid rgba(155,89,245,0.22); border-radius:12px; padding:12px 13px; margin:10px 0; }
 .hl-ico { font-size:15px; flex-shrink:0; }
 .hl-txt { font-size:13px; color:rgba(255,255,255,0.78); line-height:1.55; }
 .hl-txt strong { color:white; }
 
-/* FOOTER */
+/* STATUS INDICATORS for PWA section */
+.status-row { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:11px; padding:10px 13px; margin-bottom:7px; }
+.status-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.status-dot.green  { background:#34d399; box-shadow:0 0 6px #34d399; }
+.status-dot.red    { background:#fb7185; box-shadow:0 0 6px #fb7185; }
+.status-dot.cyan   { background:#2de2ff; box-shadow:0 0 6px #2de2ff; }
+.status-info { flex:1; }
+
 .footer { text-align:center; font-size:12px; color:var(--text-3); padding-top:8px; }
 .footer a { color:rgba(255,255,255,0.55); font-weight:700; text-decoration:none; transition:color 0.2s; }
 .footer a:hover { color:rgba(255,255,255,0.88); }
@@ -158,7 +155,7 @@ p:last-child { margin-bottom:0; }
         <select class="lang-sel" id="langSel" onchange="setLang(this.value)"></select>
         <div class="lang-arrow">⌄</div>
       </div>
-      <a href="varnishcalc.html" class="back-btn" id="hBack">← Back</a>
+      <a href="index.html" class="back-btn" id="hBack">← Back</a>
     </div>
   </div>
 
@@ -168,6 +165,7 @@ p:last-child { margin-bottom:0; }
     <a href="#recalculation" class="toc-link"><span class="toc-dot" style="background:#2de2ff"></span><span id="tocRecalc"></span></a>
     <a href="#planning"      class="toc-link"><span class="toc-dot" style="background:#34d399"></span><span id="tocPlan"></span></a>
     <a href="#categories"    class="toc-link"><span class="toc-dot" style="background:#fb7185"></span><span id="tocCats"></span></a>
+    <a href="#pwa"           class="toc-link"><span class="toc-dot" style="background:#67e8f9"></span><span id="tocPwa"></span></a>
   </div>
 
   <!-- SCV -->
@@ -286,6 +284,42 @@ wet = 8 / 0.36 = <span class="fv">22.2 µm</span></div>
     </div>
   </div>
 
+  <!-- PWA / OFFLINE / VERSION — NEW SECTION -->
+  <div class="section" id="pwa">
+    <div class="section-head">
+      <div class="s-icon" style="background:rgba(103,232,249,0.12);">📲</div>
+      <div><div class="s-title" id="pwaTitle"></div><div class="s-sub" id="pwaSub"></div></div>
+    </div>
+    <p id="pwaP"></p>
+    <div class="divider"></div>
+    <div class="micro" id="pwaInstallLbl"></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div class="step-t" id="pwaiS1"></div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t" id="pwaiS2"></div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t" id="pwaiS3"></div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="micro" id="pwaStatusLbl"></div>
+    <div class="status-row">
+      <div class="status-dot green"></div>
+      <div class="status-info"><div class="i-lbl" id="pwaOnlineL"></div><div class="i-desc" id="pwaOnlineD"></div></div>
+    </div>
+    <div class="status-row">
+      <div class="status-dot red"></div>
+      <div class="status-info"><div class="i-lbl" id="pwaOfflineL"></div><div class="i-desc" id="pwaOfflineD"></div></div>
+    </div>
+    <div class="status-row">
+      <div class="status-dot cyan"></div>
+      <div class="status-info"><div class="i-lbl" id="pwaUpdateL"></div><div class="i-desc" id="pwaUpdateD"></div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="micro" id="pwaVersionLbl"></div>
+    <div class="info-grid">
+      <div class="info-row"><div class="i-ico">🗄️</div><div><div class="i-lbl" id="pwaVL"></div><div class="i-desc" id="pwaVD"></div></div></div>
+    </div>
+    <div class="hl"><div class="hl-ico">✈️</div><div class="hl-txt" id="pwaHint"></div></div>
+  </div>
+
   <div class="footer">
     <a href="https://kocandrle69.github.io/my-profile/" target="_blank" rel="noopener">Jan Kočandrle</a> · © 2026
   </div>
@@ -306,8 +340,8 @@ const LANGS=[
 
 const H={
 en:{
-  back:'← Back', logoBold:'VarnishCalc', logoLight:' Pro', logoSuffix:' — Help',
-  tocSCV:'What is SCV?',tocCalc:'Calculator',tocRecalc:'Recalculation',tocPlan:'Planning',tocCats:'Varnish Categories',
+  back:'← Back',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Help',
+  tocSCV:'What is SCV?',tocCalc:'Calculator',tocRecalc:'Recalculation',tocPlan:'Planning',tocCats:'Varnish Categories',tocPwa:'App & Offline',
   scvTitle:'SCV — Solid Content by Volume',scvSub:'The most important varnish parameter',
   scvP1:'SCV tells you <strong>what fraction of the wet varnish stays on the can</strong> as dry film after solvents evaporate.',
   scvWL:'Wet varnish (applied)',scvWD:'The liquid you spray — contains solid resin and volatile solvents that evaporate during curing.',
@@ -353,10 +387,24 @@ en:{
   cOver:'Top coat applied over printed decoration. Provides gloss, scratch resistance and print protection.',
   cClear:'Transparent base layer applied before printing to improve ink adhesion on bare metal.',
   cWhite:'Opaque white base coat providing a bright ground for full-colour printing. High pigment load.',
+  // PWA
+  pwaTitle:'App & Offline Mode',pwaSub:'Install on your phone · works without internet',
+  pwaP:'VarnishCalc Pro is a <strong>Progressive Web App (PWA)</strong> — it can be installed directly on your phone home screen and works fully offline once loaded.',
+  pwaInstallLbl:'Install on iPhone / Android',
+  pwaiS1:'Open the app in <strong>Safari</strong> (iPhone) or <strong>Chrome</strong> (Android).',
+  pwaiS2:'Tap the <strong>Share</strong> button (Safari) or the three-dot menu (Chrome).',
+  pwaiS3:'Select <strong>"Add to Home Screen"</strong> — the app opens like a native app, without the browser address bar.',
+  pwaStatusLbl:'Status indicators (under the logo)',
+  pwaOnlineL:'Green dot — online',pwaOnlineD:'The app fetched the latest varnish data from the server. You are seeing the most current version.',
+  pwaOfflineL:'Red dot — offline / cached',pwaOfflineD:'No internet connection. The app is using the last downloaded varnish data. All calculations work normally.',
+  pwaUpdateL:'Blue banner — new data available',pwaUpdateD:'A newer version of the varnish database has been detected. Tap the banner to reload and get the latest data.',
+  pwaVersionLbl:'Varnish data version',
+  pwaVL:'Version number (e.g. v1.0.0)',pwaVD:'The small version shown under the logo identifies which varnish database is loaded. When your administrator updates the varnish list, the version number will change.',
+  pwaHint:'<strong>All calculations run locally</strong> — no data is sent to any server. Your production data stays on your device.',
 },
 cs:{
   back:'← Zpět',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Nápověda',
-  tocSCV:'Co je SCV?',tocCalc:'Kalkulátor',tocRecalc:'Přepočet',tocPlan:'Plánování',tocCats:'Kategorie laků',
+  tocSCV:'Co je SCV?',tocCalc:'Kalkulátor',tocRecalc:'Přepočet',tocPlan:'Plánování',tocCats:'Kategorie laků',tocPwa:'Aplikace & Offline',
   scvTitle:'SCV — Objemový obsah pevných látek',scvSub:'Nejdůležitější parametr laku',
   scvP1:'SCV říká, <strong>jaká část mokrého laku zůstane na plechovce</strong> jako suchý film po odpaření rozpouštědel.',
   scvWL:'Mokrý lak (nanášený)',scvWD:'Kapalina, kterou nanášíte — obsahuje pryskyřici a těkavá rozpouštědla, která se odpaří při sušení.',
@@ -402,10 +450,23 @@ cs:{
   cOver:'Vrchní lak přes tisk. Lesk, odolnost vůči poškrábání.',
   cClear:'Transparentní základ pro přilnavost barvy.',
   cWhite:'Bílý krycí základ pro plnobarevný tisk.',
+  pwaTitle:'Aplikace & Offline režim',pwaSub:'Přidat na plochu · funguje bez internetu',
+  pwaP:'VarnishCalc Pro je <strong>Progressive Web App (PWA)</strong> — lze nainstalovat přímo na plochu telefonu a plně funguje offline.',
+  pwaInstallLbl:'Instalace na iPhone / Android',
+  pwaiS1:'Otevřete aplikaci v <strong>Safari</strong> (iPhone) nebo <strong>Chrome</strong> (Android).',
+  pwaiS2:'Klepněte na tlačítko <strong>Sdílet</strong> (Safari) nebo nabídku se třemi tečkami (Chrome).',
+  pwaiS3:'Vyberte <strong>„Přidat na plochu"</strong> — aplikace se otevírá jako nativní appka bez adresního řádku.',
+  pwaStatusLbl:'Stavové indikátory (pod logem)',
+  pwaOnlineL:'Zelená tečka — online',pwaOnlineD:'Aplikace stáhla nejnovější data laků ze serveru.',
+  pwaOfflineL:'Červená tečka — offline / cache',pwaOfflineD:'Žádné připojení k internetu. Aplikace používá naposledy stažená data. Výpočty fungují normálně.',
+  pwaUpdateL:'Modrý banner — dostupná nová data',pwaUpdateD:'Byla zjištěna novější verze databáze laků. Klepnutím na banner data aktualizujete.',
+  pwaVersionLbl:'Verze dat laků',
+  pwaVL:'Číslo verze (např. v1.0.0)',pwaVD:'Malá verze pod logem identifikuje načtenou databázi laků. Při aktualizaci se číslo změní.',
+  pwaHint:'<strong>Všechny výpočty běží lokálně</strong> — žádná data nejsou odesílána na server. Vaše výrobní data zůstávají v zařízení.',
 },
 sk:{
   back:'← Späť',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Pomoc',
-  tocSCV:'Čo je SCV?',tocCalc:'Kalkulačka',tocRecalc:'Prepočet',tocPlan:'Plánovanie',tocCats:'Kategórie lakov',
+  tocSCV:'Čo je SCV?',tocCalc:'Kalkulačka',tocRecalc:'Prepočet',tocPlan:'Plánovanie',tocCats:'Kategórie lakov',tocPwa:'Aplikácia & Offline',
   scvTitle:'SCV — Objemový obsah pevných látok',scvSub:'Najdôležitejší parameter laku',
   scvP1:'SCV hovorí, <strong>aká časť mokrého laku zostane na plechovke</strong> ako suchý film po odparení rozpúšťadiel.',
   scvWL:'Mokrý lak (nanášaný)',scvWD:'Kvapalina, ktorú nanášate — obsahuje živicu a prchavé rozpúšťadlá.',
@@ -417,7 +478,7 @@ sk:{
   how:'Ako používať',out:'Vysvetlenie výstupov',
   cS1:'<strong>Typ aplikácie</strong> — Vnútorný alebo Vonkajší.',
   cS2:'<strong>Špecifikácia laku</strong> — vyberte zo zoznamu.',
-  cS3:'<strong>Rozmery</strong> — priemer a dĺžka v mm. Vnútorný výpočet zahrňuje dno.',
+  cS3:'<strong>Rozmery</strong> — priemer a dĺžka v mm.',
   cS4:'Stlačte <strong>VYPOČÍTAŤ</strong>.',
   cO1L:'Hmotnosť na plechovku (g)',cO1D:'Gramy mokrého/suchého laku na jednu plechovku.',
   cO2L:'Hmotnosť na m² (g/m²)',cO2D:'Normalizovaná spotreba nezávislá od veľkosti.',
@@ -442,26 +503,33 @@ sk:{
   catTitle:'Kategórie lakov',catSub:'Prehľad chémie vnútorných náterov',
   catP:'Vnútorné laky sú zoskupené podľa chemickej bázy.',
   catExtLbl:'Typy vonkajších lakov',
-  cEpoxy:'Epoxidové systémy. Priľnavosť a chemická odolnosť.',
-  cBpani:'BPA-NI — epoxid bez bisfenolu A.',
-  cPam:'Polyamidový náter. Dobrá flexibilita a priľnavosť.',
-  cPamAlt:'Modifikované polyamidové systémy.',
-  cPai:'Polyamid-imidový náter. Vysoký výkon, tepelná a chemická odolnosť.',
-  cOthers:'Neštandardné laky.',
-  cOver:'Vrchný lak cez tlač.',
-  cClear:'Transparentná základná vrstva.',
-  cWhite:'Biela základná vrstva pre farebný tlač.',
+  cEpoxy:'Epoxidové systémy.',cBpani:'BPA-NI — epoxid bez bisfenolu A.',cPam:'Polyamidový náter.',
+  cPamAlt:'Modifikované polyamidové systémy.',cPai:'Polyamid-imidový náter.',cOthers:'Neštandardné laky.',
+  cOver:'Vrchný lak cez tlač.',cClear:'Transparentná základná vrstva.',cWhite:'Biela základná vrstva.',
+  pwaTitle:'Aplikácia & Offline režim',pwaSub:'Pridať na plochu · funguje bez internetu',
+  pwaP:'VarnishCalc Pro je <strong>Progressive Web App (PWA)</strong> — možno nainštalovať na plochu telefónu a funguje offline.',
+  pwaInstallLbl:'Inštalácia na iPhone / Android',
+  pwaiS1:'Otvorte aplikáciu v <strong>Safari</strong> (iPhone) alebo <strong>Chrome</strong> (Android).',
+  pwaiS2:'Klepnite na <strong>Zdieľať</strong> (Safari) alebo menu s tromi bodkami (Chrome).',
+  pwaiS3:'Vyberte <strong>„Pridať na plochu"</strong> — aplikácia sa otvára bez adresného riadku.',
+  pwaStatusLbl:'Stavové indikátory (pod logom)',
+  pwaOnlineL:'Zelená bodka — online',pwaOnlineD:'Aplikácia stiahla najnovšie dáta zo servera.',
+  pwaOfflineL:'Červená bodka — offline / cache',pwaOfflineD:'Bez pripojenia. Aplikácia používa naposledy stiahnuté dáta. Výpočty fungujú normálne.',
+  pwaUpdateL:'Modrý banner — nové dáta',pwaUpdateD:'Novšia verzia databázy lakov je k dispozícii. Klepnutím obnovíte.',
+  pwaVersionLbl:'Verzia dát lakov',
+  pwaVL:'Číslo verzie (napr. v1.0.0)',pwaVD:'Identifikuje načítanú databázu. Pri aktualizácii lakou sa číslo zmení.',
+  pwaHint:'<strong>Všetky výpočty bežia lokálne</strong> — žiadne dáta nie sú odosielané. Vaše výrobné dáta zostávajú v zariadení.',
 },
 fr:{
   back:'← Retour',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Aide',
-  tocSCV:"Qu'est-ce que SCV?",tocCalc:'Calculateur',tocRecalc:'Recalcul',tocPlan:'Planification',tocCats:'Catégories',
+  tocSCV:"Qu'est-ce que SCV?",tocCalc:'Calculateur',tocRecalc:'Recalcul',tocPlan:'Planification',tocCats:'Catégories',tocPwa:'Appli & Hors-ligne',
   scvTitle:'SCV — Teneur en solides par volume',scvSub:'Le paramètre le plus important du vernis',
   scvP1:'Le SCV indique <strong>quelle fraction du vernis humide reste sur la boîte</strong> en film sec après évaporation.',
-  scvWL:'Vernis humide (appliqué)',scvWD:'Le liquide pulvérisé — résine + solvants volatils qui s\'évaporent à la cuisson.',
+  scvWL:'Vernis humide (appliqué)',scvWD:'Le liquide pulvérisé — résine + solvants volatils.',
   scvDL:'Film sec (ce qui reste)',scvDD:'Après cuisson, seule la fraction solide reste. SCV 36% → 36% du volume humide devient film sec.',
   scvFC:'// Relation SCV',scvFEx:'// Exemple: SCV = 36%, épaisseur sèche cible 8 µm',
   scvHint:'SCV plus bas = plus de solvant = appliquer plus de matière humide pour la même épaisseur sèche.',
-  calcTitle:'Calculateur',calcSub:'Consommation de vernis par boîte — calcul direct',
+  calcTitle:'Calculateur',calcSub:'Consommation de vernis par boîte',
   calcP:'Le Calculateur répond: <strong>"Quelle quantité de vernis faut-il par boîte?"</strong>',
   how:'Comment utiliser',out:'Explication des résultats',
   cS1:"<strong>Type d'application</strong> — Interne ou Externe.",
@@ -470,10 +538,10 @@ fr:{
   cS4:'Appuyer sur <strong>CALCULER</strong>.',
   cO1L:'Poids par boîte (g)',cO1D:'Grammes de vernis humide/sec sur une boîte.',
   cO2L:'Poids par m² (g/m²)',cO2D:'Consommation normalisée indépendante de la taille.',
-  cO3L:'Épaisseur de couche (µm)',cO3D:'Épaisseur du film humide et sec en micromètres.',
+  cO3L:'Épaisseur de couche (µm)',cO3D:'Épaisseur du film humide et sec.',
   recTitle:'Recalcul',recSub:'Calcul inverse depuis le poids humide mesuré',
   recP:'Le Recalcul répond: <strong>"J\'ai pesé le vernis — quelle épaisseur ai-je appliquée?"</strong>',
-  recHint:'Usage typique: la ligne de production pèse chaque boîte avant et après. La différence = vernis humide appliqué.',
+  recHint:'La ligne pèse chaque boîte avant et après. La différence = vernis humide appliqué.',
   rS1:'Sélectionner <strong>Type</strong> et <strong>Vernis</strong>.',
   rS2:'Entrer les <strong>Dimensions</strong>.',
   rS3:'Entrer le <strong>Poids humide par boîte</strong> en grammes.',
@@ -485,32 +553,39 @@ fr:{
   pS2:'Entrer <strong>Diamètre</strong> et <strong>Longueur</strong> en mm.',
   pS3:'Appuyer sur <strong>CALCULER LA CAPACITÉ</strong>.',
   pO1L:'Pièces min.',pO1D:'Pire cas — épaisseur maximale.',
-  pO2L:'Moyenne',pO2D:'Point médian de la plage de spécification.',
+  pO2L:'Moyenne',pO2D:'Point médian.',
   pO3L:'Pièces max.',pO3D:'Meilleur cas — épaisseur minimale.',
   planHint:'<strong>Saisie en litres</strong> — conversion via densité humide du vernis.',
   catTitle:'Catégories de vernis',catSub:'Chimie des revêtements internes',
   catP:'Les vernis internes sont regroupés par base chimique.',
   catExtLbl:'Types de vernis externes',
-  cEpoxy:'Systèmes époxy. Excellente adhérence et résistance chimique.',
-  cBpani:'BPA-NI — époxy sans bisphénol A.',
-  cPam:'Revêtement polyamide. Bonne flexibilité et adhérence.',
-  cPamAlt:'Polyamide modifié aux performances améliorées.',
-  cPai:'Revêtement polyamide-imide. Haute performance, résistance thermique et chimique.',
-  cOthers:'Vernis non standards.',
-  cOver:'Vernis de finition sur impression. Brillance, résistance aux rayures.',
-  cClear:'Couche de fond transparente.',
-  cWhite:'Couche de fond blanche opaque.',
+  cEpoxy:'Systèmes époxy.',cBpani:'BPA-NI — époxy sans bisphénol A.',cPam:'Revêtement polyamide.',
+  cPamAlt:'Polyamide modifié.',cPai:'Polyamide-imide. Haute performance.',cOthers:'Vernis non standards.',
+  cOver:'Vernis de finition sur impression.',cClear:'Couche de fond transparente.',cWhite:'Couche de fond blanche opaque.',
+  pwaTitle:'Appli & Mode hors-ligne',pwaSub:'Installer sur l\'écran d\'accueil · fonctionne sans internet',
+  pwaP:'VarnishCalc Pro est une <strong>Progressive Web App (PWA)</strong> — elle peut être installée sur l\'écran d\'accueil et fonctionne hors-ligne.',
+  pwaInstallLbl:'Installation sur iPhone / Android',
+  pwaiS1:'Ouvrir l\'application dans <strong>Safari</strong> (iPhone) ou <strong>Chrome</strong> (Android).',
+  pwaiS2:'Appuyer sur le bouton <strong>Partager</strong> (Safari) ou le menu à trois points (Chrome).',
+  pwaiS3:'Sélectionner <strong>« Sur l\'écran d\'accueil »</strong> — l\'app s\'ouvre sans barre d\'adresse.',
+  pwaStatusLbl:'Indicateurs de statut (sous le logo)',
+  pwaOnlineL:'Point vert — en ligne',pwaOnlineD:'Les dernières données de vernis ont été téléchargées.',
+  pwaOfflineL:'Point rouge — hors-ligne / cache',pwaOfflineD:'Pas de connexion. Utilisation des dernières données mises en cache. Les calculs fonctionnent normalement.',
+  pwaUpdateL:'Bannière bleue — nouvelles données',pwaUpdateD:'Une version plus récente de la base de données est disponible. Appuyer pour recharger.',
+  pwaVersionLbl:'Version des données de vernis',
+  pwaVL:'Numéro de version (ex. v1.0.0)',pwaVD:'Identifie la base de données chargée. Change lors de la mise à jour.',
+  pwaHint:'<strong>Tous les calculs s\'exécutent localement</strong> — aucune donnée n\'est envoyée à un serveur.',
 },
 nl:{
   back:'← Terug',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Help',
-  tocSCV:'Wat is SCV?',tocCalc:'Calculator',tocRecalc:'Herberekening',tocPlan:'Planning',tocCats:'Categorieën',
+  tocSCV:'Wat is SCV?',tocCalc:'Calculator',tocRecalc:'Herberekening',tocPlan:'Planning',tocCats:'Categorieën',tocPwa:'App & Offline',
   scvTitle:'SCV — Vaste stof gehalte per volume',scvSub:'De belangrijkste vernis parameter',
   scvP1:'SCV geeft aan <strong>welk deel van het natte vernis op het blik blijft</strong> als droge film.',
-  scvWL:'Nat vernis (aangebracht)',scvWD:'De vloeistof die u spuit — hars + vluchtige oplosmiddelen die verdampen.',
-  scvDL:'Droge film (wat overblijft)',scvDD:'Na uitharden blijft alleen de vaste fractie over. SCV 36% → 36% wordt droge film.',
+  scvWL:'Nat vernis (aangebracht)',scvWD:'De vloeistof — hars + vluchtige oplosmiddelen.',
+  scvDL:'Droge film (wat overblijft)',scvDD:'Na uitharden blijft alleen de vaste fractie. SCV 36% → 36% wordt droge film.',
   scvFC:'// SCV relatie',scvFEx:'// Voorbeeld: SCV = 36%, doeldikte droog 8 µm',
-  scvHint:'Lager SCV = meer oplosmiddel = meer nat materiaal nodig voor dezelfde droge dikte.',
-  calcTitle:'Calculator',calcSub:'Vernis verbruik per blik — directe berekening',
+  scvHint:'Lager SCV = meer oplosmiddel = meer nat materiaal nodig.',
+  calcTitle:'Calculator',calcSub:'Vernis verbruik per blik',
   calcP:'De Calculator beantwoordt: <strong>"Hoeveel vernis heb ik per blik nodig?"</strong>',
   how:'Hoe te gebruiken',out:'Uitleg van de resultaten',
   cS1:'<strong>Toepassingstype</strong> — Intern of Extern.',
@@ -518,48 +593,55 @@ nl:{
   cS3:'<strong>Afmetingen</strong> — diameter en lengte in mm.',
   cS4:'Druk op <strong>BEREKENEN</strong>.',
   cO1L:'Gewicht per blik (g)',cO1D:'Grammen nat/droog vernis per blik.',
-  cO2L:'Gewicht per m² (g/m²)',cO2D:'Genormaliseerd verbruik onafhankelijk van blikgrootte.',
-  cO3L:'Laagdikte (µm)',cO3D:'Natte en droge filmdikte in micrometers.',
+  cO2L:'Gewicht per m² (g/m²)',cO2D:'Genormaliseerd verbruik.',
+  cO3L:'Laagdikte (µm)',cO3D:'Natte en droge filmdikte.',
   recTitle:'Herberekening',recSub:'Terugrekenen vanuit gemeten nat gewicht',
-  recP:'Herberekening beantwoordt: <strong>"Ik heb het natte vernis gewogen — welke dikte heb ik aangebracht?"</strong>',
-  recHint:'De productielijn weegt elk blik voor en na het coaten. Gewichtsverschil = aangebracht nat vernis.',
-  rS1:'Selecteer <strong>Toepassingstype</strong> en <strong>Vernis</strong>.',
-  rS2:'Voer de <strong>Afmetingen</strong> in.',
-  rS3:'Voer het <strong>Nat gewicht per blik</strong> in grammen in.',
+  recP:'Herberekening: <strong>"Ik heb gewogen — welke dikte heb ik aangebracht?"</strong>',
+  recHint:'Gewichtsverschil voor/na = aangebracht nat vernis.',
+  rS1:'Selecteer <strong>Type</strong> en <strong>Vernis</strong>.',
+  rS2:'Voer <strong>Afmetingen</strong> in.',
+  rS3:'Voer <strong>Nat gewicht per blik</strong> in grammen in.',
   rS4:'Druk op <strong>HERBEREKENEN</strong>.',
   recFC:'// Van gemeten nat gewicht → dikte',
   planTitle:'Planning',planSub:'Hoeveel blikken kan ik coaten?',
-  planP:'Planning beantwoordt: <strong>"Ik heb X kg vernis — hoeveel blikken?"</strong>',
+  planP:'Planning: <strong>"Ik heb X kg vernis — hoeveel blikken?"</strong>',
   pS1:'Selecteer vernis en voer <strong>Beschikbare hoeveelheid</strong> in — kg, L of g.',
   pS2:'Voer <strong>Diameter</strong> en <strong>Lengte</strong> in mm in.',
   pS3:'Druk op <strong>CAPACITEIT BEREKENEN</strong>.',
-  pO1L:'Min. stuks',pO1D:'Slechtste geval — maximale laagdikte.',
-  pO2L:'Gemiddeld',pO2D:'Middelpunt van het specificatiebereik.',
-  pO3L:'Max. stuks',pO3D:'Beste geval — minimale laagdikte.',
-  planHint:'<strong>Invoer in liters</strong> — omrekening via natte dichtheid van het vernis.',
+  pO1L:'Min. stuks',pO1D:'Maximale laagdikte.',
+  pO2L:'Gemiddeld',pO2D:'Middelpunt.',
+  pO3L:'Max. stuks',pO3D:'Minimale laagdikte.',
+  planHint:'<strong>Liters</strong> — omrekening via natte dichtheid.',
   catTitle:'Vernis categorieën',catSub:'Chemie van interne coatings',
-  catP:'Interne vernissen zijn gegroepeerd per chemische basis.',
+  catP:'Interne vernissen gegroepeerd per chemische basis.',
   catExtLbl:'Externe vernis types',
-  cEpoxy:'Epoxy-systemen. Uitstekende hechting en chemische bestendigheid.',
-  cBpani:'BPA-NI — epoxy zonder bisfenol A.',
-  cPam:'Polyamide coating. Goede flexibiliteit en hechting.',
-  cPamAlt:'Gemodificeerde polyamide systemen.',
-  cPai:'Polyamide-imide coating. Hoge prestaties, warmte- en chemische bestendigheid.',
-  cOthers:'Niet-standaard vernissen.',
-  cOver:'Toplaag over bedrukking. Glans, krasbestendigheid.',
-  cClear:'Transparante basislaag voor inktadhesie.',
-  cWhite:'Dekkende witte basislaag voor volkleurig drukwerk.',
+  cEpoxy:'Epoxy-systemen.',cBpani:'BPA-NI — zonder bisfenol A.',cPam:'Polyamide coating.',
+  cPamAlt:'Gemodificeerde polyamide.',cPai:'Polyamide-imide. Hoge prestaties.',cOthers:'Niet-standaard.',
+  cOver:'Toplaag over bedrukking.',cClear:'Transparante basislaag.',cWhite:'Dekkende witte basislaag.',
+  pwaTitle:'App & Offline modus',pwaSub:'Installeer op je startscherm · werkt zonder internet',
+  pwaP:'VarnishCalc Pro is een <strong>Progressive Web App (PWA)</strong> — installeerbaar op het startscherm, werkt offline.',
+  pwaInstallLbl:'Installatie op iPhone / Android',
+  pwaiS1:'Open de app in <strong>Safari</strong> (iPhone) of <strong>Chrome</strong> (Android).',
+  pwaiS2:'Tik op <strong>Delen</strong> (Safari) of het driepuntenmenu (Chrome).',
+  pwaiS3:'Selecteer <strong>"Zet op beginscherm"</strong> — opent zonder adresbalk.',
+  pwaStatusLbl:'Statusindicatoren (onder het logo)',
+  pwaOnlineL:'Groene stip — online',pwaOnlineD:'Nieuwste vernis data geladen.',
+  pwaOfflineL:'Rode stip — offline / cache',pwaOfflineD:'Geen verbinding. Gecachede data gebruikt. Berekeningen werken normaal.',
+  pwaUpdateL:'Blauwe banner — nieuwe data',pwaUpdateD:'Nieuwere versie beschikbaar. Tik om te herladen.',
+  pwaVersionLbl:'Vernis data versie',
+  pwaVL:'Versienummer (bijv. v1.0.0)',pwaVD:'Identificeert de geladen database. Wijzigt bij update.',
+  pwaHint:'<strong>Alle berekeningen lopen lokaal</strong> — geen data wordt verstuurd.',
 },
 pt:{
   back:'← Voltar',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Ajuda',
-  tocSCV:'O que é SCV?',tocCalc:'Calculadora',tocRecalc:'Recálculo',tocPlan:'Planejamento',tocCats:'Categorias',
+  tocSCV:'O que é SCV?',tocCalc:'Calculadora',tocRecalc:'Recálculo',tocPlan:'Planejamento',tocCats:'Categorias',tocPwa:'App & Offline',
   scvTitle:'SCV — Teor de sólidos por volume',scvSub:'O parâmetro mais importante do verniz',
   scvP1:'O SCV indica <strong>qual fração do verniz úmido permanece na lata</strong> como filme seco.',
-  scvWL:'Verniz úmido (aplicado)',scvWD:'O líquido pulverizado — resina + solventes voláteis que evaporam durante a cura.',
-  scvDL:'Filme seco (o que resta)',scvDD:'Após a cura, apenas a fração sólida permanece. SCV 36% → 36% do volume úmido vira filme seco.',
+  scvWL:'Verniz úmido (aplicado)',scvWD:'O líquido pulverizado — resina + solventes voláteis.',
+  scvDL:'Filme seco (o que resta)',scvDD:'Após a cura, apenas a fração sólida permanece. SCV 36% → 36% vira filme seco.',
   scvFC:'// Relação SCV',scvFEx:'// Exemplo: SCV = 36%, espessura seca alvo 8 µm',
-  scvHint:'SCV menor = mais solvente = mais material úmido necessário para a mesma espessura seca.',
-  calcTitle:'Calculadora',calcSub:'Consumo de verniz por lata — cálculo direto',
+  scvHint:'SCV menor = mais solvente = mais material úmido necessário.',
+  calcTitle:'Calculadora',calcSub:'Consumo de verniz por lata',
   calcP:'A Calculadora responde: <strong>"Quanto verniz preciso por lata?"</strong>',
   how:'Como usar',out:'Explicação dos resultados',
   cS1:'<strong>Tipo de aplicação</strong> — Interno ou Externo.',
@@ -567,184 +649,204 @@ pt:{
   cS3:'<strong>Dimensões</strong> — diâmetro e comprimento em mm.',
   cS4:'Pressione <strong>CALCULAR</strong>.',
   cO1L:'Peso por lata (g)',cO1D:'Gramas de verniz úmido/seco em uma lata.',
-  cO2L:'Peso por m² (g/m²)',cO2D:'Consumo normalizado independente do tamanho da lata.',
-  cO3L:'Espessura da camada (µm)',cO3D:'Espessura do filme úmido e seco em micrômetros.',
+  cO2L:'Peso por m² (g/m²)',cO2D:'Consumo normalizado.',
+  cO3L:'Espessura da camada (µm)',cO3D:'Espessura do filme úmido e seco.',
   recTitle:'Recálculo',recSub:'Cálculo reverso a partir do peso úmido medido',
   recP:'O Recálculo responde: <strong>"Pesei o verniz — que espessura apliquei?"</strong>',
-  recHint:'A linha de produção pesa cada lata antes e após o revestimento. Diferença de peso = verniz úmido aplicado.',
-  rS1:'Selecione <strong>Tipo de aplicação</strong> e <strong>Verniz</strong>.',
+  recHint:'A linha pesa cada lata antes e após. Diferença = verniz úmido aplicado.',
+  rS1:'Selecione <strong>Tipo</strong> e <strong>Verniz</strong>.',
   rS2:'Insira as <strong>Dimensões</strong>.',
   rS3:'Insira o <strong>Peso úmido por lata</strong> em gramas.',
   rS4:'Pressione <strong>RECALCULAR</strong>.',
   recFC:'// Do peso úmido medido → espessura',
   planTitle:'Planejamento',planSub:'Quantas latas posso revestir?',
-  planP:'O Planejamento responde: <strong>"Tenho X kg de verniz — quantas latas produzo?"</strong>',
+  planP:'O Planejamento responde: <strong>"Tenho X kg — quantas latas?"</strong>',
   pS1:'Selecione verniz e insira <strong>Quantidade disponível</strong> — kg, L ou g.',
-  pS2:'Insira <strong>Diâmetro</strong> e <strong>Comprimento</strong> em mm.',
+  pS2:'Insira <strong>Diâmetro</strong> e <strong>Comprimento</strong>.',
   pS3:'Pressione <strong>CALCULAR CAPACIDADE</strong>.',
-  pO1L:'Peças mín.',pO1D:'Pior caso — espessura máxima.',
-  pO2L:'Média',pO2D:'Ponto médio do intervalo de especificação.',
-  pO3L:'Peças máx.',pO3D:'Melhor caso — espessura mínima.',
-  planHint:'<strong>Entrada em litros</strong> — conversão via densidade úmida do verniz.',
+  pO1L:'Peças mín.',pO1D:'Pior caso.',pO2L:'Média',pO2D:'Ponto médio.',pO3L:'Peças máx.',pO3D:'Melhor caso.',
+  planHint:'<strong>Litros</strong> — conversão via densidade úmida.',
   catTitle:'Categorias de verniz',catSub:'Química dos revestimentos internos',
   catP:'Os vernizes internos são agrupados pela base química.',
   catExtLbl:'Tipos de verniz externo',
-  cEpoxy:'Sistemas epóxi. Excelente adesão e resistência química.',
-  cBpani:'BPA-NI — epóxi sem bisfenol A.',
-  cPam:'Revestimento de poliamida. Boa flexibilidade e adesão.',
-  cPamAlt:'Poliamida modificada com desempenho aprimorado.',
-  cPai:'Revestimento poliamida-imida. Alto desempenho, resistência térmica e química.',
-  cOthers:'Vernizes não padrão.',
-  cOver:'Verniz de acabamento sobre impressão.',
-  cClear:'Camada base transparente.',
-  cWhite:'Camada base branca opaca.',
+  cEpoxy:'Sistemas epóxi.',cBpani:'BPA-NI — sem bisfenol A.',cPam:'Poliamida.',
+  cPamAlt:'Poliamida modificada.',cPai:'Poliamida-imida.',cOthers:'Não padrão.',
+  cOver:'Verniz de acabamento.',cClear:'Camada base transparente.',cWhite:'Base branca opaca.',
+  pwaTitle:'App & Modo Offline',pwaSub:'Instalar na tela inicial · funciona sem internet',
+  pwaP:'VarnishCalc Pro é um <strong>Progressive Web App (PWA)</strong> — instalável na tela inicial, funciona offline.',
+  pwaInstallLbl:'Instalação no iPhone / Android',
+  pwaiS1:'Abra o app no <strong>Safari</strong> (iPhone) ou <strong>Chrome</strong> (Android).',
+  pwaiS2:'Toque em <strong>Compartilhar</strong> (Safari) ou no menu de três pontos (Chrome).',
+  pwaiS3:'Selecione <strong>"Adicionar à Tela Inicial"</strong> — abre sem barra de endereço.',
+  pwaStatusLbl:'Indicadores de status (abaixo do logo)',
+  pwaOnlineL:'Ponto verde — online',pwaOnlineD:'Dados de verniz mais recentes carregados.',
+  pwaOfflineL:'Ponto vermelho — offline / cache',pwaOfflineD:'Sem conexão. Usando dados em cache. Cálculos funcionam normalmente.',
+  pwaUpdateL:'Banner azul — novos dados',pwaUpdateD:'Nova versão do banco de dados disponível. Toque para recarregar.',
+  pwaVersionLbl:'Versão dos dados de verniz',
+  pwaVL:'Número de versão (ex. v1.0.0)',pwaVD:'Identifica o banco de dados carregado.',
+  pwaHint:'<strong>Todos os cálculos são locais</strong> — nenhum dado é enviado a servidores.',
 },
 es:{
   back:'← Volver',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Ayuda',
-  tocSCV:'¿Qué es SCV?',tocCalc:'Calculadora',tocRecalc:'Recálculo',tocPlan:'Planificación',tocCats:'Categorías',
+  tocSCV:'¿Qué es SCV?',tocCalc:'Calculadora',tocRecalc:'Recálculo',tocPlan:'Planificación',tocCats:'Categorías',tocPwa:'App & Sin conexión',
   scvTitle:'SCV — Contenido en sólidos por volumen',scvSub:'El parámetro más importante del barniz',
   scvP1:'El SCV indica <strong>qué fracción del barniz húmedo permanece en la lata</strong> como película seca.',
-  scvWL:'Barniz húmedo (aplicado)',scvWD:'El líquido pulverizado — resina + solventes volátiles que se evaporan.',
-  scvDL:'Película seca (lo que queda)',scvDD:'Tras el curado, solo queda la fracción sólida. SCV 36% → 36% se convierte en película seca.',
+  scvWL:'Barniz húmedo (aplicado)',scvWD:'Resina + solventes volátiles.',
+  scvDL:'Película seca (lo que queda)',scvDD:'SCV 36% → 36% se convierte en película seca.',
   scvFC:'// Relación SCV',scvFEx:'// Ejemplo: SCV = 36%, espesor seco objetivo 8 µm',
-  scvHint:'SCV más bajo = más solvente = hay que aplicar más material húmedo.',
-  calcTitle:'Calculadora',calcSub:'Consumo de barniz por lata — cálculo directo',
+  scvHint:'SCV más bajo = más solvente = más material húmedo necesario.',
+  calcTitle:'Calculadora',calcSub:'Consumo de barniz por lata',
   calcP:'La Calculadora responde: <strong>"¿Cuánto barniz necesito por lata?"</strong>',
   how:'Cómo usar',out:'Explicación de resultados',
   cS1:'<strong>Tipo de aplicación</strong> — Interno o Externo.',
-  cS2:'<strong>Especificación del barniz</strong> — seleccionar de la lista.',
+  cS2:'<strong>Especificación del barniz</strong>.',
   cS3:'<strong>Dimensiones</strong> — diámetro y longitud en mm.',
   cS4:'Pulsar <strong>CALCULAR</strong>.',
-  cO1L:'Peso por lata (g)',cO1D:'Gramos de barniz húmedo/seco en una lata.',
-  cO2L:'Peso por m² (g/m²)',cO2D:'Consumo normalizado independiente del tamaño.',
-  cO3L:'Espesor de capa (µm)',cO3D:'Espesor del film húmedo y seco en micrómetros.',
+  cO1L:'Peso por lata (g)',cO1D:'Gramos de barniz húmedo/seco.',
+  cO2L:'Peso por m² (g/m²)',cO2D:'Consumo normalizado.',
+  cO3L:'Espesor de capa (µm)',cO3D:'Film húmedo y seco.',
   recTitle:'Recálculo',recSub:'Cálculo inverso desde el peso húmedo medido',
   recP:'El Recálculo responde: <strong>"Pesé el barniz — ¿qué espesor apliqué?"</strong>',
-  recHint:'La línea de producción pesa cada lata antes y después. Diferencia = barniz húmedo aplicado.',
+  recHint:'Diferencia de peso antes/después = barniz húmedo aplicado.',
   rS1:'Seleccionar <strong>Tipo</strong> y <strong>Barniz</strong>.',
   rS2:'Introducir <strong>Dimensiones</strong>.',
   rS3:'Introducir <strong>Peso húmedo por lata</strong> en gramos.',
   rS4:'Pulsar <strong>RECALCULAR</strong>.',
   recFC:'// Del peso húmedo medido → espesor',
   planTitle:'Planificación',planSub:'¿Cuántas latas puedo revestir?',
-  planP:'La Planificación responde: <strong>"Tengo X kg de barniz — ¿cuántas latas?"</strong>',
+  planP:'La Planificación responde: <strong>"Tengo X kg — ¿cuántas latas?"</strong>',
   pS1:'Seleccionar barniz e introducir <strong>Cantidad disponible</strong> — kg, L o g.',
-  pS2:'Introducir <strong>Diámetro</strong> y <strong>Longitud</strong> en mm.',
+  pS2:'Introducir <strong>Diámetro</strong> y <strong>Longitud</strong>.',
   pS3:'Pulsar <strong>CALCULAR CAPACIDAD</strong>.',
-  pO1L:'Piezas mín.',pO1D:'Peor caso — espesor máximo.',
-  pO2L:'Promedio',pO2D:'Punto medio del rango de especificación.',
-  pO3L:'Piezas máx.',pO3D:'Mejor caso — espesor mínimo.',
-  planHint:'<strong>Entrada en litros</strong> — conversión via densidad húmeda.',
+  pO1L:'Piezas mín.',pO1D:'Peor caso.',pO2L:'Promedio',pO2D:'Punto medio.',pO3L:'Piezas máx.',pO3D:'Mejor caso.',
+  planHint:'<strong>Litros</strong> — conversión via densidad húmeda.',
   catTitle:'Categorías de barniz',catSub:'Química de los recubrimientos internos',
   catP:'Los barnices internos se agrupan por base química.',
   catExtLbl:'Tipos de barniz externo',
-  cEpoxy:'Sistemas epoxi. Excelente adherencia y resistencia química.',
-  cBpani:'BPA-NI — epoxi sin bisfenol A.',
-  cPam:'Recubrimiento de poliamida. Buena flexibilidad y adherencia.',
-  cPamAlt:'Poliamida modificada con propiedades mejoradas.',
-  cPai:'Recubrimiento poliamida-imida. Alto rendimiento, resistencia térmica y química.',
-  cOthers:'Barnices no estándar.',
-  cOver:'Barniz de acabado sobre impresión.',
-  cClear:'Capa base transparente.',
-  cWhite:'Capa base blanca opaca.',
+  cEpoxy:'Sistemas epoxi.',cBpani:'BPA-NI — sin bisfenol A.',cPam:'Poliamida.',
+  cPamAlt:'Poliamida modificada.',cPai:'Poliamida-imida.',cOthers:'No estándar.',
+  cOver:'Barniz de acabado.',cClear:'Capa base transparente.',cWhite:'Base blanca opaca.',
+  pwaTitle:'App & Modo sin conexión',pwaSub:'Instalar en pantalla de inicio · funciona sin internet',
+  pwaP:'VarnishCalc Pro es una <strong>Progressive Web App (PWA)</strong> — instalable en la pantalla de inicio, funciona sin conexión.',
+  pwaInstallLbl:'Instalación en iPhone / Android',
+  pwaiS1:'Abrir la app en <strong>Safari</strong> (iPhone) o <strong>Chrome</strong> (Android).',
+  pwaiS2:'Pulsar <strong>Compartir</strong> (Safari) o el menú de tres puntos (Chrome).',
+  pwaiS3:'Seleccionar <strong>"Añadir a pantalla de inicio"</strong>.',
+  pwaStatusLbl:'Indicadores de estado (bajo el logo)',
+  pwaOnlineL:'Punto verde — en línea',pwaOnlineD:'Datos de barniz más recientes cargados.',
+  pwaOfflineL:'Punto rojo — sin conexión / caché',pwaOfflineD:'Sin internet. Usando datos en caché. Los cálculos funcionan normalmente.',
+  pwaUpdateL:'Banner azul — nuevos datos',pwaUpdateD:'Nueva versión disponible. Pulsar para recargar.',
+  pwaVersionLbl:'Versión de datos de barniz',
+  pwaVL:'Número de versión (ej. v1.0.0)',pwaVD:'Identifica la base de datos cargada.',
+  pwaHint:'<strong>Todos los cálculos son locales</strong> — ningún dato se envía a servidores.',
 },
 uk:{
   back:'← Назад',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — Довідка',
-  tocSCV:'Що таке SCV?',tocCalc:'Калькулятор',tocRecalc:'Перерахунок',tocPlan:'Планування',tocCats:'Категорії',
+  tocSCV:'Що таке SCV?',tocCalc:'Калькулятор',tocRecalc:'Перерахунок',tocPlan:'Планування',tocCats:'Категорії',tocPwa:'Застосунок & Офлайн',
   scvTitle:"SCV — Об'ємний вміст твердих речовин",scvSub:'Найважливіший параметр лаку',
   scvP1:'SCV вказує, <strong>яка частина вологого лаку залишається на банці</strong> як суха плівка.',
-  scvWL:'Вологий лак (нанесений)',scvWD:'Рідина яку наносите — смола + леткі розчинники, що випаровуються.',
-  scvDL:'Суха плівка (що залишається)',scvDD:"Після твердіння залишається лише тверда фракція. SCV 36% → 36% стає сухою плівкою.",
+  scvWL:'Вологий лак (нанесений)',scvWD:'Смола + леткі розчинники.',
+  scvDL:'Суха плівка',scvDD:'SCV 36% → 36% стає сухою плівкою.',
   scvFC:'// Співвідношення SCV',scvFEx:'// Приклад: SCV = 36%, ціль суха 8 мкм',
   scvHint:'Нижчий SCV = більше розчинника = потрібно більше вологого матеріалу.',
-  calcTitle:'Калькулятор',calcSub:'Витрата лаку на банку — прямий розрахунок',
+  calcTitle:'Калькулятор',calcSub:'Витрата лаку на банку',
   calcP:'Калькулятор відповідає: <strong>"Скільки лаку потрібно на одну банку?"</strong>',
   how:'Як використовувати',out:'Пояснення результатів',
   cS1:'<strong>Тип покриття</strong> — Внутрішній або Зовнішній.',
   cS2:'<strong>Специфікація лаку</strong> — виберіть зі списку.',
   cS3:'<strong>Розміри</strong> — діаметр і довжина в мм.',
   cS4:'Натисніть <strong>РОЗРАХУВАТИ</strong>.',
-  cO1L:'Вага на банку (г)',cO1D:'Грами вологого/сухого лаку на одну банку.',
-  cO2L:'Вага на м² (г/м²)',cO2D:'Нормалізована витрата незалежно від розміру.',
+  cO1L:'Вага на банку (г)',cO1D:'Грами вологого/сухого лаку.',
+  cO2L:'Вага на м² (г/м²)',cO2D:'Нормалізована витрата.',
   cO3L:'Товщина шару (мкм)',cO3D:'Товщина вологої та сухої плівки.',
   recTitle:'Перерахунок',recSub:'Зворотний розрахунок з виміряної вологої маси',
-  recP:'Перерахунок відповідає: <strong>"Я зважив вологий лак — яку товщину я наніс?"</strong>',
-  recHint:'Виробнича лінія зважує банку до і після нанесення. Різниця = нанесений вологий лак.',
-  rS1:'Виберіть <strong>Тип покриття</strong> та <strong>Лак</strong>.',
-  rS2:'Введіть <strong>Розміри</strong> банки.',
-  rS3:'Введіть <strong>Вологу масу на банку</strong> в грамах.',
+  recP:'Перерахунок відповідає: <strong>"Зважив лак — яку товщину наніс?"</strong>',
+  recHint:'Різниця мас до/після = нанесений вологий лак.',
+  rS1:'Виберіть <strong>Тип</strong> та <strong>Лак</strong>.',
+  rS2:'Введіть <strong>Розміри</strong>.',
+  rS3:'Введіть <strong>Вологу масу</strong> в грамах.',
   rS4:'Натисніть <strong>ПЕРЕРАХУВАТИ</strong>.',
   recFC:'// З виміряної вологої маси → товщина',
-  planTitle:'Планування',planSub:'Скільки банок можна покрити з наявного лаку?',
-  planP:'Планування відповідає: <strong>"У мене є X кг лаку — скільки банок?"</strong>',
-  pS1:'Виберіть лак і введіть <strong>Доступну кількість</strong> — кг, Л або г.',
-  pS2:'Введіть <strong>Діаметр</strong> та <strong>Довжину</strong> в мм.',
+  planTitle:'Планування',planSub:'Скільки банок можна покрити?',
+  planP:'Планування відповідає: <strong>"Є X кг лаку — скільки банок?"</strong>',
+  pS1:'Виберіть лак, введіть <strong>Доступну кількість</strong> — кг, Л або г.',
+  pS2:'Введіть <strong>Діаметр</strong> та <strong>Довжину</strong>.',
   pS3:'Натисніть <strong>РОЗРАХУНОК ЄМНОСТІ</strong>.',
-  pO1L:'Мін. шт.',pO1D:'Найгірший випадок — максимальна товщина.',
-  pO2L:'Середнє',pO2D:'Середина діапазону специфікації.',
-  pO3L:'Макс. шт.',pO3D:'Найкращий випадок — мінімальна товщина.',
-  planHint:'<strong>Введення в літрах</strong> — конвертація через вологу густину лаку.',
+  pO1L:'Мін. шт.',pO1D:'Максимальна товщина.',pO2L:'Середнє',pO2D:'Середина діапазону.',pO3L:'Макс. шт.',pO3D:'Мінімальна товщина.',
+  planHint:'<strong>Літри</strong> — конвертація через вологу густину.',
   catTitle:'Категорії лаків',catSub:'Хімія внутрішніх покриттів',
-  catP:'Внутрішні лаки групуються за хімічною основою.',
+  catP:'Групуються за хімічною основою.',
   catExtLbl:'Типи зовнішніх лаків',
-  cEpoxy:'Епоксидні системи. Відмінна адгезія та хімічна стійкість.',
-  cBpani:'BPA-NI — епоксид без бісфенолу А.',
-  cPam:'Поліамідне покриття. Гарна гнучкість і адгезія.',
-  cPamAlt:'Модифіковані поліамідні системи.',
-  cPai:'Поліамід-імідне покриття. Висока стійкість до тепла та хімікатів.',
-  cOthers:'Нестандартні лаки.',
-  cOver:'Верхній лак поверх друку.',
-  cClear:'Прозора базова плівка.',
-  cWhite:'Непрозора біла основа.',
+  cEpoxy:'Епоксидні.',cBpani:'BPA-NI.',cPam:'Поліамід.',
+  cPamAlt:'Модифікований поліамід.',cPai:'Поліамід-імід.',cOthers:'Нестандартні.',
+  cOver:'Верхній лак.',cClear:'Прозора основа.',cWhite:'Біла основа.',
+  pwaTitle:'Застосунок & Офлайн режим',pwaSub:'Додати на екран · працює без інтернету',
+  pwaP:'VarnishCalc Pro — це <strong>Progressive Web App (PWA)</strong>, яку можна встановити на екран телефону.',
+  pwaInstallLbl:'Встановлення на iPhone / Android',
+  pwaiS1:'Відкрийте у <strong>Safari</strong> (iPhone) або <strong>Chrome</strong> (Android).',
+  pwaiS2:'Натисніть <strong>Поділитися</strong> (Safari) або меню з трьома крапками (Chrome).',
+  pwaiS3:'Виберіть <strong>«Додати на екран»</strong> — відкривається без адресного рядка.',
+  pwaStatusLbl:'Індикатори стану (під логотипом)',
+  pwaOnlineL:'Зелена крапка — онлайн',pwaOnlineD:'Завантажено найновіші дані лаків.',
+  pwaOfflineL:'Червона крапка — офлайн / кеш',pwaOfflineD:'Немає підключення. Використовуються кешовані дані. Розрахунки працюють нормально.',
+  pwaUpdateL:'Синій банер — нові дані',pwaUpdateD:'Доступна новіша версія бази даних. Натисніть для оновлення.',
+  pwaVersionLbl:'Версія даних лаків',
+  pwaVL:'Номер версії (напр. v1.0.0)',pwaVD:'Ідентифікує завантажену базу даних.',
+  pwaHint:'<strong>Всі розрахунки виконуються локально</strong> — жодні дані не надсилаються на сервер.',
 },
 ar:{
   back:'رجوع →',logoBold:'VarnishCalc',logoLight:' Pro',logoSuffix:' — مساعدة',
-  tocSCV:'ما هو SCV؟',tocCalc:'الحاسبة',tocRecalc:'إعادة الحساب',tocPlan:'التخطيط',tocCats:'الفئات',
+  tocSCV:'ما هو SCV؟',tocCalc:'الحاسبة',tocRecalc:'إعادة الحساب',tocPlan:'التخطيط',tocCats:'الفئات',tocPwa:'التطبيق وبدون إنترنت',
   scvTitle:'SCV — محتوى المواد الصلبة بالحجم',scvSub:'أهم معامل للورنيش',
-  scvP1:'يشير SCV إلى <strong>نسبة الورنيش الرطب التي تبقى على العلبة</strong> كطبقة جافة.',
-  scvWL:'الورنيش الرطب (المطبق)',scvWD:'السائل المرشوش — راتنج + مذيبات متطايرة تتبخر أثناء الفرن.',
-  scvDL:'الطبقة الجافة (ما يبقى)',scvDD:'بعد التصليد تبقى فقط الجزء الصلب. SCV 36% → 36% يصبح طبقة جافة.',
+  scvP1:'يشير SCV إلى <strong>نسبة الورنيش الرطب التي تبقى</strong> كطبقة جافة.',
+  scvWL:'الورنيش الرطب',scvWD:'راتنج + مذيبات متطايرة.',
+  scvDL:'الطبقة الجافة',scvDD:'SCV 36% → 36% يصبح طبقة جافة.',
   scvFC:'// علاقة SCV',scvFEx:'// مثال: SCV = 36%، السماكة الجافة المستهدفة 8 µm',
-  scvHint:'SCV أقل = مذيب أكثر = تحتاج كمية أكبر من المادة الرطبة للوصول لنفس السماكة الجافة.',
-  calcTitle:'الحاسبة',calcSub:'استهلاك الورنيش لكل علبة — حساب مباشر',
-  calcP:'تجيب الحاسبة على: <strong>"كم من الورنيش أحتاج لكل علبة؟"</strong>',
+  scvHint:'SCV أقل = مذيب أكثر = كمية رطبة أكبر مطلوبة.',
+  calcTitle:'الحاسبة',calcSub:'استهلاك الورنيش لكل علبة',
+  calcP:'تجيب الحاسبة: <strong>"كم من الورنيش أحتاج لكل علبة؟"</strong>',
   how:'كيفية الاستخدام',out:'شرح النتائج',
   cS1:'<strong>نوع التطبيق</strong> — داخلي أو خارجي.',
-  cS2:'<strong>مواصفات الورنيش</strong> — اختر من القائمة.',
+  cS2:'<strong>مواصفات الورنيش</strong>.',
   cS3:'<strong>الأبعاد</strong> — القطر والطول بالمليمتر.',
   cS4:'اضغط <strong>احسب</strong>.',
-  cO1L:'الوزن لكل علبة (غ)',cO1D:'غرامات من الورنيش الرطب/الجاف على علبة واحدة.',
-  cO2L:'الوزن لكل م² (غ/م²)',cO2D:'استهلاك موحد بغض النظر عن حجم العلبة.',
-  cO3L:'سماكة الطبقة (ميكرون)',cO3D:'سماكة الفيلم الرطب والجاف بالميكرومتر.',
+  cO1L:'الوزن لكل علبة (غ)',cO1D:'غرامات الورنيش الرطب/الجاف.',
+  cO2L:'الوزن لكل م² (غ/م²)',cO2D:'استهلاك موحد.',
+  cO3L:'سماكة الطبقة (ميكرون)',cO3D:'سماكة الفيلم الرطب والجاف.',
   recTitle:'إعادة الحساب',recSub:'حساب عكسي من الوزن الرطب المقاس',
-  recP:'تجيب إعادة الحساب على: <strong>"وزنت الورنيش — ما السماكة التي طبقتها؟"</strong>',
-  recHint:'خط الإنتاج يزن كل علبة قبل وبعد الطلاء. فرق الوزن = الورنيش الرطب المطبق.',
-  rS1:'اختر <strong>نوع التطبيق</strong> و<strong>الورنيش</strong>.',
+  recP:'تجيب: <strong>"وزنت الورنيش — ما السماكة التي طبقتها؟"</strong>',
+  recHint:'فرق الوزن قبل/بعد = الورنيش الرطب المطبق.',
+  rS1:'اختر <strong>النوع</strong> و<strong>الورنيش</strong>.',
   rS2:'أدخل <strong>الأبعاد</strong>.',
-  rS3:'أدخل <strong>الوزن الرطب لكل علبة</strong> بالغرامات.',
+  rS3:'أدخل <strong>الوزن الرطب</strong> بالغرامات.',
   rS4:'اضغط <strong>أعد الحساب</strong>.',
-  recFC:'// من الوزن الرطب المقاس → السماكة',
+  recFC:'// من الوزن الرطب → السماكة',
   planTitle:'التخطيط',planSub:'كم علبة يمكنني طلاؤها؟',
-  planP:'يجيب التخطيط على: <strong>"لدي X كغ ورنيش — كم علبة أنتج؟"</strong>',
-  pS1:'اختر الورنيش وأدخل <strong>الكمية المتاحة</strong> — كغ أو لتر أو غ.',
-  pS2:'أدخل <strong>القطر</strong> و<strong>الطول</strong> بالمليمتر.',
+  planP:'يجيب: <strong>"لدي X كغ — كم علبة؟"</strong>',
+  pS1:'اختر الورنيش وأدخل <strong>الكمية المتاحة</strong>.',
+  pS2:'أدخل <strong>القطر</strong> و<strong>الطول</strong>.',
   pS3:'اضغط <strong>احسب الطاقة</strong>.',
-  pO1L:'الحد الأدنى',pO1D:'أسوأ حالة — أقصى سماكة.',
-  pO2L:'المتوسط',pO2D:'منتصف نطاق المواصفات.',
-  pO3L:'الحد الأقصى',pO3D:'أفضل حالة — أدنى سماكة.',
-  planHint:'<strong>الإدخال بالليتر</strong> — تحويل عبر الكثافة الرطبة للورنيش.',
+  pO1L:'الحد الأدنى',pO1D:'أسوأ حالة.',pO2L:'المتوسط',pO2D:'منتصف النطاق.',pO3L:'الحد الأقصى',pO3D:'أفضل حالة.',
+  planHint:'<strong>الليتر</strong> — تحويل عبر الكثافة الرطبة.',
   catTitle:'فئات الورنيش',catSub:'كيمياء الطلاء الداخلي',
-  catP:'تُجمَّع الورنيشات الداخلية حسب قاعدتها الكيميائية.',
+  catP:'تُجمَّع الورنيشات حسب قاعدتها الكيميائية.',
   catExtLbl:'أنواع الورنيش الخارجي',
-  cEpoxy:'أنظمة إيبوكسي. التصاق وصمود كيميائي ممتازان.',
-  cBpani:'BPA-NI — إيبوكسي بدون بيسفينول-A.',
-  cPam:'طلاء بولياميد. مرونة والتصاق جيدان.',
-  cPamAlt:'بولياميد معدّل بأداء محسّن.',
-  cPai:'طلاء بولياميد-إيميد. أداء عالٍ، مقاومة حرارية وكيميائية.',
-  cOthers:'ورنيشات غير قياسية.',
-  cOver:'طلاء تشطيب فوق الطباعة.',
-  cClear:'طبقة أساسية شفافة.',
-  cWhite:'طبقة أساسية بيضاء معتمة.',
+  cEpoxy:'إيبوكسي.',cBpani:'BPA-NI.',cPam:'بولياميد.',
+  cPamAlt:'بولياميد معدّل.',cPai:'بولياميد-إيميد.',cOthers:'غير قياسي.',
+  cOver:'طلاء تشطيب.',cClear:'طبقة أساسية شفافة.',cWhite:'طبقة بيضاء معتمة.',
+  pwaTitle:'التطبيق ووضع بدون إنترنت',pwaSub:'إضافة للشاشة الرئيسية · يعمل بدون إنترنت',
+  pwaP:'VarnishCalc Pro هو <strong>Progressive Web App (PWA)</strong> — قابل للتثبيت على الشاشة الرئيسية ويعمل بدون إنترنت.',
+  pwaInstallLbl:'التثبيت على iPhone / Android',
+  pwaiS1:'افتح التطبيق في <strong>Safari</strong> (iPhone) أو <strong>Chrome</strong> (Android).',
+  pwaiS2:'اضغط على <strong>مشاركة</strong> (Safari) أو القائمة ذات النقاط الثلاث (Chrome).',
+  pwaiS3:'اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong>.',
+  pwaStatusLbl:'مؤشرات الحالة (تحت الشعار)',
+  pwaOnlineL:'نقطة خضراء — متصل',pwaOnlineD:'تم تحميل أحدث بيانات الورنيش.',
+  pwaOfflineL:'نقطة حمراء — غير متصل / ذاكرة تخزين مؤقت',pwaOfflineD:'لا يوجد اتصال. يستخدم البيانات المخزنة. الحسابات تعمل بشكل طبيعي.',
+  pwaUpdateL:'لافتة زرقاء — بيانات جديدة',pwaUpdateD:'إصدار أحدث من قاعدة البيانات متاح. اضغط للتحديث.',
+  pwaVersionLbl:'إصدار بيانات الورنيش',
+  pwaVL:'رقم الإصدار (مثل v1.0.0)',pwaVD:'يعرّف قاعدة البيانات المحملة.',
+  pwaHint:'<strong>جميع الحسابات محلية</strong> — لا تُرسل أي بيانات إلى خوادم.',
 },
 };
 
@@ -771,7 +873,7 @@ function applyT(){
   s('hBack',t.back);
   s('hLogo',`${t.logoBold}<span style="font-weight:300">${t.logoLight}</span>${t.logoSuffix}`);
   s('tocSCV',t.tocSCV); s('tocCalc',t.tocCalc); s('tocRecalc',t.tocRecalc);
-  s('tocPlan',t.tocPlan); s('tocCats',t.tocCats);
+  s('tocPlan',t.tocPlan); s('tocCats',t.tocCats); s('tocPwa',t.tocPwa);
   // SCV
   s('scvTitle',t.scvTitle); s('scvSub',t.scvSub); s('scvP1',t.scvP1);
   s('scvWL',t.scvWL); s('scvWD',t.scvWD); s('scvDL',t.scvDL); s('scvDD',t.scvDD);
@@ -799,6 +901,17 @@ function applyT(){
   s('cEpoxy',t.cEpoxy); s('cBpani',t.cBpani); s('cPam',t.cPam);
   s('cPamAlt',t.cPamAlt); s('cPai',t.cPai); s('cOthers',t.cOthers);
   s('cOver',t.cOver); s('cClear',t.cClear); s('cWhite',t.cWhite);
+  // PWA
+  s('pwaTitle',t.pwaTitle); s('pwaSub',t.pwaSub); s('pwaP',t.pwaP);
+  s('pwaInstallLbl',t.pwaInstallLbl);
+  s('pwaiS1',t.pwaiS1); s('pwaiS2',t.pwaiS2); s('pwaiS3',t.pwaiS3);
+  s('pwaStatusLbl',t.pwaStatusLbl);
+  s('pwaOnlineL',t.pwaOnlineL); s('pwaOnlineD',t.pwaOnlineD);
+  s('pwaOfflineL',t.pwaOfflineL); s('pwaOfflineD',t.pwaOfflineD);
+  s('pwaUpdateL',t.pwaUpdateL); s('pwaUpdateD',t.pwaUpdateD);
+  s('pwaVersionLbl',t.pwaVersionLbl);
+  s('pwaVL',t.pwaVL); s('pwaVD',t.pwaVD);
+  s('pwaHint',t.pwaHint);
 }
 
 buildSel();
