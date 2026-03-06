@@ -65,10 +65,26 @@ body { font-family:'DM Sans',-apple-system,sans-serif; background:#0a0a12; color
 }
 .back-btn:hover { background:rgba(255,255,255,0.12); color:white; }
 
-.toc { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:20px; }
-.toc-link { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10); border-radius:20px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--text-2); text-decoration:none; transition:all 0.2s; backdrop-filter:blur(10px); }
-.toc-link:hover { background:rgba(155,89,245,0.18); border-color:rgba(155,89,245,0.35); color:white; }
-.toc-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+/* ── SECTION PICKER ── */
+.toc-wrap { margin-bottom: 16px; position: relative; }
+.toc-select {
+  width: 100%; padding: 13px 40px 13px 16px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 16px; color: white;
+  font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  appearance: none; outline: none; cursor: pointer;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 4px 16px rgba(0,0,0,0.3);
+  transition: border-color 0.2s;
+}
+.toc-select:focus { border-color: rgba(155,89,245,0.55); }
+.toc-select option { background: #12102a; color: white; }
+.toc-arrow {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  color: rgba(255,255,255,0.35); pointer-events: none; font-size: 13px;
+}
 
 .section {
   background:rgba(255,255,255,0.06); backdrop-filter:blur(32px) saturate(160%);
@@ -159,13 +175,9 @@ p:last-child { margin-bottom:0; }
     </div>
   </div>
 
-  <div class="toc">
-    <a href="#scv"           class="toc-link"><span class="toc-dot" style="background:#a78bfa"></span><span id="tocSCV"></span></a>
-    <a href="#calculator"    class="toc-link"><span class="toc-dot" style="background:#7c6cfc"></span><span id="tocCalc"></span></a>
-    <a href="#recalculation" class="toc-link"><span class="toc-dot" style="background:#2de2ff"></span><span id="tocRecalc"></span></a>
-    <a href="#planning"      class="toc-link"><span class="toc-dot" style="background:#34d399"></span><span id="tocPlan"></span></a>
-    <a href="#categories"    class="toc-link"><span class="toc-dot" style="background:#fb7185"></span><span id="tocCats"></span></a>
-    <a href="#pwa"           class="toc-link"><span class="toc-dot" style="background:#67e8f9"></span><span id="tocPwa"></span></a>
+  <div class="toc-wrap">
+    <select class="toc-select" id="sectionPicker" onchange="document.getElementById(this.value).scrollIntoView({behavior:'smooth'});"></select>
+    <div class="toc-arrow">⌄</div>
   </div>
 
   <!-- SCV -->
@@ -912,6 +924,18 @@ function applyT(){
   s('pwaVersionLbl',t.pwaVersionLbl);
   s('pwaVL',t.pwaVL); s('pwaVD',t.pwaVD);
   s('pwaHint',t.pwaHint);
+  // Section picker
+  const picker = document.getElementById('sectionPicker');
+  if (picker) {
+    picker.innerHTML = [
+      {v:'scv',     l:t.tocSCV},
+      {v:'calculator',   l:t.tocCalc},
+      {v:'recalculation',l:t.tocRecalc},
+      {v:'planning',     l:t.tocPlan},
+      {v:'categories',   l:t.tocCats},
+      {v:'pwa',          l:t.tocPwa},
+    ].map(o=>`<option value="${o.v}">${o.l}</option>`).join('');
+  }
 }
 
 buildSel();
