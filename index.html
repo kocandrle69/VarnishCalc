@@ -103,13 +103,6 @@ body {
   display: flex; align-items: flex-start; justify-content: space-between;
   padding: 8px 0 4px; gap: 12px;
 }
-/* ── TYPOGRAPHY SYSTEM (4-level scale on 4px grid) ──
-   Display:  24px / 800  → logo, big numbers
-   Title:    20px / 800  → section headings
-   Body:     15px / 400–700 → selects, labels, card titles, values
-   Caption:  12px / 400–700 → sublabels, footer, badges
-   Micro:    11px / 700  → uppercase labels (letter-spaced)
-────────────────────────────────────────────────── */
 
 .logo {
   font-size: 24px; font-weight: 800; letter-spacing: -0.6px; white-space: nowrap;
@@ -172,13 +165,11 @@ body {
   box-shadow: 0 2px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
-/* FIELD LABEL — micro uppercase, 11px */
+/* FIELD LABEL */
 .flabel {
   font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
   text-transform: uppercase; color: var(--text-3); margin-bottom: 8px;
 }
-
-/* TYPE TOGGLE - removed, replaced by select */
 
 /* SELECT */
 .select-wrap { position: relative; }
@@ -279,13 +270,11 @@ body {
   from{opacity:0;transform:translateY(18px) scale(0.97)}
   to  {opacity:1;transform:translateY(0)    scale(1)}
 }
-/* top specular line */
 .rc::before {
   content:''; position:absolute; top:0; left:18px; right:18px; height:1px;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,0.42),transparent);
   pointer-events:none; z-index:1;
 }
-/* shine blob */
 .rc::after {
   content:''; position:absolute; top:-30%; left:-5%; width:45%; height:80%;
   background:radial-gradient(ellipse,rgba(255,255,255,0.09) 0%,transparent 70%);
@@ -407,7 +396,7 @@ body {
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <div class="flabel" style="margin-bottom:0" id="lAppType">Application Type</div>
-        <a href="help.html#calculator" target="_blank" class="help-btn" title="Help">?</a>
+        <a href="#" class="help-btn" title="Help">?</a>
       </div>
       <div class="select-wrap" style="margin-bottom:18px;">
         <select class="glass-select" id="coatingTypeSelect" onchange="setType(this.value)">
@@ -458,10 +447,9 @@ body {
   <!-- ══ PLANNING ══ -->
   <div id="planSection" style="display:none;">
     <div class="card">
-      <!-- Coating type + varnish picker -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <div class="flabel" style="margin-bottom:0" id="lPlanCoatingType">Coating Type</div>
-        <a href="help.html#planning" target="_blank" class="help-btn" title="Help">?</a>
+        <a href="#" class="help-btn" title="Help">?</a>
       </div>
       <div class="select-wrap" style="margin-bottom:10px;">
         <select class="glass-select" id="planCoatingType" onchange="loadPlanVarnishes()">
@@ -480,11 +468,10 @@ body {
         <div class="select-arrow">⌄</div>
       </div>
 
-      <!-- Quantity -->
       <div class="flabel" id="lAvailVarnish">Available Varnish</div>
       <div class="unit-toggle" style="margin-bottom:10px;">
         <button class="unit-btn active" id="uKg"  onclick="setPlanUnit('kg')">kg</button>
-        <button class="unit-btn"        id="uL"   onclick="setPlanUnit('l')" id="uL">L</button>
+        <button class="unit-btn"        id="uL"   onclick="setPlanUnit('l')">L</button>
         <button class="unit-btn"        id="uG"   onclick="setPlanUnit('g')">g</button>
       </div>
       <div class="dim-wrap" style="margin-bottom:18px;">
@@ -492,7 +479,6 @@ body {
         <span class="num-unit" id="planUnitLbl">kg</span>
       </div>
 
-      <!-- Product dimensions -->
       <div class="flabel" id="lProductDims">Product Dimensions</div>
       <div class="dim-row" style="margin-bottom:18px;">
         <div class="dim-field">
@@ -522,10 +508,9 @@ body {
   <!-- ══ RECALCULATION ══ -->
   <div id="recalcSection" style="display:none;">
     <div class="card">
-      <!-- Coating type + varnish -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <div class="flabel" style="margin-bottom:0" id="lRecalcCoatingType">Coating Type</div>
-        <a href="help.html#recalculation" target="_blank" class="help-btn" title="Help">?</a>
+        <a href="#" class="help-btn" title="Help">?</a>
       </div>
       <div class="select-wrap" style="margin-bottom:10px;">
         <select class="glass-select" id="recalcCoatingType" onchange="loadRecalcVarnishes()">
@@ -544,7 +529,6 @@ body {
         <div class="select-arrow">⌄</div>
       </div>
 
-      <!-- Dimensions -->
       <div class="flabel" id="lRecalcDims">Dimensions</div>
       <div class="dim-row" style="margin-bottom:18px;">
         <div class="dim-field">
@@ -563,7 +547,6 @@ body {
         </div>
       </div>
 
-      <!-- Wet weight input -->
       <div class="flabel" id="lWetWeight">Wet Weight per Can (g)</div>
       <div class="dim-wrap" style="margin-bottom:18px;">
         <input class="num-input" type="number" id="wetWeight" value="" placeholder="0.00" step="0.01" min="0.001">
@@ -585,36 +568,11 @@ body {
 </div>
 
 <script>
-// ════ DATA ════
-const VARNISHES = {
-  internal: [
-    {id:1,  cat:"PAM_Alternative", name:"RLC15031",      scv:36.00, dryD:1.37, wetD:1.12,  minT:7,     maxT:11   },
-    {id:2,  cat:"BPANI",           name:"RLC10031/4",    scv:39.91, dryD:1.26, wetD:1.03,  minT:6,     maxT:10   },
-    {id:3,  cat:"PAM_Alternative", name:"PPG8900-304A",  scv:40.59, dryD:1.08, wetD:1.03,  minT:6,     maxT:10   },
-    {id:4,  cat:"PAM",             name:"PPG8460",       scv:19.49, dryD:1.38, wetD:1.03,  minT:5,     maxT:15   },
-    {id:5,  cat:"EPOXY",           name:"PPG7940-301/B", scv:31.04, dryD:1.18, wetD:1.02,  minT:7,     maxT:12   },
-    {id:6,  cat:"EPOXY",           name:"PPG3936-403/A", scv:27.04, dryD:1.31, wetD:1.03,  minT:6,     maxT:14   },
-    {id:7,  cat:"EPOXY",           name:"J462 R003",     scv:34.35, dryD:1.19, wetD:1.01,  minT:5,     maxT:11   },
-    {id:8,  cat:"BPANI",           name:"32S23MC",       scv:25.60, dryD:1.25, wetD:1.00,  minT:5,     maxT:11   },
-    {id:9,  cat:"BPANI",           name:"2845-801D",     scv:31.44, dryD:1.29, wetD:1.07,  minT:8,     maxT:12   },
-    {id:10, cat:"EPOXY",           name:"716315",        scv:42.05, dryD:1.20, wetD:1.20,  minT:10,    maxT:14.5 },
-    {id:11, cat:"Others",          name:"716307",        scv:32.00, dryD:1.40, wetD:1.10,  minT:10.71, maxT:14.29},
-    {id:12, cat:"PAI",             name:"32S39MJ",       scv:34.07, dryD:1.25, wetD:1.009, minT:5,     maxT:10   }
-  ],
-  external: [
-    {id:1001,cat:"Overvarnish",   name:"PFASNi (B 40) 75 KW 373/6 WB satin 30/70",scv:59.1,dryD:1.23,wetD:1.04,minT:10,maxT:13},
-    {id:1002,cat:"Overvarnish",   name:"PFASNi (B 12) 75 KW 373/6 WB satin 70/30",scv:56.7,dryD:1.18,wetD:1.02,minT:10,maxT:13},
-    {id:1003,cat:"Overvarnish",   name:"PFASNi (B 15) 75 KW 373/6 WB satin",      scv:59.1,dryD:1.23,wetD:1.04,minT:10,maxT:13},
-    {id:1004,cat:"Overvarnish",   name:"PFASNi (Gloss) 75 KW 373/6 WB",           scv:61.3,dryD:1.17,wetD:1.03,minT:10,maxT:12},
-    {id:1005,cat:"Clear basecoat",name:"CLEAR SIZECOAT 72 KM 401",                scv:58.5,dryD:1.17,wetD:1.02,minT:4, maxT:7 },
-    {id:1006,cat:"Overvarnish",   name:"(B 12) 75 KW 373/5 WB satin 70/30",       scv:58.3,dryD:1.20,wetD:1.03,minT:10,maxT:13},
-    {id:1007,cat:"Overvarnish",   name:"(B 40) 75 KW 373/5 WB satin 30/70",       scv:60.5,dryD:1.21,wetD:1.04,minT:10,maxT:13},
-    {id:1008,cat:"Overvarnish",   name:"(B 15) 75 KW 373/5 WB satin",             scv:60.5,dryD:1.21,wetD:1.04,minT:10,maxT:13},
-    {id:1009,cat:"White Enamel",  name:"WHITE ENAMEL T1195",                      scv:95.6,dryD:1.98,wetD:1.47,minT:10,maxT:20},
-    {id:1010,cat:"Overvarnish",   name:"(Gloss) 75 KW 373/5 WB",                  scv:61.3,dryD:1.17,wetD:1.03,minT:10,maxT:12},
-    {id:1011,cat:"Others",        name:"Custom / Other",                           scv:50.0,dryD:1.20,wetD:1.05,minT:8, maxT:15}
-  ]
-};
+// ════ DATA (protected) ════
+const _E='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';
+const _k=[86,67,80,114,111,50,48,50,54,36,120,75,57,109,78,51,112,81,55,114,84].map(c=>String.fromCharCode(c)).join('');
+function _d(e){try{const s=atob(e);let r='';for(let i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^_k.charCodeAt(i%_k.length));return JSON.parse(r);}catch(x){return{internal:[],external:[]};}}
+const VARNISHES=_d(_E);
 
 // ════ TRANSLATIONS ════
 const LANGS = [
@@ -796,7 +754,6 @@ function calcCoating(v, d, l, incBot) {
   const area = incBot ? side + bot : side;
   const aM2  = area / 1e6;
 
-  // wetLayerGM2 = (dryThickness / scvRatio) * wetDensity
   const minWGM2 = (v.minT / scvR) * v.wetD;
   const maxWGM2 = (v.maxT / scvR) * v.wetD;
   const minDGM2 = minWGM2 * scvR;
@@ -808,7 +765,7 @@ function calcCoating(v, d, l, incBot) {
   return {area,aM2,minWGM2,maxWGM2,minDGM2,maxDGM2,minWG,maxWG,minDG,maxDG,minDUm:v.minT,maxDUm:v.maxT,minWUm,maxWUm};
 }
 
-// ════ CALCULATE ════
+// ════ HELPERS ════
 const fmt  = (n, dec=2) => n.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
 const fmtI = (n)        => Math.round(n).toLocaleString('en-US');
 
@@ -819,6 +776,35 @@ function rcRow(dot, label, val) {
   </div>`;
 }
 
+const CAT_LABELS = {
+  'EPOXY':'EPOXY','BPANI':'BPANI','PAM':'PAM – Polyamide',
+  'PAM_Alternative':'PAM Alternative','PAI':'PAI – Polyamide-imide',
+  'Others':'Others','Overvarnish':'Overvarnish',
+  'Clear basecoat':'Clear Basecoat','White Enamel':'White Enamel',
+};
+const CAT_ORDER = ['EPOXY','BPANI','PAM','PAM_Alternative','PAI','Others','Overvarnish','Clear basecoat','White Enamel'];
+
+function catLabel(cat) { return CAT_LABELS[cat] || cat; }
+
+function fillSelect(sel, type) {
+  const data = VARNISHES[type];
+  const cats = [...new Set(data.map(v=>v.cat))].sort((a,b)=>{
+    const ai = CAT_ORDER.indexOf(a), bi = CAT_ORDER.indexOf(b);
+    return (ai<0?99:ai) - (bi<0?99:bi);
+  });
+  sel.innerHTML = cats.map(cat=>
+    `<optgroup label="${catLabel(cat)}">${
+      data.filter(v=>v.cat===cat).map(v=>`<option value="${v.id}">${v.name}</option>`).join('')
+    }</optgroup>`
+  ).join('');
+}
+
+function getV(selId, type) {
+  const id = parseInt(document.getElementById(selId).value);
+  return VARNISHES[type].find(v=>v.id===id);
+}
+
+// ════ CALCULATE ════
 function calculate() {
   const v = getV('varnishSelect', coatingType);
   const d = parseFloat(document.getElementById('diameter').value);
@@ -873,9 +859,9 @@ function onPlanVarnishChange() {
 }
 function setPlanUnit(u) {
   planUnit = u;
-  ['kg','l','g'].forEach(x => {
-    const btn = document.getElementById('u'+x.charAt(0).toUpperCase()+x.slice(1));
-    if(btn) btn.classList.toggle('active', x===u);
+  ['Kg','L','G'].forEach(x => {
+    const btn = document.getElementById('u'+x);
+    if(btn) btn.classList.toggle('active', x.toLowerCase()===u);
   });
   document.getElementById('planUnitLbl').textContent = u==='l' ? 'L' : u;
 }
@@ -919,61 +905,6 @@ function calculatePlanning() {
   setTimeout(()=>document.getElementById('planResultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
 }
 
-// ════ HELPERS ════
-const CAT_LABELS = {
-  'EPOXY':           'EPOXY',
-  'BPANI':           'BPANI',
-  'PAM':             'PAM – Polyamide',
-  'PAM_Alternative': 'PAM Alternative',
-  'PAI':             'PAI – Polyamide-imide',
-  'Others':          'Others',
-  'Overvarnish':     'Overvarnish',
-  'Clear basecoat':  'Clear Basecoat',
-  'White basecoat':  'White Basecoat',
-};
-const CAT_ORDER = ['EPOXY','BPANI','PAM','PAM_Alternative','PAI','Others','Overvarnish','Clear basecoat','White basecoat'];
-
-function catLabel(cat) { return CAT_LABELS[cat] || cat; }
-
-function fillSelect(sel, type) {
-  const data = VARNISHES[type];
-  const cats = [...new Set(data.map(v=>v.cat))].sort((a,b)=>{
-    const ai = CAT_ORDER.indexOf(a), bi = CAT_ORDER.indexOf(b);
-    return (ai<0?99:ai) - (bi<0?99:bi);
-  });
-  sel.innerHTML = cats.map(cat=>
-    `<optgroup label="${catLabel(cat)}">${
-      data.filter(v=>v.cat===cat).map(v=>`<option value="${v.id}">${v.name}</option>`).join('')
-    }</optgroup>`
-  ).join('');
-}
-function getV(selId, type) {
-  const id = parseInt(document.getElementById(selId).value);
-  return VARNISHES[type].find(v=>v.id===id);
-}
-function onVarnishChange() {
-  const v = getV('varnishSelect',coatingType);
-  document.getElementById('varnishBadge').textContent = v ? catLabel(v.cat) : '—';
-}
-function setType(type) {
-  coatingType = type;
-  // sync select in case called programmatically
-  const sel = document.getElementById('coatingTypeSelect');
-  if (sel) sel.value = type;
-  fillSelect(document.getElementById('varnishSelect'), type);
-  onVarnishChange();
-  document.getElementById('resultsSection').style.display='none';
-}
-function switchTab(tab) {
-  document.getElementById('calcSection').style.display   = tab==='calc'   ?'block':'none';
-  document.getElementById('planSection').style.display   = tab==='plan'   ?'block':'none';
-  document.getElementById('recalcSection').style.display = tab==='recalc' ?'block':'none';
-  document.getElementById('tabCalc').classList.toggle('active',   tab==='calc');
-  document.getElementById('tabPlan').classList.toggle('active',   tab==='plan');
-  document.getElementById('tabRecalc').classList.toggle('active', tab==='recalc');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
 // ════ RECALCULATION (matches Swift recalculateWeight exactly) ════
 function calcRecalc(v, d, l, wetWeightG, incBot) {
   const scvR  = v.scv / 100;
@@ -982,12 +913,9 @@ function calcRecalc(v, d, l, wetWeightG, incBot) {
   const area  = incBot ? side + bot : side;
   const aM2   = area / 1e6;
 
-  // Swift: dryLayerG = wetWeight * solidContentRatio
   const dryG    = wetWeightG * scvR;
-  // Swift: wetLayerGM2 = wetWeight / (area / 1_000_000)
   const wetGM2  = wetWeightG / aM2;
   const dryGM2  = wetGM2 * scvR;
-  // Swift: wetLayerUm = wetLayerGM2 / wetDensity
   const wetUm   = wetGM2 / v.wetD;
   const dryUm   = wetUm * scvR;
 
@@ -1027,7 +955,6 @@ function calculateRecalc() {
       <div style="font-size:12px;color:var(--text-3);margin-top:2px">${fmt(r.aM2,6)} m²</div>
     </div>`;
 
-  // 2 result cards: weight and thickness
   document.getElementById('recalcCards').innerHTML = `
     <div class="rc rc-purple"><div class="rc-inner">
       <div class="rc-head"><div class="rc-icon">⚖️</div><div class="rc-card-title">${t.weightCan}</div></div>
@@ -1047,6 +974,31 @@ function calculateRecalc() {
 
   document.getElementById('recalcResultsSection').style.display = 'block';
   setTimeout(()=>document.getElementById('recalcResultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+// ════ VARNISH SELECTS ════
+function onVarnishChange() {
+  const v = getV('varnishSelect',coatingType);
+  document.getElementById('varnishBadge').textContent = v ? catLabel(v.cat) : '—';
+}
+function setType(type) {
+  coatingType = type;
+  const sel = document.getElementById('coatingTypeSelect');
+  if (sel) sel.value = type;
+  fillSelect(document.getElementById('varnishSelect'), type);
+  onVarnishChange();
+  document.getElementById('resultsSection').style.display='none';
+}
+
+// ════ TABS ════
+function switchTab(tab) {
+  document.getElementById('calcSection').style.display   = tab==='calc'   ?'block':'none';
+  document.getElementById('planSection').style.display   = tab==='plan'   ?'block':'none';
+  document.getElementById('recalcSection').style.display = tab==='recalc' ?'block':'none';
+  document.getElementById('tabCalc').classList.toggle('active',   tab==='calc');
+  document.getElementById('tabPlan').classList.toggle('active',   tab==='plan');
+  document.getElementById('tabRecalc').classList.toggle('active', tab==='recalc');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ════ LANGUAGE ════
@@ -1079,22 +1031,19 @@ function applyT() {
   document.getElementById('lLen').textContent        = t.len;
   document.getElementById('btnCalc').textContent     = t.btnCalc;
   document.getElementById('lResTitle').textContent    = t.resTitle;
-  // calc coating type options
   const ico = {internal:'🥫 ', external:'🌐 '};
   document.getElementById('calcOptInternal').textContent = ico.internal + t.internal;
   document.getElementById('calcOptExternal').textContent = ico.external + t.external;
-  // plan
   document.getElementById('lPlanCoatingType').textContent = t.coatingType;
   document.getElementById('lPlanVarnish').textContent     = t.varnishSpec;
   document.getElementById('lAvailVarnish').textContent    = t.availVarnish;
-  document.getElementById('uL').textContent          = t.liters;
+  document.getElementById('uL').textContent               = t.liters || 'L';
   document.getElementById('lProductDims').textContent     = t.productDims;
   document.getElementById('lPlanDiam').textContent    = t.diam;
   document.getElementById('lPlanLen').textContent     = t.len;
   document.getElementById('btnPlan').textContent     = t.btnPlan;
   document.getElementById('planOptInternal').textContent  = '🥫 ' + t.internal;
   document.getElementById('planOptExternal').textContent  = '🌐 ' + t.external;
-  // recalc
   document.getElementById('lRecalcCoatingType').textContent = t.coatingType;
   document.getElementById('lRecalcVarnish').textContent     = t.varnishSpec;
   document.getElementById('lRecalcDims').textContent        = t.dims;
