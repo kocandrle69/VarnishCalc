@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0a3a"/>
+      <stop offset="100%" style="stop-color:#0a0a12"/>
+    </linearGradient>
+    <linearGradient id="txt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="50%" style="stop-color:#9b59f5"/>
+      <stop offset="100%" style="stop-color:#2de2ff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="65%" cy="25%" r="50%">
+      <stop offset="0%" style="stop-color:rgba(120,60,220,0.6)"/>
+      <stop offset="100%" style="stop-color:rgba(120,60,220,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="192" height="192" rx="42.24" fill="url(#bg)"/>
+  <rect width="192" height="192" rx="42.24" fill="url(#glow)"/>
+  <text x="96" y="96" font-family="Georgia,serif" font-size="72.96000000000001" font-weight="bold" fill="url(#txt)" text-anchor="middle" dominant-baseline="central">f(x)</text>
+</svg>
