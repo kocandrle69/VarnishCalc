@@ -191,13 +191,7 @@ p:last-child { margin-bottom:0; }
       <div class="info-row"><div class="i-ico">💧</div><div><div class="i-lbl" id="scvWL"></div><div class="i-desc" id="scvWD"></div></div></div>
       <div class="info-row"><div class="i-ico">☀️</div><div><div class="i-lbl" id="scvDL"></div><div class="i-desc" id="scvDD"></div></div></div>
     </div>
-    <div class="formula">
-<span class="fc" id="scvFC"></span>
-<span class="fk">dry thickness</span> = <span class="fv">wet thickness</span> × (SCV / 100)
-<span class="fk">wet thickness</span> = <span class="fv">dry thickness</span> / (SCV / 100)
-
-<span class="fc" id="scvFEx"></span>
-wet = 8 / 0.36 = <span class="fv">22.2 µm</span></div>
+    <div class="formula" id="scvFormula"></div>
     <div class="hl"><div class="hl-ico">💡</div><div class="hl-txt" id="scvHint"></div></div>
   </div>
 
@@ -241,13 +235,7 @@ wet = 8 / 0.36 = <span class="fv">22.2 µm</span></div>
       <div class="step"><div class="step-n">3</div><div class="step-t" id="rS3"></div></div>
       <div class="step"><div class="step-n">4</div><div class="step-t" id="rS4"></div></div>
     </div>
-    <div class="formula">
-<span class="fc" id="recFC"></span>
-<span class="fk">dryG</span>   = wetWeight × SCV
-<span class="fk">wetGM2</span> = wetWeight / areaM2
-<span class="fk">dryGM2</span> = wetGM2 × SCV
-<span class="fk">wetUm</span>  = wetGM2 / wetDensity
-<span class="fk">dryUm</span>  = wetUm × SCV</div>
+    <div class="formula" id="recFormula"></div>
   </div>
 
   <!-- PLANNING -->
@@ -284,7 +272,7 @@ wet = 8 / 0.36 = <span class="fv">22.2 µm</span></div>
       <div class="cat-row"><div class="cat-dot" style="background:#c084fc"></div><div class="cat-name">BPANI</div><div class="cat-desc" id="cBpani"></div></div>
       <div class="cat-row"><div class="cat-dot" style="background:#4ade80"></div><div class="cat-name">PAM</div><div class="cat-desc" id="cPam"></div></div>
       <div class="cat-row"><div class="cat-dot" style="background:#fb923c"></div><div class="cat-name">PAM Alt.</div><div class="cat-desc" id="cPamAlt"></div></div>
-      <div class="cat-row"><div class="cat-dot" style="background:#f87171"></div><div class="cat-name">PAI</div><div class="cat-desc" id="cPai"></div></div>
+      <div class="cat-row" id="paiRow" style="display:none"><div class="cat-dot" style="background:#f87171"></div><div class="cat-name">PAI</div><div class="cat-desc" id="cPai"></div></div>
       <div class="cat-row"><div class="cat-dot" style="background:#94a3b8"></div><div class="cat-name">Others</div><div class="cat-desc" id="cOthers"></div></div>
     </div>
     <div class="divider"></div>
@@ -358,26 +346,26 @@ en:{
   scvP1:'SCV tells you <strong>what fraction of the wet varnish stays on the can</strong> as dry film after solvents evaporate.',
   scvWL:'Wet varnish (applied)',scvWD:'The liquid you spray — contains solid resin and volatile solvents that evaporate during curing.',
   scvDL:'Dry film (what remains)',scvDD:'After curing, only the solid fraction stays. SCV 36% means only 36% of the wet volume becomes dry film.',
-  scvFC:'// SCV relationship',scvFEx:'// Example: SCV = 36%, target dry 8 µm',
+  scvFC:'// SCV relationship',scvFEx:'// Example: SCV = 36%, target dry thickness 8 µm',
   scvHint:'Lower SCV = more solvent = you must apply more wet material to reach the same dry thickness. Higher SCV varnishes are more material-efficient.',
   calcTitle:'Calculator',calcSub:'Varnish consumption per can — forward calculation',
   calcP:'The Calculator answers: <strong>"How much varnish do I need per can?"</strong> Provide can geometry and select a varnish — the app computes wet and dry weights and thicknesses.',
   how:'How to use',out:'Output explained',
-  cS1:'<strong>Application Type</strong> — choose Internal (food-contact side) or External (decoration/protection).',
+  cS1:'<strong>Application Type</strong> — choose Internal (product-contact side) or External (decoration/protection).',
   cS2:'<strong>Varnish Specification</strong> — select from the grouped list. The badge shows the chemical category.',
   cS3:'<strong>Dimensions</strong> — enter diameter and length in mm. Internal automatically includes the bottom lid area.',
   cS4:'Press <strong>CALCULATE</strong>. Results show min/max ranges based on the varnish thickness specification.',
   cO1L:'Weight per can (g)',cO1D:'Grams of wet/dry varnish applied to one can. Min–Max reflects specification tolerance.',
   cO2L:'Weight per m² (g/m²)',cO2D:'Normalised consumption independent of can size — useful for comparing varnishes.',
-  cO3L:'Layer thickness (µm)',cO3D:'Wet and dry film thickness in micrometres. Dry thickness is what quality control measures.',
+  cO3L:'Layer thickness (µm)',cO3D:'Wet and dry film thickness in micrometres.',
   recTitle:'Recalculation',recSub:'Back-calculate from a measured wet weight',
   recP:'Recalculation answers: <strong>"I weighed the wet varnish on the can — what thickness did I actually apply?"</strong>',
-  recHint:'Typical use: the production line weighs each can before and after coating. The weight difference is the wet varnish applied. Enter that value here to get the actual film thickness.',
+  recHint:'Typical use: the operator weighs each can before and after coating. The weight difference is the wet varnish applied. Enter that value here to get the actual film thickness.',
+  recFC:'// From measured wet weight → thickness',
   rS1:'Select <strong>Application Type</strong> and <strong>Varnish</strong> — must match what was actually applied.',
   rS2:'Enter <strong>Dimensions</strong> of the can.',
   rS3:'Enter the <strong>Wet Weight per can</strong> in grams — the actual measured value.',
   rS4:'Press <strong>RECALCULATE</strong>. Results show actual dry film thickness and layer weights.',
-  recFC:'// From measured wet weight → thickness',
   planTitle:'Planning',planSub:'How many cans can I coat with available varnish?',
   planP:'Planning answers: <strong>"I have X kg of varnish — how many cans can I produce?"</strong>',
   pS1:'Select varnish and enter <strong>Available Varnish</strong> quantity — switch between <strong>kg</strong>, <strong>L</strong>, or <strong>g</strong>.',
@@ -390,15 +378,15 @@ en:{
   catTitle:'Varnish Categories',catSub:'Internal coating chemistry overview',
   catP:'Internal varnishes are grouped by their chemical base. Each category has different performance characteristics, cure conditions and application windows.',
   catExtLbl:'External varnish types',
-  cEpoxy:'Epoxy-based systems. Excellent adhesion and chemical resistance. Widely used for beverage and food cans.',
-  cBpani:'BPA-NI (Bisphenol A Non-Intent). BPA-free epoxy alternative meeting current food contact regulations.',
-  cPam:'Polyamide coating. Good flexibility and adhesion on tinplate and aluminium substrates.',
-  cPamAlt:'Modified polyamide-based systems offering improved performance vs. standard PAM.',
-  cPai:'Polyamide-imide coating. High performance with superior heat and chemical resistance.',
+  cEpoxy:'Epoxy-based systems. In most cases contain BPA (bisphenol A). Excellent adhesion and chemical resistance. Recommended surface tension &gt;36 mN/m.',
+  cBpani:'BPA-NI (Bisphenol A Non-Intent). BPA-free alternative — in most cases modified polyesters meeting current food contact regulations. Recommended surface tension 50 mN/m.',
+  cPam:'Polyamide / Polyamide-imide coating. In the case of 8460 contains NMP (N-methyl-2-pyrrolidone). Good flexibility and adhesion. Recommended surface tension 56 mN/m.',
+  cPamAlt:'Modified polyesters — demanding coatings with high requirements for cleaning and maintenance of coating systems. Recommended surface tension 56 mN/m.',
+  cPai:'',
   cOthers:'Custom or non-standard varnishes. Use when the product does not fit standard categories.',
-  cOver:'Top coat applied over printed decoration. Provides gloss, scratch resistance and print protection.',
-  cClear:'Transparent base layer applied before printing to improve ink adhesion on bare metal.',
-  cWhite:'Opaque white base coat providing a bright ground for full-colour printing. High pigment load.',
+  cOver:'Top coat covering the print and base coat. Provides mechanical and chemical resistance.',
+  cClear:'Transparent base coat ensuring sufficient adhesion for other layers.',
+  cWhite:'White base coat providing opacity and sufficient adhesion for other layers.',
   // PWA
   pwaTitle:'App & Offline Mode',pwaSub:'Install on your phone · works without internet',
   pwaP:'VarnishCalc Pro is a <strong>Progressive Web App (PWA)</strong> — it can be installed directly on your phone home screen and works fully offline once loaded.',
@@ -426,21 +414,21 @@ cs:{
   calcTitle:'Kalkulátor',calcSub:'Spotřeba laku na plechovku — dopředný výpočet',
   calcP:'Kalkulátor odpovídá: <strong>„Kolik laku potřebuji na jednu plechovku?"</strong>',
   how:'Jak používat',out:'Vysvětlení výstupů',
-  cS1:'<strong>Typ aplikace</strong> — vyberte Vnitřní (kontakt s potravinou) nebo Vnější (dekorace/ochrana).',
+  cS1:'<strong>Typ aplikace</strong> — vyberte Vnitřní (kontakt s produktem) nebo Vnější (dekorace/ochrana).',
   cS2:'<strong>Specifikace laku</strong> — vyberte ze seznamu. Badge zobrazuje chemickou kategorii.',
   cS3:'<strong>Rozměry</strong> — zadejte průměr a délku těla v mm. Vnitřní výpočet zahrnuje plochu dna.',
   cS4:'Stiskněte <strong>VYPOČÍTAT</strong>. Výsledky zobrazují rozsah min/max.',
   cO1L:'Hmotnost na plechovku (g)',cO1D:'Gramy mokrého/suchého laku na jednu plechovku.',
   cO2L:'Hmotnost na m² (g/m²)',cO2D:'Normalizovaná spotřeba nezávislá na velikosti plechovky.',
-  cO3L:'Tloušťka vrstvy (µm)',cO3D:'Tloušťka mokré a suché vrstvy. Suchou měří kontrola kvality.',
+  cO3L:'Tloušťka vrstvy (µm)',cO3D:'Tloušťka mokré a suché vrstvy.',
   recTitle:'Přepočet',recSub:'Zpětný výpočet z naměřené mokré hmotnosti',
-  recP:'Přepočet odpovídá: <strong>„Zvážil jsem mokrý lak — jakou tloušťku jsem nanesL?"</strong>',
-  recHint:'Typické použití: linka váží plechovku před a po lakování. Rozdíl hmotností = nanesený mokrý lak.',
+  recP:'Přepočet odpovídá: <strong>„Zvážil jsem mokrý lak — jakou tloušťku jsem nanesл?"</strong>',
+  recHint:'Typické použití: operátor váží plechovku před a po lakování. Rozdíl hmotností = nanesený mokrý lak.',
+  recFC:'// Z naměřené mokré hmotnosti → tloušťka',
   rS1:'Vyberte <strong>Typ aplikace</strong> a <strong>Lak</strong> — musí odpovídat skutečně použitému.',
   rS2:'Zadejte <strong>Rozměry</strong> plechovky.',
   rS3:'Zadejte <strong>Mokrou hmotnost na plechovku</strong> v gramech.',
   rS4:'Stiskněte <strong>PŘEPOČÍTAT</strong>.',
-  recFC:'// Z naměřené mokré hmotnosti → tloušťka',
   planTitle:'Plánování',planSub:'Kolik plechovek polakuji z dostupného laku?',
   planP:'Plánování odpovídá: <strong>„Mám X kg laku — kolik plechovek vyrobím?"</strong>',
   pS1:'Vyberte lak a zadejte <strong>Dostupné množství</strong> — kg, L nebo g.',
@@ -453,15 +441,15 @@ cs:{
   catTitle:'Kategorie laků',catSub:'Přehled chemie vnitřních nátěrů',
   catP:'Vnitřní laky jsou seskupeny podle chemické báze.',
   catExtLbl:'Typy vnějších laků',
-  cEpoxy:'Epoxidové systémy. Výborná přilnavost a chemická odolnost.',
-  cBpani:'BPA-NI — epoxid bez bisfenolu A, dle potravinových předpisů.',
-  cPam:'Polyamidový nátěr. Dobrá flexibilita a přilnavost na pocínovaný plech i hliník.',
-  cPamAlt:'Modifikované polyamidové systémy s vylepšenými vlastnostmi.',
-  cPai:'Polyamid-imidový nátěr. Vysoký výkon, nadřazená tepelná a chemická odolnost.',
+  cEpoxy:'Epoxidové systémy. Ve většině případů obsahují BPA (bisfenol A). Výborná přilnavost a chemická odolnost. Doporučená hodnota povrchového napětí &gt;36 mN/m.',
+  cBpani:'BPA-NI — ve většině případů modifikované polyestery bez bisfenolu A, dle předpisů o kontaktu s potravinami. Doporučená hodnota povrchového napětí 50 mN/m.',
+  cPam:'Polyamid / Polyamid-imid. V případě 8460 obsahuje NMP (N-methyl-2-pyrrolidon). Dobrá flexibilita a přilnavost. Doporučená hodnota povrchového napětí 56 mN/m.',
+  cPamAlt:'Modifikované polyestery — náročné laky na čištění a údržbu lakovacích systémů. Doporučená hodnota povrchového napětí 56 mN/m.',
+  cPai:'',
   cOthers:'Nestandardní laky mimo běžné kategorie.',
-  cOver:'Vrchní lak přes tisk. Lesk, odolnost vůči poškrábání.',
-  cClear:'Transparentní základ pro přilnavost barvy.',
-  cWhite:'Bílý krycí základ pro plnobarevný tisk.',
+  cOver:'Vrchní lak překrývající tisk a základní lak. Zajišťuje mechanickou a chemickou odolnost.',
+  cClear:'Transparentní základní lak zajišťující dostatečnou adhezi ostatním vrstvám.',
+  cWhite:'Bílý základní lak zajišťující kryvost a dostatečnou adhezi ostatním vrstvám.',
   pwaTitle:'Aplikace & Offline režim',pwaSub:'Přidat na plochu · funguje bez internetu',
   pwaP:'VarnishCalc Pro je <strong>Progressive Web App (PWA)</strong> — lze nainstalovat přímo na plochu telefonu a plně funguje offline.',
   pwaInstallLbl:'Instalace na iPhone / Android',
@@ -497,7 +485,7 @@ sk:{
   cO3L:'Hrúbka vrstvy (µm)',cO3D:'Hrúbka mokrej a suchej vrstvy.',
   recTitle:'Prepočet',recSub:'Spätný výpočet z nameranej mokrej hmotnosti',
   recP:'Prepočet odpovedá: <strong>„Zvážil som mokrý lak — akú hrúbku som naniesol?"</strong>',
-  recHint:'Linka váži plechovku pred a po lakovaní. Rozdiel = nanesený mokrý lak.',
+  recHint:'Operátor váži plechovku pred a po lakovaní. Rozdiel = nanesený mokrý lak.',
   rS1:'Vyberte <strong>Typ aplikácie</strong> a <strong>Lak</strong>.',
   rS2:'Zadajte <strong>Rozmery</strong> plechovky.',
   rS3:'Zadajte <strong>Mokrú hmotnosť</strong> v gramoch.',
@@ -515,9 +503,15 @@ sk:{
   catTitle:'Kategórie lakov',catSub:'Prehľad chémie vnútorných náterov',
   catP:'Vnútorné laky sú zoskupené podľa chemickej bázy.',
   catExtLbl:'Typy vonkajších lakov',
-  cEpoxy:'Epoxidové systémy.',cBpani:'BPA-NI — epoxid bez bisfenolu A.',cPam:'Polyamidový náter.',
-  cPamAlt:'Modifikované polyamidové systémy.',cPai:'Polyamid-imidový náter.',cOthers:'Neštandardné laky.',
-  cOver:'Vrchný lak cez tlač.',cClear:'Transparentná základná vrstva.',cWhite:'Biela základná vrstva.',
+  cEpoxy:'Epoxidové systémy. Vo väčšine prípadov obsahujú BPA (bisfenol A). Odporúčaná hodnota povrchového napätia &gt;36 mN/m.',
+  cBpani:'BPA-NI — vo väčšine prípadov modifikované polyestery bez bisfenolu A. Odporúčaná hodnota povrchového napätia 50 mN/m.',
+  cPam:'Polyamid / Polyamid-imid. V prípade 8460 obsahuje NMP (N-metyl-2-pyrolidon). Odporúčaná hodnota povrchového napätia 56 mN/m.',
+  cPamAlt:'Modifikované polyestery — náročné laky na čistenie a údržbu lakovacích systémov. Odporúčaná hodnota povrchového napätia 56 mN/m.',
+  cPai:'',
+  cOthers:'Neštandardné laky.',
+  cOver:'Vrchný lak prekrývajúci tlač a základný lak. Zabezpečuje mechanickú a chemickú odolnosť.',
+  cClear:'Transparentný základný lak zabezpečujúci dostatočnú adhéziu ostatným vrstvám.',
+  cWhite:'Biely základný lak zabezpečujúci kryciu schopnosť a dostatočnú adhéziu ostatným vrstvám.',
   pwaTitle:'Aplikácia & Offline režim',pwaSub:'Pridať na plochu · funguje bez internetu',
   pwaP:'VarnishCalc Pro je <strong>Progressive Web App (PWA)</strong> — možno nainštalovať na plochu telefónu a funguje offline.',
   pwaInstallLbl:'Inštalácia na iPhone / Android',
@@ -553,7 +547,7 @@ fr:{
   cO3L:'Épaisseur de couche (µm)',cO3D:'Épaisseur du film humide et sec.',
   recTitle:'Recalcul',recSub:'Calcul inverse depuis le poids humide mesuré',
   recP:'Le Recalcul répond: <strong>"J\'ai pesé le vernis — quelle épaisseur ai-je appliquée?"</strong>',
-  recHint:'La ligne pèse chaque boîte avant et après. La différence = vernis humide appliqué.',
+  recHint:'L\'opérateur pèse chaque boîte avant et après. La différence = vernis humide appliqué.',
   rS1:'Sélectionner <strong>Type</strong> et <strong>Vernis</strong>.',
   rS2:'Entrer les <strong>Dimensions</strong>.',
   rS3:'Entrer le <strong>Poids humide par boîte</strong> en grammes.',
@@ -571,9 +565,15 @@ fr:{
   catTitle:'Catégories de vernis',catSub:'Chimie des revêtements internes',
   catP:'Les vernis internes sont regroupés par base chimique.',
   catExtLbl:'Types de vernis externes',
-  cEpoxy:'Systèmes époxy.',cBpani:'BPA-NI — époxy sans bisphénol A.',cPam:'Revêtement polyamide.',
-  cPamAlt:'Polyamide modifié.',cPai:'Polyamide-imide. Haute performance.',cOthers:'Vernis non standards.',
-  cOver:'Vernis de finition sur impression.',cClear:'Couche de fond transparente.',cWhite:'Couche de fond blanche opaque.',
+  cEpoxy:'Systèmes époxy. Contiennent généralement du BPA (bisphénol A). Tension de surface recommandée &gt;36 mN/m.',
+  cBpani:'BPA-NI — polyesters modifiés sans bisphénol A. Tension de surface recommandée 50 mN/m.',
+  cPam:'Polyamide / Polyamide-imide. Le 8460 contient du NMP (N-méthyl-2-pyrrolidone). Tension de surface recommandée 56 mN/m.',
+  cPamAlt:'Polyesters modifiés — revêtements exigeants pour le nettoyage et la maintenance. Tension de surface recommandée 56 mN/m.',
+  cPai:'',
+  cOthers:'Vernis non standards.',
+  cOver:'Vernis de finition couvrant l\'impression et la couche de fond. Assure résistance mécanique et chimique.',
+  cClear:'Vernis de fond transparent assurant l\'adhérence des autres couches.',
+  cWhite:'Vernis de fond blanc assurant l\'opacité et l\'adhérence des autres couches.',
   pwaTitle:'Appli & Mode hors-ligne',pwaSub:'Installer sur l\'écran d\'accueil · fonctionne sans internet',
   pwaP:'VarnishCalc Pro est une <strong>Progressive Web App (PWA)</strong> — elle peut être installée sur l\'écran d\'accueil et fonctionne hors-ligne.',
   pwaInstallLbl:'Installation sur iPhone / Android',
@@ -627,9 +627,15 @@ nl:{
   catTitle:'Vernis categorieën',catSub:'Chemie van interne coatings',
   catP:'Interne vernissen gegroepeerd per chemische basis.',
   catExtLbl:'Externe vernis types',
-  cEpoxy:'Epoxy-systemen.',cBpani:'BPA-NI — zonder bisfenol A.',cPam:'Polyamide coating.',
-  cPamAlt:'Gemodificeerde polyamide.',cPai:'Polyamide-imide. Hoge prestaties.',cOthers:'Niet-standaard.',
-  cOver:'Toplaag over bedrukking.',cClear:'Transparante basislaag.',cWhite:'Dekkende witte basislaag.',
+  cEpoxy:'Epoxy-systemen. Bevatten meestal BPA (bisfenol A). Aanbevolen oppervlaktespanning &gt;36 mN/m.',
+  cBpani:'BPA-NI — gemodificeerde polyesters zonder bisfenol A. Aanbevolen oppervlaktespanning 50 mN/m.',
+  cPam:'Polyamide / Polyamide-imide. Bij 8460 bevat NMP (N-methyl-2-pyrrolidon). Aanbevolen oppervlaktespanning 56 mN/m.',
+  cPamAlt:'Gemodificeerde polyesters — veeleisende verven voor reiniging en onderhoud. Aanbevolen oppervlaktespanning 56 mN/m.',
+  cPai:'',
+  cOthers:'Niet-standaard vernissen.',
+  cOver:'Toplaag over bedrukking en grondlaag. Biedt mechanische en chemische weerstand.',
+  cClear:'Transparante grondlak voor voldoende hechting van andere lagen.',
+  cWhite:'Witte grondlak voor dekkracht en voldoende hechting van andere lagen.',
   pwaTitle:'App & Offline modus',pwaSub:'Installeer op je startscherm · werkt zonder internet',
   pwaP:'VarnishCalc Pro is een <strong>Progressive Web App (PWA)</strong> — installeerbaar op het startscherm, werkt offline.',
   pwaInstallLbl:'Installatie op iPhone / Android',
@@ -665,7 +671,7 @@ pt:{
   cO3L:'Espessura da camada (µm)',cO3D:'Espessura do filme úmido e seco.',
   recTitle:'Recálculo',recSub:'Cálculo reverso a partir do peso úmido medido',
   recP:'O Recálculo responde: <strong>"Pesei o verniz — que espessura apliquei?"</strong>',
-  recHint:'A linha pesa cada lata antes e após. Diferença = verniz úmido aplicado.',
+  recHint:'O operador pesa cada lata antes e após o revestimento. Diferença = verniz úmido aplicado.',
   rS1:'Selecione <strong>Tipo</strong> e <strong>Verniz</strong>.',
   rS2:'Insira as <strong>Dimensões</strong>.',
   rS3:'Insira o <strong>Peso úmido por lata</strong> em gramas.',
@@ -681,9 +687,15 @@ pt:{
   catTitle:'Categorias de verniz',catSub:'Química dos revestimentos internos',
   catP:'Os vernizes internos são agrupados pela base química.',
   catExtLbl:'Tipos de verniz externo',
-  cEpoxy:'Sistemas epóxi.',cBpani:'BPA-NI — sem bisfenol A.',cPam:'Poliamida.',
-  cPamAlt:'Poliamida modificada.',cPai:'Poliamida-imida.',cOthers:'Não padrão.',
-  cOver:'Verniz de acabamento.',cClear:'Camada base transparente.',cWhite:'Base branca opaca.',
+  cEpoxy:'Sistemas epóxi. Geralmente contêm BPA (bisfenol A). Tensão superficial recomendada &gt;36 mN/m.',
+  cBpani:'BPA-NI — poliésteres modificados sem bisfenol A. Tensão superficial recomendada 50 mN/m.',
+  cPam:'Poliamida / Poliamida-imida. O 8460 contém NMP (N-metil-2-pirrolidona). Tensão superficial recomendada 56 mN/m.',
+  cPamAlt:'Poliésteres modificados — vernizes exigentes para limpeza e manutenção. Tensão superficial recomendada 56 mN/m.',
+  cPai:'',
+  cOthers:'Vernizes não padrão.',
+  cOver:'Verniz de acabamento cobrindo a impressão e o verniz base. Garante resistência mecânica e química.',
+  cClear:'Verniz base transparente garantindo adesão suficiente às outras camadas.',
+  cWhite:'Verniz base branco garantindo cobertura e adesão suficiente às outras camadas.',
   pwaTitle:'App & Modo Offline',pwaSub:'Instalar na tela inicial · funciona sem internet',
   pwaP:'VarnishCalc Pro é um <strong>Progressive Web App (PWA)</strong> — instalável na tela inicial, funciona offline.',
   pwaInstallLbl:'Instalação no iPhone / Android',
@@ -735,9 +747,15 @@ es:{
   catTitle:'Categorías de barniz',catSub:'Química de los recubrimientos internos',
   catP:'Los barnices internos se agrupan por base química.',
   catExtLbl:'Tipos de barniz externo',
-  cEpoxy:'Sistemas epoxi.',cBpani:'BPA-NI — sin bisfenol A.',cPam:'Poliamida.',
-  cPamAlt:'Poliamida modificada.',cPai:'Poliamida-imida.',cOthers:'No estándar.',
-  cOver:'Barniz de acabado.',cClear:'Capa base transparente.',cWhite:'Base blanca opaca.',
+  cEpoxy:'Sistemas epoxi. Generalmente contienen BPA (bisfenol A). Tensión superficial recomendada &gt;36 mN/m.',
+  cBpani:'BPA-NI — poliésteres modificados sin bisfenol A. Tensión superficial recomendada 50 mN/m.',
+  cPam:'Poliamida / Poliamida-imida. El 8460 contiene NMP (N-metil-2-pirrolidona). Tensión superficial recomendada 56 mN/m.',
+  cPamAlt:'Poliésteres modificados — barnices exigentes para limpieza y mantenimiento. Tensión superficial recomendada 56 mN/m.',
+  cPai:'',
+  cOthers:'Barnices no estándar.',
+  cOver:'Barniz de acabado que cubre impresión y capa base. Proporciona resistencia mecánica y química.',
+  cClear:'Barniz base transparente que asegura adhesión suficiente para otras capas.',
+  cWhite:'Barniz base blanco que asegura cobertura y adhesión suficiente para otras capas.',
   pwaTitle:'App & Modo sin conexión',pwaSub:'Instalar en pantalla de inicio · funciona sin internet',
   pwaP:'VarnishCalc Pro es una <strong>Progressive Web App (PWA)</strong> — instalable en la pantalla de inicio, funciona sin conexión.',
   pwaInstallLbl:'Instalación en iPhone / Android',
@@ -773,7 +791,7 @@ uk:{
   cO3L:'Товщина шару (мкм)',cO3D:'Товщина вологої та сухої плівки.',
   recTitle:'Перерахунок',recSub:'Зворотний розрахунок з виміряної вологої маси',
   recP:'Перерахунок відповідає: <strong>"Зважив лак — яку товщину наніс?"</strong>',
-  recHint:'Різниця мас до/після = нанесений вологий лак.',
+  recHint:'Оператор зважує банку до і після нанесення. Різниця мас = нанесений вологий лак.',
   rS1:'Виберіть <strong>Тип</strong> та <strong>Лак</strong>.',
   rS2:'Введіть <strong>Розміри</strong>.',
   rS3:'Введіть <strong>Вологу масу</strong> в грамах.',
@@ -789,9 +807,15 @@ uk:{
   catTitle:'Категорії лаків',catSub:'Хімія внутрішніх покриттів',
   catP:'Групуються за хімічною основою.',
   catExtLbl:'Типи зовнішніх лаків',
-  cEpoxy:'Епоксидні.',cBpani:'BPA-NI.',cPam:'Поліамід.',
-  cPamAlt:'Модифікований поліамід.',cPai:'Поліамід-імід.',cOthers:'Нестандартні.',
-  cOver:'Верхній лак.',cClear:'Прозора основа.',cWhite:'Біла основа.',
+  cEpoxy:'Епоксидні системи. Здебільшого містять BPA (бісфенол А). Рекомендоване поверхневе натягнення &gt;36 мН/м.',
+  cBpani:'BPA-NI — модифіковані поліестери без бісфенолу А. Рекомендоване поверхневе натягнення 50 мН/м.',
+  cPam:'Поліамід / Поліамід-імід. 8460 містить NMP (N-метил-2-піролідон). Рекомендоване поверхневе натягнення 56 мН/м.',
+  cPamAlt:'Модифіковані поліестери — вимогливі лаки до чищення та обслуговування. Рекомендоване поверхневе натягнення 56 мН/м.',
+  cPai:'',
+  cOthers:'Нестандартні лаки.',
+  cOver:'Верхній лак що покриває друк і базовий лак. Забезпечує механічну та хімічну стійкість.',
+  cClear:'Прозорий базовий лак що забезпечує достатню адгезію для інших шарів.',
+  cWhite:'Білий базовий лак що забезпечує укривність і достатню адгезію для інших шарів.',
   pwaTitle:'Застосунок & Офлайн режим',pwaSub:'Додати на екран · працює без інтернету',
   pwaP:'VarnishCalc Pro — це <strong>Progressive Web App (PWA)</strong>, яку можна встановити на екран телефону.',
   pwaInstallLbl:'Встановлення на iPhone / Android',
@@ -827,7 +851,7 @@ ar:{
   cO3L:'سماكة الطبقة (ميكرون)',cO3D:'سماكة الفيلم الرطب والجاف.',
   recTitle:'إعادة الحساب',recSub:'حساب عكسي من الوزن الرطب المقاس',
   recP:'تجيب: <strong>"وزنت الورنيش — ما السماكة التي طبقتها؟"</strong>',
-  recHint:'فرق الوزن قبل/بعد = الورنيش الرطب المطبق.',
+  recHint:'يزن المشغّل كل علبة قبل وبعد الطلاء. فرق الوزن = الورنيش الرطب المطبق.',
   rS1:'اختر <strong>النوع</strong> و<strong>الورنيش</strong>.',
   rS2:'أدخل <strong>الأبعاد</strong>.',
   rS3:'أدخل <strong>الوزن الرطب</strong> بالغرامات.',
@@ -843,9 +867,15 @@ ar:{
   catTitle:'فئات الورنيش',catSub:'كيمياء الطلاء الداخلي',
   catP:'تُجمَّع الورنيشات حسب قاعدتها الكيميائية.',
   catExtLbl:'أنواع الورنيش الخارجي',
-  cEpoxy:'إيبوكسي.',cBpani:'BPA-NI.',cPam:'بولياميد.',
-  cPamAlt:'بولياميد معدّل.',cPai:'بولياميد-إيميد.',cOthers:'غير قياسي.',
-  cOver:'طلاء تشطيب.',cClear:'طبقة أساسية شفافة.',cWhite:'طبقة بيضاء معتمة.',
+  cEpoxy:'أنظمة إيبوكسي. تحتوي في معظم الحالات على BPA (بيسفينول-A). شد سطحي موصى به &gt;36 mN/m.',
+  cBpani:'BPA-NI — بوليسترات معدّلة بدون بيسفينول-A. شد سطحي موصى به 50 mN/m.',
+  cPam:'بولياميد / بولياميد-إيميد. يحتوي 8460 على NMP (N-ميثيل-2-بيروليدون). شد سطحي موصى به 56 mN/m.',
+  cPamAlt:'بوليسترات معدّلة — طلاءات متطلبة لتنظيف وصيانة أنظمة الطلاء. شد سطحي موصى به 56 mN/m.',
+  cPai:'',
+  cOthers:'ورنيشات غير قياسية.',
+  cOver:'طلاء تشطيب يغطي الطباعة والطبقة الأساسية. يوفر مقاومة ميكانيكية وكيميائية.',
+  cClear:'طبقة أساسية شفافة تضمن التصاقاً كافياً للطبقات الأخرى.',
+  cWhite:'طبقة أساسية بيضاء تضمن التغطية والتصاقاً كافياً للطبقات الأخرى.',
   pwaTitle:'التطبيق ووضع بدون إنترنت',pwaSub:'إضافة للشاشة الرئيسية · يعمل بدون إنترنت',
   pwaP:'VarnishCalc Pro هو <strong>Progressive Web App (PWA)</strong> — قابل للتثبيت على الشاشة الرئيسية ويعمل بدون إنترنت.',
   pwaInstallLbl:'التثبيت على iPhone / Android',
@@ -924,6 +954,22 @@ function applyT(){
   s('pwaVersionLbl',t.pwaVersionLbl);
   s('pwaVL',t.pwaVL); s('pwaVD',t.pwaVD);
   s('pwaHint',t.pwaHint);
+  // Render formulas with translated comments
+  const sf = document.getElementById('scvFormula');
+  if (sf) sf.innerHTML =
+    `<span class="fc">${t.scvFC}</span>\n`+
+    `<span class="fk">dry thickness</span> = <span class="fv">wet thickness</span> × (SCV / 100)\n`+
+    `<span class="fk">wet thickness</span> = <span class="fv">dry thickness</span> / (SCV / 100)\n\n`+
+    `<span class="fc">${t.scvFEx}</span>\n`+
+    `wet = 8 / 0.36 = <span class="fv">22.2 µm</span>`;
+  const rf = document.getElementById('recFormula');
+  if (rf) rf.innerHTML =
+    `<span class="fc">${t.recFC}</span>\n`+
+    `<span class="fk">dryG</span>   = wetWeight × SCV\n`+
+    `<span class="fk">wetGM2</span> = wetWeight / areaM2\n`+
+    `<span class="fk">dryGM2</span> = wetGM2 × SCV\n`+
+    `<span class="fk">wetUm</span>  = wetGM2 / wetDensity\n`+
+    `<span class="fk">dryUm</span>  = wetUm × SCV`;
   // Section picker
   const picker = document.getElementById('sectionPicker');
   if (picker) {
