@@ -369,8 +369,8 @@ function calcRecalc(v,d,l,wg,incBot){const scvR=v.scv/100,side=Math.PI*d*l,bot=M
 const fmt=(n,dec=2)=>n.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
 const fmtI=n=>Math.round(n).toLocaleString('en-US');
 function rcRow(dot,label,val){return`<div class="rc-row"><div class="rc-row-left"><div class="rc-dot">${dot}</div>${label}</div><div class="rc-val">${val}</div></div>`;}
-const CAT_LABELS={'EPOXY':'EPOXY','BPANI':'BPANI','PAM':'PAM – Polyamide','PAM_Alternative':'PAM Alternative','PAI':'PAI – Polyamide-imide','Others':'Others','Overvarnish':'Overvarnish','Clear basecoat':'Clear Basecoat','White Enamel':'White Enamel'};
-const CAT_ORDER=['EPOXY','BPANI','PAM','PAM_Alternative','PAI','Others','Overvarnish','Clear basecoat','White Enamel'];
+const CAT_LABELS={'EPOXY':'EPOXY','BPANI':'BPANI','PAM':'PAM – Polyamide','PAM_Alternative':'PAM Alternative','PAI':'PAI – Polyamide-imide','Polyurethane':'Polyurethane','Others':'Others','Overvarnish':'Overvarnish','Clear basecoat':'Clear Basecoat','White Enamel':'White Enamel'};
+const CAT_ORDER=['EPOXY','BPANI','PAM','PAM_Alternative','PAI','Polyurethane','Others','Overvarnish','Clear basecoat','White Enamel'];
 function catLabel(cat){return CAT_LABELS[cat]||cat;}
 function fillSelect(sel,type){const data=VARNISHES[type],cats=[...new Set(data.map(v=>v.cat))].sort((a,b)=>{const ai=CAT_ORDER.indexOf(a),bi=CAT_ORDER.indexOf(b);return(ai<0?99:ai)-(bi<0?99:bi);});sel.innerHTML=cats.map(cat=>`<optgroup label="${catLabel(cat)}">${data.filter(v=>v.cat===cat).map(v=>`<option value="${v.id}">${v.name}</option>`).join('')}</optgroup>`).join('');}
 function getV(selId,type){const id=parseInt(document.getElementById(selId).value);return VARNISHES[type].find(v=>v.id===id);}
