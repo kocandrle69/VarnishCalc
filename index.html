@@ -647,6 +647,806 @@ function calculateConsumption(){
         r=calcCoating(v,d,coatLen,inc),
         spoilF=spoilPct/100,
         t=T[lang];
+  // Min and Max only — no Mid
+  const netMinG=r.minWG*qty, netMaxG=r.maxWG*qty;
+  const spoilMinG=netMinG*spoilF, spoilMaxG=netMaxG*spoilF;
+  const totMinG=netMinG+spoilMinG, totMaxG=netMaxG+spoilMaxG;
+  const toKg=g=>g/1000;
+  const el=document.getElementById('prodConsumeResults');
+  el.style.display='block';
+  el.innerHTML=`
+  <div class="res-title" style="padding-top:0;margin-bottom:6px">${t.prodResTitle}</div>
+  <div class="res-sub" style="margin-bottom:12px">${v.name} · SCV ${v.scv.toFixed(2)}% · Ø${d}×${coatLen} mm · ${fmtI(qty)} ${t.pcs} · ${spoilPct.toFixed(1)}% ${t.spoilageRow}</div>
+  <div class="pp-summary">
+    <div class="pp-card">
+      <div class="pp-card-lbl">${t.netConsumption} — Min</div>
+      <div class="pp-card-val">${fmt(toKg(netMinG),1)} kg</div>
+      <div class="pp-card-sub">${fmt(r.minWG,3)} g/${t.pcs}</div>
+    </div>
+    <div class="pp-card">
+      <div class="pp-card-lbl">${t.netConsumption} — Max</div>
+      <div class="pp-card-val">${fmt(toKg(netMaxG),1)} kg</div>
+      <div class="pp-card-sub">${fmt(r.maxWG,3)} g/${t.pcs}</div>
+    </div>
+    <div class="pp-card accent-amber">
+      <div class="pp-card-lbl">${t.totalOrder} — Min</div>
+      <div class="pp-card-val">${fmt(toKg(totMinG),1)} kg</div>
+      <div class="pp-card-sub">+${fmt(toKg(spoilMinG),1)} kg ${t.spoilageRow}</div>
+    </div>
+    <div class="pp-card accent-amber">
+      <div class="pp-card-lbl">${t.totalOrder} — Max</div>
+      <div class="pp-card-val">${fmt(toKg(totMaxG),1)} kg</div>
+      <div class="pp-card-sub">+${fmt(toKg(spoilMaxG),1)} kg ${t.spoilageRow}</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:0;padding:14px 16px">
+    <table class="pp-table">
+      <thead><tr>
+        <th style="text-align:left"></th>
+        <th>${t.netConsumption}</th>
+        <th class="pp-spoilage-val">${t.spoilageRow}</th>
+        <th>${t.totalOrder}</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Min (${fmt(r.minWG,3)} g/${t.pcs})</td>
+          <td>${fmt(toKg(netMinG),2)} kg</td>
+          <td class="pp-spoilage-val">+${fmt(toKg(spoilMinG),2)} kg</td>
+          <td><strong>${fmt(toKg(totMinG),2)} kg</strong></td>
+        </tr>
+        <tr>
+          <td>Max (${fmt(r.maxWG,3)} g/${t.pcs})</td>
+          <td>${fmt(toKg(netMaxG),2)} kg</td>
+          <td class="pp-spoilage-val">+${fmt(toKg(spoilMaxG),2)} kg</td>
+          <td><strong>${fmt(toKg(totMaxG),2)} kg</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="plan-detail" style="margin-top:12px">
+      <div class="pd-lbl">${t.dryLacquer} (Min – Max)</div>
+      <div class="pd-val">${fmt(toKg(totMinG)*v.scv/100,1)} – ${fmt(toKg(totMaxG)*v.scv/100,1)} kg</div>
+    </div>
+    <div class="plan-detail" style="margin-top:8px">
+      <div class="pd-lbl">${t.coatLenRes}</div>
+      <div class="pd-val">${finLen} + ${allow} = ${coatLen} mm</div>
+    </div>
+    <div class="plan-detail" style="margin-top:8px">
+      <div class="pd-lbl">${t.surfPerCan}</div>
+      <div class="pd-val">${fmt(r.area/100)} cm²</div>
+    </div>
+  </div>`;
+  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function calculateStock(){
+  const type=document.getElementById('stockCoatingType').value,
+        v=getV('stockVarnishSelect',type),
+        d=parseFloat(document.getElementById('stockDiam').value),
+        finLen=parseFloat(document.getElementById('stockFinLen').value),
+        allow=parseFloat(document.getElementById('stockAllowance').value)||0,
+        spoilPct=parseFloat(document.getElementById('stockSpoilage').value)||0,
+        rawQty=parseFloat(document.getElementById('stockQty').value);
+  if(!v||!d||!finLen||!rawQty)return;
+  const coatLen=finLen+allow,
+        inc=type==='internal',
+        r=calcCoating(v,d,coatLen,inc),
+        spoilF=spoilPct/100,
+        t=T[lang];
+  // convert stock to grams
+  const stockG=stockUnit==='kg'?rawQty*1000:stockUnit==='l'?rawQty*1000*v.wetD:rawQty;
+  // effective grams per can incl. spoilage
+  const effMinWG=r.minWG*(1+spoilF), effMaxWG=r.maxWG*(1+spoilF);
+  const maxPcs=Math.floor(stockG/effMinWG),
+        minPcs=Math.floor(stockG/effMaxWG),
+        avgPcs=Math.round((maxPcs+minPcs)/2);
+  const el=document.getElementById('prodStockResults');
+  el.style.display='block';
+  el.innerHTML=`
+  <div class="res-title" style="padding-top:0;margin-bottom:6px">${t.stockResTitle}</div>
+  <div class="res-sub" style="margin-bottom:12px">${v.name} · ${rawQty} ${stockUnit==='l'?'L':stockUnit} · Ø${d}×${coatLen} mm · ${spoilPct.toFixed(1)}% ${t.spoilageRow}</div>
+  <div class="card" style="margin-top:0;padding:16px">
+    <div class="stock-res-grid">
+      <div class="plan-mini"><div class="pm-lbl">${t.stockMinPcs}</div><div class="pm-val pm-min">${fmtI(minPcs)}</div><div class="pm-unit">${t.pcs}</div></div>
+      <div class="plan-mini"><div class="pm-lbl">${t.stockAvgPcs}</div><div class="pm-val pm-avg">${fmtI(avgPcs)}</div><div class="pm-unit">${t.pcs}</div></div>
+      <div class="plan-mini"><div class="pm-lbl">${t.stockMaxPcs}</div><div class="pm-val pm-max">${fmtI(maxPcs)}</div><div class="pm-unit">${t.pcs}</div></div>
+    </div>
+    <div class="plan-detail" style="margin-top:14px">
+      <div class="pd-lbl">${t.stockWetPerCan}</div>
+      <div class="pd-val">${fmt(r.minWG,3)} – ${fmt(r.maxWG,3)} g</div>
+    </div>
+    <div class="plan-detail" style="margin-top:8px">
+      <div class="pd-lbl">${t.coatLenRes}</div>
+      <div class="pd-val">${finLen} + ${allow} = ${coatLen} mm</div>
+    </div>
+    <div class="plan-detail" style="margin-top:8px">
+      <div class="pd-lbl">${t.surfPerCan}</div>
+      <div class="pd-val">${fmt(r.area/100)} cm²</div>
+    </div>
+  </div>`;
+  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function onVarnishChange(){const v=getV('varnishSelect',coatingType);document.getElementById('varnishBadge').textContent=v?catLabel(v.cat):'—';}
+function setType(type){coatingType=type;document.getElementById('coatingTypeSelect').value=type;fillSelect(document.getElementById('varnishSelect'),type);onVarnishChange();document.getElementById('resultsSection').style.display='none';}
+function switchTab(tab){
+  ['calc','plan','recalc','prod'].forEach(t=>{
+    document.getElementById(t+'Section').style.display=t===tab?'block':'none';
+    const btn=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(btn)btn.classList.toggle('active',t===tab);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function buildLangSelect(){document.getElementById('langSelect').innerHTML=LANGS.map(l=>`<option value="${l.code}"${l.code===lang?' selected':''}>${l.flag} ${l.name}</option>`).join('');}
+function setLang(l){
+  lang=l;const lObj=LANGS.find(x=>x.code===l);
+  document.documentElement.lang=l;document.documentElement.dir=lObj?.dir||'ltr';
+  buildLangSelect();applyT();
+  if(document.getElementById('resultsSection').style.display!=='none')calculate();
+  if(document.getElementById('planResultsSection').style.display!=='none')calculatePlanning();
+  if(document.getElementById('recalcResultsSection').style.display!=='none')calculateRecalc();
+  if(document.getElementById('prodConsumeResults').style.display!=='none')calculateConsumption();
+  if(document.getElementById('prodStockResults').style.display!=='none')calculateStock();
+}
+function applyT(){
+  const t=T[lang];
+  document.getElementById('tabCalc').textContent=t.tabCalc;
+  document.getElementById('tabRecalc').textContent=t.tabRecalc;
+  document.getElementById('tabPlan').textContent=t.tabPlan;
+  document.getElementById('tabProd').textContent=t.tabProd;
+  document.getElementById('lAppType').textContent=t.appType;
+  document.getElementById('lVarnishSpec').textContent=t.varnishSpec;
+  document.getElementById('lDims').textContent=t.dims;
+  document.getElementById('lDiam').textContent=t.diam;
+  document.getElementById('lLen').textContent=t.len;
+  document.getElementById('btnCalc').textContent=t.btnCalc;
+  document.getElementById('lResTitle').textContent=t.resTitle;
+  const ico={internal:'🥫 ',external:'🌐 '};
+  document.getElementById('calcOptInternal').textContent=ico.internal+t.internal;
+  document.getElementById('calcOptExternal').textContent=ico.external+t.external;
+  document.getElementById('lPlanCoatingType').textContent=t.coatingType;
+  document.getElementById('lPlanVarnish').textContent=t.varnishSpec;
+  document.getElementById('lAvailVarnish').textContent=t.availVarnish;
+  document.getElementById('lProductDims').textContent=t.productDims;
+  document.getElementById('lPlanDiam').textContent=t.diam;
+  document.getElementById('lPlanLen').textContent=t.len;
+  document.getElementById('btnPlan').textContent=t.btnPlan;
+  document.getElementById('planOptInternal').textContent='🥫 '+t.internal;
+  document.getElementById('planOptExternal').textContent='🌐 '+t.external;
+  document.getElementById('lRecalcCoatingType').textContent=t.coatingType;
+  document.getElementById('lRecalcVarnish').textContent=t.varnishSpec;
+  document.getElementById('lRecalcDims').textContent=t.dims;
+  document.getElementById('lRecalcDiam').textContent=t.diam;
+  document.getElementById('lRecalcLen').textContent=t.len;
+  document.getElementById('lWetWeight').textContent=t.wetWeightLabel;
+  document.getElementById('btnRecalc').textContent=t.btnRecalc;
+  document.getElementById('lRecalcResTitle').textContent=t.recalcResTitle;
+  document.getElementById('recalcOptInternal').textContent='🥫 '+t.internal;
+  document.getElementById('recalcOptExternal').textContent='🌐 '+t.external;
+  // production planning
+  document.getElementById('ppTabConsume').textContent=t.ppTabConsume;
+  document.getElementById('ppTabStock').textContent=t.ppTabStock;
+  document.getElementById('lProdCoatingType').textContent=t.coatingType;
+  document.getElementById('lProdVarnish').textContent=t.varnishSpec;
+  document.getElementById('lProdCanDims').textContent=t.prodCanDims;
+  document.getElementById('lProdDiam').textContent=t.diam;
+  document.getElementById('lProdFinLen').textContent=t.prodFinLen;
+  document.getElementById('lProdAllowance').textContent=t.prodAllowance;
+  document.getElementById('lProdVolume').textContent=t.prodVolume;
+  document.getElementById('lProdQty').textContent=t.prodQty;
+  document.getElementById('lProdSpoilage').textContent=t.prodSpoilage;
+  document.getElementById('btnProdConsume').textContent=t.btnProdConsume;
+  document.getElementById('prodOptInternal').textContent='🥫 '+t.internal;
+  document.getElementById('prodOptExternal').textContent='🌐 '+t.external;
+  document.getElementById('lStockCoatingType').textContent=t.coatingType;
+  document.getElementById('lStockVarnish').textContent=t.varnishSpec;
+  document.getElementById('lStockAvail').textContent=t.stockAvail;
+  document.getElementById('lStockCanDims').textContent=t.stockCanDims;
+  document.getElementById('lStockDiam').textContent=t.diam;
+  document.getElementById('lStockFinLen').textContent=t.stockFinLen;
+  document.getElementById('lStockAllowance').textContent=t.stockAllowance;
+  document.getElementById('lStockSpoilage').textContent=t.stockSpoilage;
+  document.getElementById('btnStockCalc').textContent=t.btnStockCalc;
+  document.getElementById('stockOptInternal').textContent='🥫 '+t.internal;
+  document.getElementById('stockOptExternal').textContent='🌐 '+t.external;
+  document.getElementById('lProdQtyUnit').textContent=t.pcs;
+}
+
+// ════ OFFLINE ════
+window.addEventListener('online',()=>document.getElementById('offlineBanner').classList.remove('show'));
+window.addEventListener('offline',()=>document.getElementById('offlineBanner').classList.add('show'));
+
+// ════ SERVICE WORKER ════
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').then(reg=>{
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'&&navigator.serviceWorker.controller)
+            document.getElementById('updateBanner').classList.add('show');
+        });
+      });
+    }).catch(e=>console.warn('SW:',e));
+  });
+}
+
+init();
+</script>
+</body>
+</html>.tab.active{background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.18);box-shadow:0 2px 16px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.2)}
+
+/* INPUTS */
+.flabel{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:8px}
+.select-wrap{position:relative}
+.glass-select{width:100%;padding:13px 40px 13px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-sm);color:white;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;appearance:none;outline:none;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),inset 0 -1px 0 rgba(0,0,0,0.15);transition:border-color 0.2s}
+.glass-select:focus{border-color:rgba(155,89,245,0.6);box-shadow:0 0 0 3px rgba(155,89,245,0.15)}
+.glass-select option,.glass-select optgroup{background:#12102a;color:white}
+.select-arrow{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none;font-size:11px}
+[dir="rtl"] .select-arrow{right:auto;left:14px}
+.varnish-badge{display:inline-flex;align-items:center;background:rgba(155,89,245,0.15);border:1px solid rgba(155,89,245,0.30);border-radius:7px;padding:3px 9px;font-size:11px;font-weight:700;color:rgba(196,169,255,0.9);letter-spacing:0.3px}
+.dim-row{display:flex;gap:10px}
+.dim-field{flex:1}
+.dim-wrap{position:relative}
+.num-input{width:100%;padding:12px 36px 12px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-sm);color:white;font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color 0.2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.num-input:focus{border-color:rgba(155,89,245,0.55);box-shadow:0 0 0 3px rgba(155,89,245,0.1)}
+.num-unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:11px;font-weight:700;letter-spacing:0.5px;pointer-events:none}
+[dir="rtl"] .num-unit{right:auto;left:11px}
+.btn-main{width:100%;padding:17px;background:linear-gradient(135deg,#7c6cfc 0%,#36b0e0 60%,#2de2ff 100%);border:none;border-radius:18px;color:white;font-size:15px;font-weight:800;letter-spacing:1.2px;cursor:pointer;transition:all 0.18s;font-family:'DM Sans',sans-serif;box-shadow:0 4px 28px rgba(124,108,252,0.40),inset 0 1px 0 rgba(255,255,255,0.2);position:relative;overflow:hidden;text-transform:uppercase}
+.btn-main::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent);border-radius:18px 18px 0 0;pointer-events:none}
+.btn-main:active{transform:scale(0.97);box-shadow:0 2px 14px rgba(124,108,252,0.3)}
+.unit-toggle{display:flex;gap:3px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:3px}
+.unit-btn{flex:1;padding:8px 4px;border:none;background:transparent;color:rgba(255,255,255,0.4);font-size:13px;font-weight:600;border-radius:9px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.unit-btn.active{background:rgba(255,255,255,0.13);color:white;border:1px solid rgba(255,255,255,0.18);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)}
+
+/* RESULTS */
+.res-title{font-size:20px;font-weight:800;letter-spacing:-0.4px;margin-bottom:4px;padding-top:4px}
+.res-sub{font-size:12px;color:var(--text-3);margin-bottom:12px;line-height:1.6}
+.area-pill{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 14px;margin-bottom:12px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.area-pill-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-3)}
+.area-pill-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--accent-cyan)}
+.rc{border-radius:22px;margin-bottom:10px;position:relative;overflow:hidden;backdrop-filter:blur(36px) saturate(200%);-webkit-backdrop-filter:blur(36px) saturate(200%);border:1px solid rgba(255,255,255,0.2);box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.28),inset 0 -1px 0 rgba(0,0,0,0.35),0 20px 60px rgba(0,0,0,0.55),0 4px 14px rgba(0,0,0,0.4);animation:rcUp 0.38s cubic-bezier(.22,.68,0,1.18) both}
+.rc:nth-child(1){animation-delay:.03s}.rc:nth-child(2){animation-delay:.09s}.rc:nth-child(3){animation-delay:.15s}.rc:nth-child(4){animation-delay:.21s}
+@keyframes rcUp{from{opacity:0;transform:translateY(18px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.rc::before{content:'';position:absolute;top:0;left:18px;right:18px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.42),transparent);pointer-events:none;z-index:1}
+.rc::after{content:'';position:absolute;top:-30%;left:-5%;width:45%;height:80%;background:radial-gradient(ellipse,rgba(255,255,255,0.09) 0%,transparent 70%);pointer-events:none}
+.rc-purple{background:linear-gradient(145deg,rgba(109,40,217,0.80) 0%,rgba(192,38,211,0.70) 100%)}
+.rc-blue{background:linear-gradient(145deg,rgba(29,78,216,0.80) 0%,rgba(109,40,217,0.70) 100%)}
+.rc-green{background:linear-gradient(145deg,rgba(4,120,87,0.82) 0%,rgba(15,118,110,0.72) 100%)}
+.rc-amber{background:linear-gradient(145deg,rgba(180,83,9,0.85) 0%,rgba(217,119,6,0.75) 100%)}
+.rc-inner{padding:18px 18px 16px;position:relative;z-index:2}
+.rc-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.rc-icon{width:40px;height:40px;border-radius:12px;flex-shrink:0;background:rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.15);box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:20px}
+.rc-card-title{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.1px;line-height:1.2}
+.rc-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
+.rc-row:last-child{border-bottom:none;padding-bottom:2px}
+.rc-row-left{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:rgba(255,255,255,0.75)}
+.rc-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px}
+.rc-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.2px}
+[dir="rtl"] .rc-row{flex-direction:row-reverse}[dir="rtl"] .rc-row-left{flex-direction:row-reverse}[dir="rtl"] .rc-head{flex-direction:row-reverse}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:14px}
+.plan-mini{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:14px 8px;text-align:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 4px 16px rgba(0,0,0,0.3);position:relative;overflow:hidden}
+.plan-mini::before{content:'';position:absolute;top:0;left:25%;right:25%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)}
+.pm-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-3);margin-bottom:6px}
+.pm-val{font-size:24px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1.1;word-break:break-all}
+.pm-unit{font-size:11px;color:var(--text-3);margin-top:4px;font-weight:600;letter-spacing:0.4px}
+.pm-min{color:#fb7185}.pm-avg{color:#a78bfa}.pm-max{color:#34d399}
+.plan-detail{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:11px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.pd-lbl{font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:0.7px}
+.pd-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--accent-cyan)}
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--text-3);font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0;transition:all 0.2s;font-family:'DM Sans',sans-serif;cursor:pointer}
+.help-btn:hover{background:rgba(155,89,245,0.25);border-color:rgba(155,89,245,0.5);color:#c4a9ff}
+.footer{text-align:center;font-size:12px;color:var(--text-3);padding-top:4px;padding-bottom:8px;letter-spacing:0.2px}
+.footer a{color:rgba(255,255,255,0.55);font-weight:700;text-decoration:none;transition:color 0.2s}
+.footer a:hover{color:rgba(255,255,255,0.85)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+
+/* ════ PRODUCTION PLANNING — section divider ════ */
+.pp-divider{display:flex;align-items:center;gap:10px;margin:6px 0 2px}
+.pp-divider-line{flex:1;height:1px;background:rgba(255,255,255,0.09)}
+.pp-divider-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3);white-space:nowrap}
+
+/* section toggle pills */
+.pp-toggle{display:flex;gap:4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:3px;margin-bottom:16px}
+.pp-toggle-btn{flex:1;background:transparent;border:none;color:rgba(255,255,255,0.38);padding:9px 6px;border-radius:11px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.2px;transition:all 0.22s;font-family:'DM Sans',sans-serif;text-align:center}
+.pp-toggle-btn.active{background:rgba(255,255,255,0.11);color:white;border:1px solid rgba(255,255,255,0.16);box-shadow:0 2px 12px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.18)}
+
+/* spoilage row */
+.spoilage-row{display:flex;align-items:center;gap:10px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.20);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:18px}
+.spoilage-label{font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:rgba(251,191,36,0.7);flex-shrink:0}
+.spoilage-input{flex:1;background:transparent;border:none;outline:none;color:#fbbf24;font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;min-width:0;text-align:right}
+.spoilage-pct{font-size:13px;font-weight:700;color:rgba(251,191,36,0.5);flex-shrink:0}
+
+/* consumption result summary cards */
+.pp-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.pp-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:14px 12px;text-align:center;position:relative;overflow:hidden}
+.pp-card::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.pp-card-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-3);margin-bottom:5px}
+.pp-card-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:#fff;line-height:1.1}
+.pp-card-sub{font-size:11px;color:var(--text-3);margin-top:3px}
+.pp-card.accent-amber{border-color:rgba(245,158,11,0.30);background:rgba(245,158,11,0.08)}
+.pp-card.accent-amber .pp-card-val{color:#fbbf24}
+
+/* consumption table */
+.pp-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.pp-table th{font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--text-3);padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.08)}
+.pp-table th:first-child{text-align:left}
+.pp-table td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:right;color:rgba(255,255,255,0.75);font-family:'JetBrains Mono',monospace}
+.pp-table td:first-child{text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;color:#fff;font-size:11px}
+.pp-table tr:last-child td{border-bottom:none;color:#fff;font-weight:700}
+.pp-spoilage-val{color:#fbbf24}
+
+/* stock → pieces result */
+.stock-res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:14px}
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+  <div class="loader-logo"><span style="font-weight:300">Varnish</span>Calc<span style="font-weight:300"> Pro</span></div>
+  <div class="loader-ring"></div>
+  <div class="loader-txt" id="loaderTxt">Loading varnish data…</div>
+</div>
+
+<div id="offlineBanner">📡 Offline mode — using cached data</div>
+<div id="updateBanner" onclick="location.reload()">✨ New varnish data available — tap to refresh</div>
+
+<div class="bg-canvas">
+  <div class="bg-base"></div>
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <div class="flare flare-1"></div><div class="flare flare-2"></div><div class="flare flare-3"></div>
+</div>
+<div class="bg-vignette"></div>
+<div class="bg-noise"></div>
+
+<div class="wrap" id="mainApp" style="display:none">
+
+  <div class="header">
+    <div class="logo-wrap">
+      <div class="logo"><span class="logo-light">Varnish</span>Calc<span class="logo-light"> Pro</span></div>
+      <div class="logo-version"><div class="data-dot" id="dataDot"></div><span id="dataVersion">—</span></div>
+    </div>
+    <div class="header-right">
+      <div class="lang-select-wrap">
+        <select class="lang-select" id="langSelect" onchange="setLang(this.value)"></select>
+        <div class="lang-select-arrow">⌄</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabCalc"   onclick="switchTab('calc')">Calculator</button>
+    <button class="tab"        id="tabRecalc" onclick="switchTab('recalc')">Recalculation</button>
+    <button class="tab"        id="tabPlan"   onclick="switchTab('plan')">Planning</button>
+    <button class="tab"        id="tabProd"   onclick="switchTab('prod')">Production</button>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div id="calcSection">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="flabel" style="margin-bottom:0" id="lAppType">Application Type</div>
+        <a href="help.html" class="help-btn" onclick="window.location.href='help.html';return false;">?</a>
+      </div>
+      <div class="select-wrap" style="margin-bottom:18px">
+        <select class="glass-select" id="coatingTypeSelect" onchange="setType(this.value)">
+          <option value="internal" id="calcOptInternal">🥫 Internal</option>
+          <option value="external" id="calcOptExternal">🌐 External</option>
+        </select><div class="select-arrow">⌄</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="flabel" style="margin-bottom:0" id="lVarnishSpec">Varnish Specification</div>
+        <div class="varnish-badge" id="varnishBadge">—</div>
+      </div>
+      <div class="select-wrap" style="margin-bottom:18px">
+        <select class="glass-select" id="varnishSelect" onchange="onVarnishChange()"></select><div class="select-arrow">⌄</div>
+      </div>
+      <div class="flabel" id="lDims">Dimensions</div>
+      <div class="dim-row" style="margin-bottom:18px">
+        <div class="dim-field"><div class="flabel" id="lDiam">Diameter</div><div class="dim-wrap"><input class="num-input" type="number" id="diameter" value="35" step="0.1" min="0.1"><span class="num-unit">mm</span></div></div>
+        <div class="dim-field"><div class="flabel" id="lLen">Length</div><div class="dim-wrap"><input class="num-input" type="number" id="length" value="150" step="1" min="1"><span class="num-unit">mm</span></div></div>
+      </div>
+      <button class="btn-main" id="btnCalc" onclick="calculate()">CALCULATE</button>
+    </div>
+    <div id="resultsSection" style="display:none;margin-top:8px">
+      <div class="res-title" id="lResTitle">Calculation Results</div>
+      <div class="res-sub" id="resSub"></div>
+      <div class="area-pill" id="areaPill"></div>
+      <div id="resultCards"></div>
+    </div>
+  </div>
+
+  <!-- PLANNING -->
+  <div id="planSection" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="flabel" style="margin-bottom:0" id="lPlanCoatingType">Coating Type</div>
+        <a href="help.html" class="help-btn" onclick="window.location.href='help.html';return false;">?</a>
+      </div>
+      <div class="select-wrap" style="margin-bottom:10px">
+        <select class="glass-select" id="planCoatingType" onchange="loadPlanVarnishes()">
+          <option value="internal" id="planOptInternal">🥫 Internal</option>
+          <option value="external" id="planOptExternal">🌐 External</option>
+        </select><div class="select-arrow">⌄</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="flabel" style="margin-bottom:0" id="lPlanVarnish">Varnish Specification</div>
+        <div class="varnish-badge" id="planVarnishBadge">—</div>
+      </div>
+      <div class="select-wrap" style="margin-bottom:18px">
+        <select class="glass-select" id="planVarnishSelect" onchange="onPlanVarnishChange()"></select><div class="select-arrow">⌄</div>
+      </div>
+      <div class="flabel" id="lAvailVarnish">Available Varnish</div>
+      <div class="unit-toggle" style="margin-bottom:10px">
+        <button class="unit-btn active" id="uKg" onclick="setPlanUnit('kg')">kg</button>
+        <button class="unit-btn"        id="uL"  onclick="setPlanUnit('l')">L</button>
+        <button class="unit-btn"        id="uG"  onclick="setPlanUnit('g')">g</button>
+      </div>
+      <div class="dim-wrap" style="margin-bottom:18px">
+        <input class="num-input" type="number" id="planQty" value="25" step="0.1" min="0.001">
+        <span class="num-unit" id="planUnitLbl">kg</span>
+      </div>
+      <div class="flabel" id="lProductDims">Product Dimensions</div>
+      <div class="dim-row" style="margin-bottom:18px">
+        <div class="dim-field"><div class="flabel" id="lPlanDiam">Diameter</div><div class="dim-wrap"><input class="num-input" type="number" id="planDiam" value="35" step="0.1" min="0.1"><span class="num-unit">mm</span></div></div>
+        <div class="dim-field"><div class="flabel" id="lPlanLen">Length</div><div class="dim-wrap"><input class="num-input" type="number" id="planLen" value="150" step="1" min="1"><span class="num-unit">mm</span></div></div>
+      </div>
+      <button class="btn-main" id="btnPlan" onclick="calculatePlanning()">CALCULATE CAPACITY</button>
+    </div>
+    <div id="planResultsSection" style="display:none;margin-top:8px"><div id="planCards"></div></div>
+  </div>
+
+  <!-- RECALCULATION -->
+  <div id="recalcSection" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="flabel" style="margin-bottom:0" id="lRecalcCoatingType">Coating Type</div>
+        <a href="help.html" class="help-btn" onclick="window.location.href='help.html';return false;">?</a>
+      </div>
+      <div class="select-wrap" style="margin-bottom:10px">
+        <select class="glass-select" id="recalcCoatingType" onchange="loadRecalcVarnishes()">
+          <option value="internal" id="recalcOptInternal">🥫 Internal</option>
+          <option value="external" id="recalcOptExternal">🌐 External</option>
+        </select><div class="select-arrow">⌄</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="flabel" style="margin-bottom:0" id="lRecalcVarnish">Varnish</div>
+        <div class="varnish-badge" id="recalcVarnishBadge">—</div>
+      </div>
+      <div class="select-wrap" style="margin-bottom:18px">
+        <select class="glass-select" id="recalcVarnishSelect" onchange="onRecalcVarnishChange()"></select><div class="select-arrow">⌄</div>
+      </div>
+      <div class="flabel" id="lRecalcDims">Dimensions</div>
+      <div class="dim-row" style="margin-bottom:18px">
+        <div class="dim-field"><div class="flabel" id="lRecalcDiam">Diameter</div><div class="dim-wrap"><input class="num-input" type="number" id="recalcDiam" value="35" step="0.1" min="0.1"><span class="num-unit">mm</span></div></div>
+        <div class="dim-field"><div class="flabel" id="lRecalcLen">Length</div><div class="dim-wrap"><input class="num-input" type="number" id="recalcLen" value="150" step="1" min="1"><span class="num-unit">mm</span></div></div>
+      </div>
+      <div class="flabel" id="lWetWeight">Wet Weight per Can (g)</div>
+      <div class="dim-wrap" style="margin-bottom:18px">
+        <input class="num-input" type="number" id="wetWeight" value="" placeholder="0.00" step="0.01" min="0.001">
+        <span class="num-unit">g</span>
+      </div>
+      <button class="btn-main" id="btnRecalc" onclick="calculateRecalc()">RECALCULATE</button>
+    </div>
+    <div id="recalcResultsSection" style="display:none;margin-top:8px">
+      <div class="res-title" id="lRecalcResTitle">Recalculation Results</div>
+      <div class="res-sub" id="recalcResSub"></div>
+      <div class="area-pill" id="recalcAreaPill"></div>
+      <div id="recalcCards"></div>
+    </div>
+  </div>
+
+  <!-- ════ PRODUCTION PLANNING ════ -->
+  <div id="prodSection" style="display:none">
+
+    <!-- Sub-tab toggle -->
+    <div class="pp-toggle">
+      <button class="pp-toggle-btn active" id="ppTabConsume" onclick="switchProdTab('consume')" id="lPpTabConsume">📦 Consumption</button>
+      <button class="pp-toggle-btn"        id="ppTabStock"   onclick="switchProdTab('stock')"   id="lPpTabStock">🔄 Stock → Pieces</button>
+    </div>
+
+    <!-- ── A: CONSUMPTION ESTIMATOR ── -->
+    <div id="prodConsumeSection">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div class="flabel" style="margin-bottom:0" id="lProdCoatingType">Coating Type</div>
+          <a href="help.html" class="help-btn" onclick="window.location.href='help.html';return false;">?</a>
+        </div>
+        <div class="select-wrap" style="margin-bottom:10px">
+          <select class="glass-select" id="prodCoatingType" onchange="loadProdVarnishes()">
+            <option value="internal" id="prodOptInternal">🥫 Internal</option>
+            <option value="external" id="prodOptExternal">🌐 External</option>
+          </select><div class="select-arrow">⌄</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div class="flabel" style="margin-bottom:0" id="lProdVarnish">Varnish Specification</div>
+          <div class="varnish-badge" id="prodVarnishBadge">—</div>
+        </div>
+        <div class="select-wrap" style="margin-bottom:18px">
+          <select class="glass-select" id="prodVarnishSelect" onchange="onProdVarnishChange()"></select><div class="select-arrow">⌄</div>
+        </div>
+
+        <div class="pp-divider"><div class="pp-divider-line"></div><div class="pp-divider-label" id="lProdCanDims">Can Dimensions</div><div class="pp-divider-line"></div></div>
+        <div style="height:12px"></div>
+
+        <div class="dim-row" style="margin-bottom:18px">
+          <div class="dim-field">
+            <div class="flabel" id="lProdDiam">Diameter</div>
+            <div class="dim-wrap"><input class="num-input" type="number" id="prodDiam" value="45" step="0.1" min="1"><span class="num-unit">mm</span></div>
+          </div>
+          <div class="dim-field">
+            <div class="flabel" id="lProdFinLen">Finished length</div>
+            <div class="dim-wrap"><input class="num-input" type="number" id="prodFinLen" value="150" step="1" min="1"><span class="num-unit">mm</span></div>
+          </div>
+        </div>
+
+        <div class="flabel" id="lProdAllowance">Press length allowance</div>
+        <div class="dim-wrap" style="margin-bottom:18px">
+          <input class="num-input" type="number" id="prodAllowance" value="9" step="1" min="0">
+          <span class="num-unit">mm</span>
+        </div>
+
+        <div class="pp-divider"><div class="pp-divider-line"></div><div class="pp-divider-label" id="lProdVolume">Production Volume</div><div class="pp-divider-line"></div></div>
+        <div style="height:12px"></div>
+
+        <div class="flabel" id="lProdQty">Number of cans</div>
+        <div class="dim-wrap" style="margin-bottom:14px">
+          <input class="num-input" type="number" id="prodQty" value="1000000" step="1000" min="1">
+          <span class="num-unit" id="lProdQtyUnit">pcs</span>
+        </div>
+
+        <div class="flabel" id="lProdSpoilage">Spoilage / scrap rate</div>
+        <div class="spoilage-row">
+          <span class="spoilage-label">%</span>
+          <input class="spoilage-input" type="number" id="prodSpoilage" value="3" step="0.1" min="0" max="100">
+          <span class="spoilage-pct" id="prodSpoilagePct">3.0 %</span>
+        </div>
+
+        <button class="btn-main" id="btnProdConsume" onclick="calculateConsumption()">CALCULATE CONSUMPTION</button>
+      </div>
+      <div id="prodConsumeResults" style="display:none;margin-top:8px"></div>
+    </div>
+
+    <!-- ── B: STOCK → PIECES ── -->
+    <div id="prodStockSection" style="display:none">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div class="flabel" style="margin-bottom:0" id="lStockCoatingType">Coating Type</div>
+          <a href="help.html" class="help-btn" onclick="window.location.href='help.html';return false;">?</a>
+        </div>
+        <div class="select-wrap" style="margin-bottom:10px">
+          <select class="glass-select" id="stockCoatingType" onchange="loadStockVarnishes()">
+            <option value="internal" id="stockOptInternal">🥫 Internal</option>
+            <option value="external" id="stockOptExternal">🌐 External</option>
+          </select><div class="select-arrow">⌄</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div class="flabel" style="margin-bottom:0" id="lStockVarnish">Varnish Specification</div>
+          <div class="varnish-badge" id="stockVarnishBadge">—</div>
+        </div>
+        <div class="select-wrap" style="margin-bottom:18px">
+          <select class="glass-select" id="stockVarnishSelect" onchange="onStockVarnishChange()"></select><div class="select-arrow">⌄</div>
+        </div>
+
+        <div class="pp-divider"><div class="pp-divider-line"></div><div class="pp-divider-label" id="lStockAvail">Available stock</div><div class="pp-divider-line"></div></div>
+        <div style="height:12px"></div>
+
+        <div class="unit-toggle" style="margin-bottom:10px">
+          <button class="unit-btn active" id="sUKg" onclick="setStockUnit('kg')">kg</button>
+          <button class="unit-btn"        id="sUL"  onclick="setStockUnit('l')">L</button>
+          <button class="unit-btn"        id="sUG"  onclick="setStockUnit('g')">g</button>
+        </div>
+        <div class="dim-wrap" style="margin-bottom:18px">
+          <input class="num-input" type="number" id="stockQty" value="100" step="0.1" min="0.001">
+          <span class="num-unit" id="stockUnitLbl">kg</span>
+        </div>
+
+        <div class="pp-divider"><div class="pp-divider-line"></div><div class="pp-divider-label" id="lStockCanDims">Can Dimensions</div><div class="pp-divider-line"></div></div>
+        <div style="height:12px"></div>
+
+        <div class="dim-row" style="margin-bottom:18px">
+          <div class="dim-field">
+            <div class="flabel" id="lStockDiam">Diameter</div>
+            <div class="dim-wrap"><input class="num-input" type="number" id="stockDiam" value="45" step="0.1" min="1"><span class="num-unit">mm</span></div>
+          </div>
+          <div class="dim-field">
+            <div class="flabel" id="lStockFinLen">Finished length</div>
+            <div class="dim-wrap"><input class="num-input" type="number" id="stockFinLen" value="150" step="1" min="1"><span class="num-unit">mm</span></div>
+          </div>
+        </div>
+
+        <div class="flabel" id="lStockAllowance">Press length allowance</div>
+        <div class="dim-wrap" style="margin-bottom:18px">
+          <input class="num-input" type="number" id="stockAllowance" value="9" step="1" min="0">
+          <span class="num-unit">mm</span>
+        </div>
+
+        <div class="flabel" id="lStockSpoilage">Spoilage / scrap rate</div>
+        <div class="spoilage-row">
+          <span class="spoilage-label">%</span>
+          <input class="spoilage-input" type="number" id="stockSpoilage" value="3" step="0.1" min="0" max="100">
+          <span class="spoilage-pct" id="stockSpoilagePct">3.0 %</span>
+        </div>
+
+        <button class="btn-main" id="btnStockCalc" onclick="calculateStock()">CALCULATE PIECES</button>
+      </div>
+      <div id="prodStockResults" style="display:none;margin-top:8px"></div>
+    </div>
+
+  </div><!-- /prodSection -->
+
+  <div class="footer"><a href="https://kocandrle69.github.io/my-profile/" target="_blank" rel="noopener">Jan Kočandrle</a> · © 2026</div>
+</div>
+
+<script>
+// ════ DECRYPT ════
+const _k=[86,67,80,114,111,50,48,50,54,36,120,75,57,109,78,51,112,81,55,114,84].map(c=>String.fromCharCode(c)).join('');
+function _d(e){try{const s=atob(e);let r='';for(let i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^_k.charCodeAt(i%_k.length));return JSON.parse(r);}catch(x){return null;}}
+
+// ════ STATE ════
+let VARNISHES=null,lang='en',coatingType='internal',planUnit='kg',stockUnit='kg';
+
+// ════ TRANSLATIONS ════
+const LANGS=[{code:'en',flag:'🇬🇧',dir:'ltr',name:'English'},{code:'cs',flag:'🇨🇿',dir:'ltr',name:'Čeština'},{code:'sk',flag:'🇸🇰',dir:'ltr',name:'Slovenčina'},{code:'fr',flag:'🇫🇷',dir:'ltr',name:'Français'},{code:'nl',flag:'🇧🇪',dir:'ltr',name:'Nederlands (BE)'},{code:'pt',flag:'🇧🇷',dir:'ltr',name:'Português BR'},{code:'es',flag:'🇪🇸',dir:'ltr',name:'Español'},{code:'uk',flag:'🇺🇦',dir:'ltr',name:'Українська'},{code:'ar',flag:'🇸🇦',dir:'rtl',name:'العربية'}];
+const T={
+en:{tabCalc:'Calculator',tabPlan:'Planning',tabRecalc:'Recalculation',tabProd:'Production',appType:'Application Type',internal:'Internal',external:'External',varnishSpec:'Varnish Specification',dims:'Dimensions',diam:'Diameter',len:'Length',btnCalc:'CALCULATE',btnPlan:'CALCULATE CAPACITY',btnRecalc:'RECALCULATE',resTitle:'Calculation Results',recalcResTitle:'Recalculation Results',surfaceArea:'Surface area',weightCan:'Layer weight (g/can)',weightM2:'Layer weight (g/m²)',thickness:'Layer thickness (µm)',dry:'Dry',wet:'Wet',coatingType:'Coating Type',availVarnish:'Available Varnish',liters:'Liters (L)',productDims:'Product Dimensions',minPcs:'Min. pieces',avg:'Average',maxPcs:'Max. pieces',pcs:'pcs',wetPerCan:'Wet varnish per can',internalNote:'incl. bottom',externalNote:'side only',wetWeightLabel:'Wet Weight per Can (g)',
+ppTabConsume:'📦 Consumption',ppTabStock:'🔄 Stock → Pieces',
+prodCanDims:'Can Dimensions',prodFinLen:'Finished length',prodAllowance:'Press length allowance',prodVolume:'Production Volume',prodQty:'Number of cans',prodSpoilage:'Spoilage / scrap rate',btnProdConsume:'CALCULATE CONSUMPTION',
+prodResTitle:'Consumption Estimate',netConsumption:'Net consumption',spoilageAllowance:'Spoilage allowance',totalOrder:'Total order qty',dryLacquer:'Dry lacquer',wetPerCanRes:'Wet lacquer / can',coatLenRes:'Coat length',surfPerCan:'Surface / can',
+stockAvail:'Available stock',stockCanDims:'Can Dimensions',stockDiam:'Diameter',stockFinLen:'Finished length',stockAllowance:'Press length allowance',stockSpoilage:'Spoilage / scrap rate',btnStockCalc:'CALCULATE PIECES',
+stockResTitle:'Estimated Output',stockMinPcs:'Min. pieces',stockAvgPcs:'Average',stockMaxPcs:'Max. pieces',stockWetPerCan:'Wet varnish / can range',
+spoilageRow:'Spoilage'
+},
+cs:{tabCalc:'Kalkulátor',tabPlan:'Plánování',tabRecalc:'Přepočet',tabProd:'Výroba',appType:'Typ aplikace',internal:'Vnitřní',external:'Vnější',varnishSpec:'Specifikace laku',dims:'Rozměry',diam:'Průměr',len:'Délka',btnCalc:'VYPOČÍTAT',btnPlan:'VÝPOČET KAPACITY',btnRecalc:'PŘEPOČÍTAT',resTitle:'Výsledky výpočtu',recalcResTitle:'Výsledky přepočtu',surfaceArea:'Plocha povrchu',weightCan:'Hmotnost vrstvy (g/plechovka)',weightM2:'Hmotnost vrstvy (g/m²)',thickness:'Tloušťka vrstvy (µm)',dry:'Suchý',wet:'Mokrý',coatingType:'Typ laku',availVarnish:'Dostupné množství laku',liters:'Litry (L)',productDims:'Rozměry produktu',minPcs:'Min. kusů',avg:'Průměr',maxPcs:'Max. kusů',pcs:'ks',wetPerCan:'Mokrý lak na plechovku',internalNote:'vč. dna',externalNote:'pouze plášť',wetWeightLabel:'Mokrá hmotnost na plechovku (g)',
+ppTabConsume:'📦 Spotřeba',ppTabStock:'🔄 Zásoba → Kusy',
+prodCanDims:'Rozměry pouzdra',prodFinLen:'Délka hotového pouzdra',prodAllowance:'Přídavek délky od lisu',prodVolume:'Objem výroby',prodQty:'Počet pouzder',prodSpoilage:'Zmetkovitost',btnProdConsume:'VYPOČÍTAT SPOTŘEBU',
+prodResTitle:'Odhad spotřeby laku',netConsumption:'Čistá spotřeba',spoilageAllowance:'Přídavek zmetků',totalOrder:'Celková objednávka',dryLacquer:'Suchý lak',wetPerCanRes:'Mokrý lak / pouzdro',coatLenRes:'Délka lakování',surfPerCan:'Povrch / pouzdro',
+stockAvail:'Dostupná zásoba',stockCanDims:'Rozměry pouzdra',stockDiam:'Průměr',stockFinLen:'Délka hotového pouzdra',stockAllowance:'Přídavek délky od lisu',stockSpoilage:'Zmetkovitost',btnStockCalc:'VYPOČÍTAT KUSY',
+stockResTitle:'Odhadovaný výstup',stockMinPcs:'Min. kusů',stockAvgPcs:'Průměr',stockMaxPcs:'Max. kusů',stockWetPerCan:'Mokrý lak / pouzdro (rozsah)',
+spoilageRow:'Zmetkovitost'
+},
+sk:{tabCalc:'Kalkulačka',tabPlan:'Plánovanie',tabRecalc:'Prepočet',tabProd:'Výroba',appType:'Typ aplikácie',internal:'Vnútorný',external:'Vonkajší',varnishSpec:'Špecifikácia laku',dims:'Rozmery',diam:'Priemer',len:'Dĺžka',btnCalc:'VYPOČÍTAŤ',btnPlan:'VÝPOČET KAPACITY',btnRecalc:'PREPOČÍTAŤ',resTitle:'Výsledky výpočtu',recalcResTitle:'Výsledky prepočtu',surfaceArea:'Plocha povrchu',weightCan:'Hmotnosť vrstvy (g/plechovka)',weightM2:'Hmotnosť vrstvy (g/m²)',thickness:'Hrúbka vrstvy (µm)',dry:'Suchý',wet:'Mokrý',coatingType:'Typ laku',availVarnish:'Dostupné množstvo laku',liters:'Litre (L)',productDims:'Rozmery produktu',minPcs:'Min. kusov',avg:'Priemer',maxPcs:'Max. kusov',pcs:'ks',wetPerCan:'Mokrý lak na plechovku',internalNote:'vr. dna',externalNote:'iba plášť',wetWeightLabel:'Mokrá hmotnosť na plechovku (g)',
+ppTabConsume:'📦 Spotreba',ppTabStock:'🔄 Zásoba → Kusy',prodCanDims:'Rozmery púzdra',prodFinLen:'Dĺžka hotového púzdra',prodAllowance:'Prídavok dĺžky od lisu',prodVolume:'Objem výroby',prodQty:'Počet púzdier',prodSpoilage:'Zmätkovitosť',btnProdConsume:'VYPOČÍTAŤ SPOTREBU',prodResTitle:'Odhad spotreby laku',netConsumption:'Čistá spotreba',spoilageAllowance:'Prídavok zmätkov',totalOrder:'Celková objednávka',dryLacquer:'Suchý lak',wetPerCanRes:'Mokrý lak / púzdro',coatLenRes:'Dĺžka lakovania',surfPerCan:'Povrch / púzdro',stockAvail:'Dostupná zásoba',stockCanDims:'Rozmery púzdra',stockDiam:'Priemer',stockFinLen:'Dĺžka hotového púzdra',stockAllowance:'Prídavok dĺžky od lisu',stockSpoilage:'Zmätkovitosť',btnStockCalc:'VYPOČÍTAŤ KUSY',stockResTitle:'Odhadovaný výstup',stockMinPcs:'Min. kusov',stockAvgPcs:'Priemer',stockMaxPcs:'Max. kusov',stockWetPerCan:'Mokrý lak / púzdro (rozsah)',spoilageRow:'Zmätkovitosť'},
+fr:{tabCalc:'Calculateur',tabPlan:'Planification',tabRecalc:'Recalcul',tabProd:'Production',appType:"Type d'application",internal:'Interne',external:'Externe',varnishSpec:'Spécification du vernis',dims:'Dimensions',diam:'Diamètre',len:'Longueur',btnCalc:'CALCULER',btnPlan:'CALCULER LA CAPACITÉ',btnRecalc:'RECALCULER',resTitle:'Résultats du calcul',recalcResTitle:'Résultats du recalcul',surfaceArea:'Surface totale',weightCan:'Poids de couche (g/boîte)',weightM2:'Poids de couche (g/m²)',thickness:'Épaisseur de couche (µm)',dry:'Sec',wet:'Humide',coatingType:'Type de revêtement',availVarnish:'Quantité de vernis disponible',liters:'Litres (L)',productDims:'Dimensions du produit',minPcs:'Pièces min.',avg:'Moyenne',maxPcs:'Pièces max.',pcs:'pcs',wetPerCan:'Vernis humide par boîte',internalNote:'fond incl.',externalNote:'côté seul',wetWeightLabel:'Poids humide par boîte (g)',ppTabConsume:'📦 Consommation',ppTabStock:'🔄 Stock → Pièces',prodCanDims:'Dimensions boîte',prodFinLen:'Longueur finie',prodAllowance:'Surcote presse',prodVolume:'Volume production',prodQty:'Nombre de boîtes',prodSpoilage:'Taux de rebut',btnProdConsume:'CALCULER CONSOMMATION',prodResTitle:'Estimation consommation',netConsumption:'Consommation nette',spoilageAllowance:'Allocation rebuts',totalOrder:'Qtté commande totale',dryLacquer:'Vernis sec',wetPerCanRes:'Vernis humide / boîte',coatLenRes:'Longueur laquage',surfPerCan:'Surface / boîte',stockAvail:'Stock disponible',stockCanDims:'Dimensions boîte',stockDiam:'Diamètre',stockFinLen:'Longueur finie',stockAllowance:'Surcote presse',stockSpoilage:'Taux de rebut',btnStockCalc:'CALCULER PIÈCES',stockResTitle:'Sortie estimée',stockMinPcs:'Pièces min.',stockAvgPcs:'Moyenne',stockMaxPcs:'Pièces max.',stockWetPerCan:'Vernis humide / boîte (plage)',spoilageRow:'Rebuts'},
+nl:{tabCalc:'Calculator',tabPlan:'Planning',tabRecalc:'Herberekening',tabProd:'Productie',appType:'Toepassingstype',internal:'Intern',external:'Extern',varnishSpec:'Vernis specificatie',dims:'Afmetingen',diam:'Diameter',len:'Lengte',btnCalc:'BEREKENEN',btnPlan:'CAPACITEIT BEREKENEN',btnRecalc:'HERBEREKENEN',resTitle:'Berekeningsresultaten',recalcResTitle:'Herberekeningsresultaten',surfaceArea:'Oppervlakte',weightCan:'Laaggewicht (g/blik)',weightM2:'Laaggewicht (g/m²)',thickness:'Laagdikte (µm)',dry:'Droog',wet:'Nat',coatingType:'Coating type',availVarnish:'Beschikbare vernis',liters:'Liter (L)',productDims:'Productafmetingen',minPcs:'Min. stuks',avg:'Gemiddeld',maxPcs:'Max. stuks',pcs:'st',wetPerCan:'Nat vernis per blik',internalNote:'incl. bodem',externalNote:'alleen zijkant',wetWeightLabel:'Nat gewicht per blik (g)',ppTabConsume:'📦 Verbruik',ppTabStock:'🔄 Voorraad → Stuks',prodCanDims:'Blikafmetingen',prodFinLen:'Eindlengte',prodAllowance:'Pers lengte toeslag',prodVolume:'Productievolume',prodQty:'Aantal blikken',prodSpoilage:'Uitvalpercentage',btnProdConsume:'VERBRUIK BEREKENEN',prodResTitle:'Verbruiksschatting',netConsumption:'Nettoverbruik',spoilageAllowance:'Uitvaltoeslag',totalOrder:'Totale bestelhoeveelheid',dryLacquer:'Droog vernis',wetPerCanRes:'Nat vernis / blik',coatLenRes:'Laklengte',surfPerCan:'Oppervlakte / blik',stockAvail:'Beschikbare voorraad',stockCanDims:'Blikafmetingen',stockDiam:'Diameter',stockFinLen:'Eindlengte',stockAllowance:'Pers lengte toeslag',stockSpoilage:'Uitvalpercentage',btnStockCalc:'STUKS BEREKENEN',stockResTitle:'Geschatte output',stockMinPcs:'Min. stuks',stockAvgPcs:'Gemiddeld',stockMaxPcs:'Max. stuks',stockWetPerCan:'Nat vernis / blik (bereik)',spoilageRow:'Uitval'},
+pt:{tabCalc:'Calculadora',tabPlan:'Planejamento',tabRecalc:'Recálculo',tabProd:'Produção',appType:'Tipo de aplicação',internal:'Interno',external:'Externo',varnishSpec:'Especificação do verniz',dims:'Dimensões',diam:'Diâmetro',len:'Comprimento',btnCalc:'CALCULAR',btnPlan:'CALCULAR CAPACIDADE',btnRecalc:'RECALCULAR',resTitle:'Resultados do cálculo',recalcResTitle:'Resultados do recálculo',surfaceArea:'Área da superfície',weightCan:'Peso da camada (g/lata)',weightM2:'Peso da camada (g/m²)',thickness:'Espessura da camada (µm)',dry:'Seco',wet:'Úmido',coatingType:'Tipo de cobertura',availVarnish:'Quantidade de verniz disponível',liters:'Litros (L)',productDims:'Dimensões do produto',minPcs:'Mín. peças',avg:'Média',maxPcs:'Máx. peças',pcs:'un',wetPerCan:'Verniz úmido por lata',internalNote:'incl. fundo',externalNote:'apenas lateral',wetWeightLabel:'Peso úmido por lata (g)',ppTabConsume:'📦 Consumo',ppTabStock:'🔄 Estoque → Peças',prodCanDims:'Dimensões da lata',prodFinLen:'Comprimento acabado',prodAllowance:'Tolerância de prensa',prodVolume:'Volume de produção',prodQty:'Número de latas',prodSpoilage:'Taxa de refugo',btnProdConsume:'CALCULAR CONSUMO',prodResTitle:'Estimativa de consumo',netConsumption:'Consumo líquido',spoilageAllowance:'Alocação de refugo',totalOrder:'Quantidade total do pedido',dryLacquer:'Verniz seco',wetPerCanRes:'Verniz úmido / lata',coatLenRes:'Comprimento de laca',surfPerCan:'Superfície / lata',stockAvail:'Estoque disponível',stockCanDims:'Dimensões da lata',stockDiam:'Diâmetro',stockFinLen:'Comprimento acabado',stockAllowance:'Tolerância de prensa',stockSpoilage:'Taxa de refugo',btnStockCalc:'CALCULAR PEÇAS',stockResTitle:'Saída estimada',stockMinPcs:'Mín. peças',stockAvgPcs:'Média',stockMaxPcs:'Máx. peças',stockWetPerCan:'Verniz úmido / lata (faixa)',spoilageRow:'Refugo'},
+es:{tabCalc:'Calculadora',tabPlan:'Planificación',tabRecalc:'Recálculo',tabProd:'Producción',appType:'Tipo de aplicación',internal:'Interno',external:'Externo',varnishSpec:'Especificación del barniz',dims:'Dimensiones',diam:'Diámetro',len:'Longitud',btnCalc:'CALCULAR',btnPlan:'CALCULAR CAPACIDAD',btnRecalc:'RECALCULAR',resTitle:'Resultados del cálculo',recalcResTitle:'Resultados del recálculo',surfaceArea:'Área superficial',weightCan:'Peso de capa (g/lata)',weightM2:'Peso de capa (g/m²)',thickness:'Espesor de capa (µm)',dry:'Seco',wet:'Húmedo',coatingType:'Tipo de recubrimiento',availVarnish:'Cantidad de barniz disponible',liters:'Litros (L)',productDims:'Dimensiones del producto',minPcs:'Piezas mín.',avg:'Promedio',maxPcs:'Piezas máx.',pcs:'uds',wetPerCan:'Barniz húmedo por lata',internalNote:'incl. fondo',externalNote:'solo lateral',wetWeightLabel:'Peso húmedo por lata (g)',ppTabConsume:'📦 Consumo',ppTabStock:'🔄 Stock → Piezas',prodCanDims:'Dimensiones lata',prodFinLen:'Longitud acabada',prodAllowance:'Tolerancia de prensa',prodVolume:'Volumen de producción',prodQty:'Número de latas',prodSpoilage:'Tasa de rechazo',btnProdConsume:'CALCULAR CONSUMO',prodResTitle:'Estimación de consumo',netConsumption:'Consumo neto',spoilageAllowance:'Asignación de rechazos',totalOrder:'Cantidad total del pedido',dryLacquer:'Barniz seco',wetPerCanRes:'Barniz húmedo / lata',coatLenRes:'Longitud de laca',surfPerCan:'Superficie / lata',stockAvail:'Stock disponible',stockCanDims:'Dimensiones lata',stockDiam:'Diámetro',stockFinLen:'Longitud acabada',stockAllowance:'Tolerancia de prensa',stockSpoilage:'Tasa de rechazo',btnStockCalc:'CALCULAR PIEZAS',stockResTitle:'Producción estimada',stockMinPcs:'Piezas mín.',stockAvgPcs:'Promedio',stockMaxPcs:'Piezas máx.',stockWetPerCan:'Barniz húmedo / lata (rango)',spoilageRow:'Rechazos'},
+uk:{tabCalc:'Калькулятор',tabPlan:'Планування',tabRecalc:'Перерахунок',tabProd:'Виробництво',appType:'Тип покриття',internal:'Внутрішній',external:'Зовнішній',varnishSpec:'Специфікація лаку',dims:'Розміри',diam:'Діаметр',len:'Довжина',btnCalc:'РОЗРАХУВАТИ',btnPlan:'РОЗРАХУНОК ЄМНОСТІ',btnRecalc:'ПЕРЕРАХУВАТИ',resTitle:'Результати розрахунку',recalcResTitle:'Результати перерахунку',surfaceArea:'Площа поверхні',weightCan:'Маса шару (г/банка)',weightM2:'Маса шару (г/м²)',thickness:'Товщина шару (мкм)',dry:'Сухий',wet:'Мокрий',coatingType:'Тип покриття',availVarnish:'Доступна кількість лаку',liters:'Літри (L)',productDims:'Розміри продукту',minPcs:'Мін. шт.',avg:'Середнє',maxPcs:'Макс. шт.',pcs:'шт',wetPerCan:'Мокрий лак на банку',internalNote:'вкл. дно',externalNote:'лише бічна',wetWeightLabel:'Мокра маса на банку (г)',ppTabConsume:'📦 Споживання',ppTabStock:'🔄 Запас → Штуки',prodCanDims:'Розміри банки',prodFinLen:'Кінцева довжина',prodAllowance:'Допуск преса',prodVolume:"Об'єм виробництва",prodQty:'Кількість банок',prodSpoilage:'Відсоток браку',btnProdConsume:'РОЗРАХУВАТИ СПОЖИВАННЯ',prodResTitle:'Оцінка споживання',netConsumption:'Чисте споживання',spoilageAllowance:'Надбавка на брак',totalOrder:'Загальне замовлення',dryLacquer:'Сухий лак',wetPerCanRes:'Мокрий лак / банку',coatLenRes:'Довжина лакування',surfPerCan:'Поверхня / банка',stockAvail:'Наявний запас',stockCanDims:'Розміри банки',stockDiam:'Діаметр',stockFinLen:'Кінцева довжина',stockAllowance:'Допуск преса',stockSpoilage:'Відсоток браку',btnStockCalc:'РОЗРАХУВАТИ ШТУКИ',stockResTitle:'Орієнтовний вихід',stockMinPcs:'Мін. шт.',stockAvgPcs:'Середнє',stockMaxPcs:'Макс. шт.',stockWetPerCan:'Мокрий лак / банку (діапазон)',spoilageRow:'Брак'},
+ar:{tabCalc:'الحاسبة',tabPlan:'التخطيط',tabRecalc:'إعادة الحساب',tabProd:'الإنتاج',appType:'نوع التطبيق',internal:'داخلي',external:'خارجي',varnishSpec:'مواصفات الورنيش',dims:'الأبعاد',diam:'القطر',len:'الطول',btnCalc:'احسب',btnPlan:'احسب الطاقة',btnRecalc:'أعد الحساب',resTitle:'نتائج الحساب',recalcResTitle:'نتائج إعادة الحساب',surfaceArea:'مساحة السطح',weightCan:'وزن الطبقة (غ/علبة)',weightM2:'وزن الطبقة (غ/م²)',thickness:'سماكة الطبقة (ميكرون)',dry:'جاف',wet:'رطب',coatingType:'نوع الطلاء',availVarnish:'كمية الورنيش المتاحة',liters:'لترات (L)',productDims:'أبعاد المنتج',minPcs:'الحد الأدنى',avg:'المتوسط',maxPcs:'الحد الأقصى',pcs:'قطعة',wetPerCan:'ورنيش رطب لكل علبة',internalNote:'شاملاً القاع',externalNote:'الجانب فقط',wetWeightLabel:'الوزن الرطب لكل علبة (غ)',ppTabConsume:'📦 الاستهلاك',ppTabStock:'🔄 المخزون → قطع',prodCanDims:'أبعاد العلبة',prodFinLen:'الطول النهائي',prodAllowance:'سماح الضغط',prodVolume:'حجم الإنتاج',prodQty:'عدد العلب',prodSpoilage:'نسبة الهالك',btnProdConsume:'احسب الاستهلاك',prodResTitle:'تقدير الاستهلاك',netConsumption:'الاستهلاك الصافي',spoilageAllowance:'مخصص الهالك',totalOrder:'إجمالي الطلب',dryLacquer:'ورنيش جاف',wetPerCanRes:'ورنيش رطب / علبة',coatLenRes:'طول الطلاء',surfPerCan:'مساحة / علبة',stockAvail:'المخزون المتاح',stockCanDims:'أبعاد العلبة',stockDiam:'القطر',stockFinLen:'الطول النهائي',stockAllowance:'سماح الضغط',stockSpoilage:'نسبة الهالك',btnStockCalc:'احسب القطع',stockResTitle:'الناتج المتوقع',stockMinPcs:'الحد الأدنى',stockAvgPcs:'المتوسط',stockMaxPcs:'الحد الأقصى',stockWetPerCan:'ورنيش رطب / علبة (نطاق)',spoilageRow:'هالك'}
+};
+
+// ════ DATA LOADING ════
+async function loadVarnishData(){
+  const lt=document.getElementById('loaderTxt');
+  const tryFetch=async(bust)=>{
+    const url='varnishes.json'+(bust?'?_='+Date.now():'');
+    const res=await fetch(url);
+    const json=await res.json();
+    const dec=_d(json.d);
+    if(!dec)throw new Error('decrypt failed');
+    return{data:dec,version:json.v||'—'};
+  };
+  try{
+    lt.textContent='Fetching varnish data…';
+    const{data,version}=await tryFetch(true);
+    VARNISHES=data;
+    document.getElementById('dataVersion').textContent='v'+version;
+    document.getElementById('dataDot').classList.remove('offline');
+    const prev=localStorage.getItem('vc_dv');
+    if(prev&&prev!==version)document.getElementById('updateBanner').classList.add('show');
+    localStorage.setItem('vc_dv',version);
+    return true;
+  }catch(e){
+    try{
+      lt.textContent='Loading from cache…';
+      const{data,version}=await tryFetch(false);
+      VARNISHES=data;
+      document.getElementById('dataVersion').textContent='v'+version+' ⚡';
+      document.getElementById('dataDot').classList.add('offline');
+      document.getElementById('offlineBanner').classList.add('show');
+      return true;
+    }catch(e2){
+      lt.textContent='❌ Failed to load data';
+      return false;
+    }
+  }
+}
+
+// ════ INIT ════
+async function init(){
+  const ok=await loadVarnishData();
+  if(!ok)return;
+  const ls=document.getElementById('loadingScreen');
+  ls.classList.add('hidden');
+  setTimeout(()=>ls.style.display='none',400);
+  document.getElementById('mainApp').style.display='';
+  buildLangSelect();
+  fillSelect(document.getElementById('varnishSelect'),'internal');
+  onVarnishChange();
+  loadPlanVarnishes();
+  loadRecalcVarnishes();
+  loadProdVarnishes();
+  loadStockVarnishes();
+  applyT();
+  // live spoilage label
+  document.getElementById('prodSpoilage').addEventListener('input',function(){document.getElementById('prodSpoilagePct').textContent=parseFloat(this.value||0).toFixed(1)+' %';});
+  document.getElementById('stockSpoilage').addEventListener('input',function(){document.getElementById('stockSpoilagePct').textContent=parseFloat(this.value||0).toFixed(1)+' %';});
+}
+
+// ════ CALCULATIONS ════
+function calcCoating(v,d,l,incBot){const scvR=v.scv/100,side=Math.PI*d*l,bot=Math.PI*d*d/4,area=incBot?side+bot:side,aM2=area/1e6,minWGM2=(v.minT/scvR)*v.wetD,maxWGM2=(v.maxT/scvR)*v.wetD,minDGM2=minWGM2*scvR,maxDGM2=maxWGM2*scvR;return{area,aM2,minWGM2,maxWGM2,minDGM2,maxDGM2,minWG:minWGM2*aM2,maxWG:maxWGM2*aM2,minDG:minDGM2*aM2,maxDG:maxDGM2*aM2,minDUm:v.minT,maxDUm:v.maxT,minWUm:v.minT/scvR,maxWUm:v.maxT/scvR};}
+function calcRecalc(v,d,l,wg,incBot){const scvR=v.scv/100,side=Math.PI*d*l,bot=Math.PI*d*d/4,area=incBot?side+bot:side,aM2=area/1e6,dryG=wg*scvR,wetGM2=wg/aM2,dryGM2=wetGM2*scvR,wetUm=wetGM2/v.wetD,dryUm=wetUm*scvR;return{area,aM2,dryG,wetWeightG:wg,wetGM2,dryGM2,wetUm,dryUm};}
+const fmt=(n,dec=2)=>n.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+const fmtI=n=>Math.round(n).toLocaleString('en-US');
+function rcRow(dot,label,val){return`<div class="rc-row"><div class="rc-row-left"><div class="rc-dot">${dot}</div>${label}</div><div class="rc-val">${val}</div></div>`;}
+const CAT_LABELS={'EPOXY':'EPOXY','BPANI':'BPANI','PAM':'PAM – Polyamide','PAM_Alternative':'PAM Alternative','PAI':'PAI – Polyamide-imide','Polyurethane':'Polyurethane','Others':'Others','Overvarnish':'Overvarnish','Clear basecoat':'Clear Basecoat','White Enamel':'White Enamel','White basecoat':'White Basecoat'};
+const CAT_ORDER=['EPOXY','BPANI','PAM','PAM_Alternative','PAI','Polyurethane','Others','Overvarnish','Clear basecoat','White basecoat','White Enamel'];
+function catLabel(cat){return CAT_LABELS[cat]||cat;}
+function fillSelect(sel,type){const data=VARNISHES[type],cats=[...new Set(data.map(v=>v.cat))].sort((a,b)=>{const ai=CAT_ORDER.indexOf(a),bi=CAT_ORDER.indexOf(b);return(ai<0?99:ai)-(bi<0?99:bi);});sel.innerHTML=cats.map(cat=>`<optgroup label="${catLabel(cat)}">${data.filter(v=>v.cat===cat).map(v=>`<option value="${v.id}">${v.name}</option>`).join('')}</optgroup>`).join('');}
+function getV(selId,type){const id=parseInt(document.getElementById(selId).value);return VARNISHES[type].find(v=>v.id===id);}
+
+function calculate(){
+  const v=getV('varnishSelect',coatingType),d=parseFloat(document.getElementById('diameter').value),l=parseFloat(document.getElementById('length').value);
+  if(!v||!d||!l||d<=0||l<=0)return;
+  const inc=coatingType==='internal',r=calcCoating(v,d,l,inc),t=T[lang];
+  document.getElementById('resSub').textContent=`${v.name}  ·  SCV ${v.scv.toFixed(2)}%  ·  Ø${d} × ${l} mm  ·  ${inc?t.internalNote:t.externalNote}`;
+  document.getElementById('areaPill').innerHTML=`<div><div class="area-pill-lbl">${t.surfaceArea}</div></div><div style="text-align:right"><div class="area-pill-val">${fmt(r.area/100)} cm²</div><div style="font-size:12px;color:var(--text-3);margin-top:2px">${fmt(r.aM2,6)} m²</div></div>`;
+  document.getElementById('resultCards').innerHTML=`<div class="rc rc-purple"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">⚖️</div><div class="rc-card-title">${t.weightCan}</div></div>${rcRow('☀️',t.dry,fmt(r.minDG)+' – '+fmt(r.maxDG)+' g')}${rcRow('💧',t.wet,fmt(r.minWG)+' – '+fmt(r.maxWG)+' g')}</div></div><div class="rc rc-blue"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">⊞</div><div class="rc-card-title">${t.weightM2}</div></div>${rcRow('☀️',t.dry,fmt(r.minDGM2)+' – '+fmt(r.maxDGM2)+' g')}${rcRow('💧',t.wet,fmt(r.minWGM2)+' – '+fmt(r.maxWGM2)+' g')}</div></div><div class="rc rc-green"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">📏</div><div class="rc-card-title">${t.thickness}</div></div>${rcRow('☀️',t.dry,fmt(r.minDUm)+' – '+fmt(r.maxDUm)+' µm')}${rcRow('💧',t.wet,fmt(r.minWUm)+' – '+fmt(r.maxWUm)+' µm')}</div></div>`;
+  document.getElementById('resultsSection').style.display='block';
+  setTimeout(()=>document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function loadPlanVarnishes(){fillSelect(document.getElementById('planVarnishSelect'),document.getElementById('planCoatingType').value);onPlanVarnishChange();}
+function onPlanVarnishChange(){const v=getV('planVarnishSelect',document.getElementById('planCoatingType').value);document.getElementById('planVarnishBadge').textContent=v?catLabel(v.cat):'—';}
+function setPlanUnit(u){planUnit=u;['Kg','L','G'].forEach(x=>{const b=document.getElementById('u'+x);if(b)b.classList.toggle('active',x.toLowerCase()===u);});document.getElementById('planUnitLbl').textContent=u==='l'?'L':u;}
+function calculatePlanning(){
+  const type=document.getElementById('planCoatingType').value,v=getV('planVarnishSelect',type),qty=parseFloat(document.getElementById('planQty').value),d=parseFloat(document.getElementById('planDiam').value),l=parseFloat(document.getElementById('planLen').value);
+  if(!v||!qty||!d||!l)return;
+  const g=planUnit==='kg'?qty*1000:planUnit==='l'?qty*1000*v.wetD:qty,inc=type==='internal',r=calcCoating(v,d,l,inc),maxPcs=Math.floor(g/r.minWG),minPcs=Math.floor(g/r.maxWG),avgPcs=Math.round((maxPcs+minPcs)/2),t=T[lang];
+  document.getElementById('planCards').innerHTML=`<div class="card" style="margin-top:0"><div style="font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:5px">${t.resTitle}</div><div style="font-size:13px;color:var(--text-3);margin-bottom:18px;line-height:1.6">${v.name} · ${qty} ${planUnit==='l'?'L':planUnit} · Ø${d}×${l} mm</div><div class="plan-grid"><div class="plan-mini"><div class="pm-lbl">${t.minPcs}</div><div class="pm-val pm-min">${fmtI(minPcs)}</div><div class="pm-unit">${t.pcs}</div></div><div class="plan-mini"><div class="pm-lbl">${t.avg}</div><div class="pm-val pm-avg">${fmtI(avgPcs)}</div><div class="pm-unit">${t.pcs}</div></div><div class="plan-mini"><div class="pm-lbl">${t.maxPcs}</div><div class="pm-val pm-max">${fmtI(maxPcs)}</div><div class="pm-unit">${t.pcs}</div></div></div><div class="plan-detail" style="margin-top:14px"><div class="pd-lbl">${t.wetPerCan}</div><div class="pd-val">${fmt(r.minWG)} – ${fmt(r.maxWG)} g</div></div></div>`;
+  document.getElementById('planResultsSection').style.display='block';
+  setTimeout(()=>document.getElementById('planResultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function loadRecalcVarnishes(){fillSelect(document.getElementById('recalcVarnishSelect'),document.getElementById('recalcCoatingType').value);onRecalcVarnishChange();}
+function onRecalcVarnishChange(){const v=getV('recalcVarnishSelect',document.getElementById('recalcCoatingType').value);document.getElementById('recalcVarnishBadge').textContent=v?catLabel(v.cat):'—';}
+function calculateRecalc(){
+  const type=document.getElementById('recalcCoatingType').value,v=getV('recalcVarnishSelect',type),d=parseFloat(document.getElementById('recalcDiam').value),l=parseFloat(document.getElementById('recalcLen').value),wg=parseFloat(document.getElementById('wetWeight').value);
+  if(!v||!d||!l||!wg||wg<=0)return;
+  const inc=type==='internal',r=calcRecalc(v,d,l,wg,inc),t=T[lang];
+  document.getElementById('recalcResSub').textContent=`${v.name}  ·  SCV ${v.scv.toFixed(2)}%  ·  Ø${d} × ${l} mm  ·  ${wg} g wet  ·  ${inc?t.internalNote:t.externalNote}`;
+  document.getElementById('recalcAreaPill').innerHTML=`<div><div class="area-pill-lbl">${t.surfaceArea}</div></div><div style="text-align:right"><div class="area-pill-val">${fmt(r.area/100)} cm²</div><div style="font-size:12px;color:var(--text-3);margin-top:2px">${fmt(r.aM2,6)} m²</div></div>`;
+  document.getElementById('recalcCards').innerHTML=`<div class="rc rc-purple"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">⚖️</div><div class="rc-card-title">${t.weightCan}</div></div>${rcRow('☀️',t.dry,fmt(r.dryG,3)+' g')}${rcRow('💧',t.wet,fmt(r.wetWeightG,3)+' g')}</div></div><div class="rc rc-blue"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">⊞</div><div class="rc-card-title">${t.weightM2}</div></div>${rcRow('☀️',t.dry,fmt(r.dryGM2)+' g')}${rcRow('💧',t.wet,fmt(r.wetGM2)+' g')}</div></div><div class="rc rc-green"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">📏</div><div class="rc-card-title">${t.thickness}</div></div>${rcRow('☀️',t.dry,fmt(r.dryUm)+' µm')}${rcRow('💧',t.wet,fmt(r.wetUm)+' µm')}</div></div>`;
+  document.getElementById('recalcResultsSection').style.display='block';
+  setTimeout(()=>document.getElementById('recalcResultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+// ════ PRODUCTION PLANNING ════
+function loadProdVarnishes(){fillSelect(document.getElementById('prodVarnishSelect'),document.getElementById('prodCoatingType').value);onProdVarnishChange();}
+function onProdVarnishChange(){const v=getV('prodVarnishSelect',document.getElementById('prodCoatingType').value);document.getElementById('prodVarnishBadge').textContent=v?catLabel(v.cat):'—';}
+function loadStockVarnishes(){fillSelect(document.getElementById('stockVarnishSelect'),document.getElementById('stockCoatingType').value);onStockVarnishChange();}
+function onStockVarnishChange(){const v=getV('stockVarnishSelect',document.getElementById('stockCoatingType').value);document.getElementById('stockVarnishBadge').textContent=v?catLabel(v.cat):'—';}
+function setStockUnit(u){stockUnit=u;['Kg','L','G'].forEach(x=>{const b=document.getElementById('sU'+x);if(b)b.classList.toggle('active',x.toLowerCase()===u);});document.getElementById('stockUnitLbl').textContent=u==='l'?'L':u;}
+function switchProdTab(tab){
+  document.getElementById('prodConsumeSection').style.display=tab==='consume'?'block':'none';
+  document.getElementById('prodStockSection').style.display=tab==='stock'?'block':'none';
+  document.getElementById('ppTabConsume').classList.toggle('active',tab==='consume');
+  document.getElementById('ppTabStock').classList.toggle('active',tab==='stock');
+}
+
+function calculateConsumption(){
+  const type=document.getElementById('prodCoatingType').value,
+        v=getV('prodVarnishSelect',type),
+        d=parseFloat(document.getElementById('prodDiam').value),
+        finLen=parseFloat(document.getElementById('prodFinLen').value),
+        allow=parseFloat(document.getElementById('prodAllowance').value)||0,
+        qty=parseFloat(document.getElementById('prodQty').value),
+        spoilPct=parseFloat(document.getElementById('prodSpoilage').value)||0;
+  if(!v||!d||!finLen||!qty)return;
+  const coatLen=finLen+allow,
+        inc=type==='internal',
+        r=calcCoating(v,d,coatLen,inc),
+        spoilF=spoilPct/100,
+        t=T[lang];
   // mid-point wet weight per can
   const midWG=(r.minWG+r.maxWG)/2;
   // net total (g)
