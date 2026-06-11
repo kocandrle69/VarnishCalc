@@ -216,7 +216,6 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;backgroun
   <div class="tabs">
     <button class="tab active" id="tabCalc"   onclick="switchTab('calc')">Calculator</button>
     <button class="tab"        id="tabRecalc" onclick="switchTab('recalc')">Recalculation</button>
-    <button class="tab"        id="tabPlan"   onclick="switchTab('plan')">Planning</button>
     <button class="tab"        id="tabProd"   onclick="switchTab('prod')">Production</button>
   </div>
 
@@ -253,46 +252,6 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;backgroun
       <div class="area-pill" id="areaPill"></div>
       <div id="resultCards"></div>
     </div>
-  </div>
-
-  <!-- PLANNING -->
-  <div id="planSection" style="display:none">
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="flabel" style="margin-bottom:0" id="lPlanCoatingType">Coating Type</div>
-        <a href="help.html" class="help-btn" onclick="window.location.href='help.html';return false;">?</a>
-      </div>
-      <div class="select-wrap" style="margin-bottom:10px">
-        <select class="glass-select" id="planCoatingType" onchange="loadPlanVarnishes()">
-          <option value="internal" id="planOptInternal">🥫 Internal</option>
-          <option value="external" id="planOptExternal">🌐 External</option>
-        </select><div class="select-arrow">⌄</div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="flabel" style="margin-bottom:0" id="lPlanVarnish">Varnish Specification</div>
-        <div class="varnish-badge" id="planVarnishBadge">—</div>
-      </div>
-      <div class="select-wrap" style="margin-bottom:18px">
-        <select class="glass-select" id="planVarnishSelect" onchange="onPlanVarnishChange()"></select><div class="select-arrow">⌄</div>
-      </div>
-      <div class="flabel" id="lAvailVarnish">Available Varnish</div>
-      <div class="unit-toggle" style="margin-bottom:10px">
-        <button class="unit-btn active" id="uKg" onclick="setPlanUnit('kg')">kg</button>
-        <button class="unit-btn"        id="uL"  onclick="setPlanUnit('l')">L</button>
-        <button class="unit-btn"        id="uG"  onclick="setPlanUnit('g')">g</button>
-      </div>
-      <div class="dim-wrap" style="margin-bottom:18px">
-        <input class="num-input" type="number" id="planQty" value="25" step="0.1" min="0.001">
-        <span class="num-unit" id="planUnitLbl">kg</span>
-      </div>
-      <div class="flabel" id="lProductDims">Product Dimensions</div>
-      <div class="dim-row" style="margin-bottom:18px">
-        <div class="dim-field"><div class="flabel" id="lPlanDiam">Diameter</div><div class="dim-wrap"><input class="num-input" type="number" id="planDiam" value="35" step="0.1" min="0.1"><span class="num-unit">mm</span></div></div>
-        <div class="dim-field"><div class="flabel" id="lPlanLen">Length</div><div class="dim-wrap"><input class="num-input" type="number" id="planLen" value="150" step="1" min="1"><span class="num-unit">mm</span></div></div>
-      </div>
-      <button class="btn-main" id="btnPlan" onclick="calculatePlanning()">CALCULATE CAPACITY</button>
-    </div>
-    <div id="planResultsSection" style="display:none;margin-top:8px"><div id="planCards"></div></div>
   </div>
 
   <!-- RECALCULATION -->
@@ -483,7 +442,7 @@ const _k=[86,67,80,114,111,50,48,50,54,36,120,75,57,109,78,51,112,81,55,114,84].
 function _d(e){try{const s=atob(e);let r='';for(let i=0;i<s.length;i++)r+=String.fromCharCode(s.charCodeAt(i)^_k.charCodeAt(i%_k.length));return JSON.parse(r);}catch(x){return null;}}
 
 // ════ STATE ════
-let VARNISHES=null,lang='en',coatingType='internal',planUnit='kg',stockUnit='kg';
+let VARNISHES=null,lang='en',coatingType='internal',stockUnit='kg';
 
 // ════ TRANSLATIONS ════
 const LANGS=[{code:'en',flag:'🇬🇧',dir:'ltr',name:'English'},{code:'cs',flag:'🇨🇿',dir:'ltr',name:'Čeština'},{code:'sk',flag:'🇸🇰',dir:'ltr',name:'Slovenčina'},{code:'fr',flag:'🇫🇷',dir:'ltr',name:'Français'},{code:'nl',flag:'🇧🇪',dir:'ltr',name:'Nederlands (BE)'},{code:'pt',flag:'🇧🇷',dir:'ltr',name:'Português BR'},{code:'es',flag:'🇪🇸',dir:'ltr',name:'Español'},{code:'uk',flag:'🇺🇦',dir:'ltr',name:'Українська'},{code:'ar',flag:'🇸🇦',dir:'rtl',name:'العربية'}];
@@ -564,7 +523,6 @@ async function init(){
   buildLangSelect();
   fillSelect(document.getElementById('varnishSelect'),'internal');
   onVarnishChange();
-  loadPlanVarnishes();
   loadRecalcVarnishes();
   loadProdVarnishes();
   loadStockVarnishes();
@@ -595,18 +553,6 @@ function calculate(){
   document.getElementById('resultCards').innerHTML=`<div class="rc rc-purple"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">⚖️</div><div class="rc-card-title">${t.weightCan}</div></div>${rcRow('☀️',t.dry,fmt(r.minDG)+' – '+fmt(r.maxDG)+' g')}${rcRow('💧',t.wet,fmt(r.minWG)+' – '+fmt(r.maxWG)+' g')}</div></div><div class="rc rc-blue"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">⊞</div><div class="rc-card-title">${t.weightM2}</div></div>${rcRow('☀️',t.dry,fmt(r.minDGM2)+' – '+fmt(r.maxDGM2)+' g')}${rcRow('💧',t.wet,fmt(r.minWGM2)+' – '+fmt(r.maxWGM2)+' g')}</div></div><div class="rc rc-green"><div class="rc-inner"><div class="rc-head"><div class="rc-icon">📏</div><div class="rc-card-title">${t.thickness}</div></div>${rcRow('☀️',t.dry,fmt(r.minDUm)+' – '+fmt(r.maxDUm)+' µm')}${rcRow('💧',t.wet,fmt(r.minWUm)+' – '+fmt(r.maxWUm)+' µm')}</div></div>`;
   document.getElementById('resultsSection').style.display='block';
   setTimeout(()=>document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
-}
-
-function loadPlanVarnishes(){fillSelect(document.getElementById('planVarnishSelect'),document.getElementById('planCoatingType').value);onPlanVarnishChange();}
-function onPlanVarnishChange(){const v=getV('planVarnishSelect',document.getElementById('planCoatingType').value);document.getElementById('planVarnishBadge').textContent=v?catLabel(v.cat):'—';}
-function setPlanUnit(u){planUnit=u;['Kg','L','G'].forEach(x=>{const b=document.getElementById('u'+x);if(b)b.classList.toggle('active',x.toLowerCase()===u);});document.getElementById('planUnitLbl').textContent=u==='l'?'L':u;}
-function calculatePlanning(){
-  const type=document.getElementById('planCoatingType').value,v=getV('planVarnishSelect',type),qty=parseFloat(document.getElementById('planQty').value),d=parseFloat(document.getElementById('planDiam').value),l=parseFloat(document.getElementById('planLen').value);
-  if(!v||!qty||!d||!l)return;
-  const g=planUnit==='kg'?qty*1000:planUnit==='l'?qty*1000*v.wetD:qty,inc=type==='internal',r=calcCoating(v,d,l,inc),maxPcs=Math.floor(g/r.minWG),minPcs=Math.floor(g/r.maxWG),avgPcs=Math.round((maxPcs+minPcs)/2),t=T[lang];
-  document.getElementById('planCards').innerHTML=`<div class="card" style="margin-top:0"><div style="font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:5px">${t.resTitle}</div><div style="font-size:13px;color:var(--text-3);margin-bottom:18px;line-height:1.6">${v.name} · ${qty} ${planUnit==='l'?'L':planUnit} · Ø${d}×${l} mm</div><div class="plan-grid"><div class="plan-mini"><div class="pm-lbl">${t.minPcs}</div><div class="pm-val pm-min">${fmtI(minPcs)}</div><div class="pm-unit">${t.pcs}</div></div><div class="plan-mini"><div class="pm-lbl">${t.avg}</div><div class="pm-val pm-avg">${fmtI(avgPcs)}</div><div class="pm-unit">${t.pcs}</div></div><div class="plan-mini"><div class="pm-lbl">${t.maxPcs}</div><div class="pm-val pm-max">${fmtI(maxPcs)}</div><div class="pm-unit">${t.pcs}</div></div></div><div class="plan-detail" style="margin-top:14px"><div class="pd-lbl">${t.wetPerCan}</div><div class="pd-val">${fmt(r.minWG)} – ${fmt(r.maxWG)} g</div></div></div>`;
-  document.getElementById('planResultsSection').style.display='block';
-  setTimeout(()=>document.getElementById('planResultsSection').scrollIntoView({behavior:'smooth',block:'start'}),80);
 }
 
 function loadRecalcVarnishes(){fillSelect(document.getElementById('recalcVarnishSelect'),document.getElementById('recalcCoatingType').value);onRecalcVarnishChange();}
@@ -771,7 +717,7 @@ function calculateStock(){
 function onVarnishChange(){const v=getV('varnishSelect',coatingType);document.getElementById('varnishBadge').textContent=v?catLabel(v.cat):'—';}
 function setType(type){coatingType=type;document.getElementById('coatingTypeSelect').value=type;fillSelect(document.getElementById('varnishSelect'),type);onVarnishChange();document.getElementById('resultsSection').style.display='none';}
 function switchTab(tab){
-  ['calc','plan','recalc','prod'].forEach(t=>{
+  ['calc','recalc','prod'].forEach(t=>{
     document.getElementById(t+'Section').style.display=t===tab?'block':'none';
     const btn=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
     if(btn)btn.classList.toggle('active',t===tab);
@@ -784,7 +730,6 @@ function setLang(l){
   document.documentElement.lang=l;document.documentElement.dir=lObj?.dir||'ltr';
   buildLangSelect();applyT();
   if(document.getElementById('resultsSection').style.display!=='none')calculate();
-  if(document.getElementById('planResultsSection').style.display!=='none')calculatePlanning();
   if(document.getElementById('recalcResultsSection').style.display!=='none')calculateRecalc();
   if(document.getElementById('prodConsumeResults').style.display!=='none')calculateConsumption();
   if(document.getElementById('prodStockResults').style.display!=='none')calculateStock();
@@ -793,7 +738,6 @@ function applyT(){
   const t=T[lang];
   document.getElementById('tabCalc').textContent=t.tabCalc;
   document.getElementById('tabRecalc').textContent=t.tabRecalc;
-  document.getElementById('tabPlan').textContent=t.tabPlan;
   document.getElementById('tabProd').textContent=t.tabProd;
   document.getElementById('lAppType').textContent=t.appType;
   document.getElementById('lVarnishSpec').textContent=t.varnishSpec;
@@ -805,15 +749,6 @@ function applyT(){
   const ico={internal:'🥫 ',external:'🌐 '};
   document.getElementById('calcOptInternal').textContent=ico.internal+t.internal;
   document.getElementById('calcOptExternal').textContent=ico.external+t.external;
-  document.getElementById('lPlanCoatingType').textContent=t.coatingType;
-  document.getElementById('lPlanVarnish').textContent=t.varnishSpec;
-  document.getElementById('lAvailVarnish').textContent=t.availVarnish;
-  document.getElementById('lProductDims').textContent=t.productDims;
-  document.getElementById('lPlanDiam').textContent=t.diam;
-  document.getElementById('lPlanLen').textContent=t.len;
-  document.getElementById('btnPlan').textContent=t.btnPlan;
-  document.getElementById('planOptInternal').textContent='🥫 '+t.internal;
-  document.getElementById('planOptExternal').textContent='🌐 '+t.external;
   document.getElementById('lRecalcCoatingType').textContent=t.coatingType;
   document.getElementById('lRecalcVarnish').textContent=t.varnishSpec;
   document.getElementById('lRecalcDims').textContent=t.dims;
