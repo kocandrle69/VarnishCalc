@@ -1,7 +1,7 @@
 // ════ VarnishCalc Pro — Service Worker ════
 // Cache version — change this string when deploying new app version
-const CACHE_NAME = 'varnishcalc-v1.0.3';
-const DATA_CACHE = 'varnishcalc-data-v1.0.3';
+const CACHE_NAME = 'varnishcalc-v1.0.4';
+const DATA_CACHE = 'varnishcalc-data-v1.0.4';
 
 // Files to cache for offline use
 const APP_SHELL = [
